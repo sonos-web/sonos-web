@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "description": "Sonos Web Controller",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "connect-history-api-fallback": "^1.5.0",
+    "express": "^4.16.2",
+    "serve-static": "^1.13.2",
+    "node-sonos": "^0.12.6"    
+  },
+  "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "nodemon": "^1.17.5"
+  }
+}

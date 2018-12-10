@@ -1,0 +1,25 @@
+# Development
+version: "3"
+services:
+  sonos-web-client:
+    container_name: sonos-web-client
+    restart: on-failure
+    build: client
+    image: bytegenesis/sonos-web-client
+    env_file: ./client/.env
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./client:/app
+      - /app/node_modules/
+  sonos-web-server:
+    container_name: sonos-web-server
+    restart: on-failure
+    build: server
+    image: bytegenesis/sonos-web-server
+    env_file: ./server/.env
+    ports:
+      - "5051:5051"
+    volumes:
+      - ./server:/app
+      - /app/node_modules/
