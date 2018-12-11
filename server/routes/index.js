@@ -14,7 +14,7 @@ if (process.env.NODE_ENV == 'production') {
 }
 
 // All Routes
-routes.use('/rooms', require('./rooms'))
+routes.use('/zones', require('./zones'))
 // End All Routes
 
 // This MUST come last - all routes that we do not have endpoints for

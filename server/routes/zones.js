@@ -1,8 +1,8 @@
-const rooms = require('express').Router()
+const zones = require('express').Router()
 const {Sonos, DeviceDiscovery} = require('sonos')
 
 // Retrieve all
-rooms.get('/', function (req, res) {
+zones.get('/', function (req, res) {
     DeviceDiscovery().once('DeviceAvailable', async function (device) {        
         let groups = await device.getAllGroups()
         res.status(200).send(parseZoneGroups(groups))
@@ -11,8 +11,7 @@ rooms.get('/', function (req, res) {
 
 /// Return a subset of the zone group information that is relevant
 function parseZoneGroups(groups) {
-    var zoneGroups = []
-    var zones = []
+    var zoneGroups = []    
 
     for(group of groups) {
         zoneGroups.push({
@@ -34,7 +33,6 @@ function parseZoneGroups(groups) {
                 isCoordinator: zone.UUID === group.Coordinator,
             }
             zoneGroup.members.push(room)
-            zones.push(room)
         }
     }
 
@@ -44,22 +42,18 @@ function parseZoneGroups(groups) {
             return member.isCoordinator
         })[0]
         zoneGroup.coordinator_name = coordinator.name
-        
+
         // sort members alphabetically
         zoneGroup.members.sort(function(member1, member2) {
             return member1.name > member2.name
         })     
     }
 
-    // sort alphabetically
-    zones.sort(function(zone1, zone2) {
-        return zone1.name > zone2.name
-    })
     zoneGroups.sort(function(group1, group2) {
         return group1.coordinator_name > group2.coordinator_name
     })           
 
-    return {zoneGroups, zones}
+    return {zoneGroups}
 }
 
-module.exports = rooms
+module.exports = zones

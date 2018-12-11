@@ -6,7 +6,9 @@ import Router from 'vue-router';
 // const Home = () => import(/* webpackChunkName: "Home" */ './views/Home.vue');
 
 import NowPlaying from './views/NowPlaying.vue';
-import Rooms from './views/Rooms.vue';
+
+const Rooms = () => import(/* webpackChunkName: "Rooms" */ './views/Rooms.vue');
+
 
 Vue.use(Router);
 

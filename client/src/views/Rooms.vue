@@ -1,28 +1,29 @@
-<template>
-  <v-container fill-height fluid grid-list-lg>
+<template>  
+  <LoadingView v-if="isLoading"></LoadingView>
+  <v-container fill-height fluid grid-list-xl v-else>
     <v-layout row wrap>
       <v-flex xs4 v-for="group in zoneGroups" :key="group.id">
-        <v-card class="px-4" hover color="tertiary">          
+        <v-card class="px-4" hover color="tertiary">
           <v-layout>
             <v-flex xs12>
               <v-card-title primary-title class="pa-0 pt-3">
-                <div class="display-1 text-truncate" v-for="zone in group.members" :key="zone.id" v-if="zone.isCoordinator">
-                  {{zone.name}}
+                <div class="display-1 text-truncate">
+                  {{group.coordinator_name}}
                 </div>
               </v-card-title>
             </v-flex>
           </v-layout>
           <v-layout>
-            <v-flex xs12 v-if="group.members.length > 1">
-              <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="zone in group.members" :key="zone.id" v-if="!zone.isCoordinator">
+            <v-flex xs12 v-if="memberZones.length > 1">
+              <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="zone in memberZones" :key="zone.id">
                 <div class="subheading grey--text text--lighten-2" >
                   {{zone.name}}
                 </div>
               </v-chip>
             </v-flex>
           </v-layout>
-          <v-divider v-if="group.members.length > 1"></v-divider>
-          <v-layout>            
+          <v-divider v-if="memberZones.length > 1"></v-divider>
+          <v-layout>
             <v-flex xs5>
               <v-img
                 src="https://cdn.vuetifyjs.com/images/cards/foster.jpg"
@@ -49,40 +50,29 @@
             <v-icon>star_border</v-icon>
             <v-icon>star_border</v-icon>
             <v-icon>star_border</v-icon>
-          </v-card-actions>          
+          </v-card-actions>
         </v-card>
       </v-flex>
     </v-layout>
-  </v-container>    
+  </v-container>
 </template>
 
 <script>
-import roomsAPI from '@/services/API/rooms';
-
 export default {
   name: 'Rooms',
-  data: () => ({
-    zoneGroups: [],
-    zones: []
-  }),
   created() {
-    try {
-      this.getRooms();
-    } catch (error) {
-      console.log(error);
-    }
+    this.$store.dispatch('fetchZones');
   },
-  methods: {
-    async getRooms() {
-      const response = await roomsAPI.getRooms();      
-      this.zoneGroups = response.data.zoneGroups
-      this.zones = response.data.zones
-      console.log(this.zones)
+  computed: {
+    zoneGroups() {      
+      return this.$store.state.zoneGroups;
     },
+    memberZones() {
+      return this.$store.getters.memberZones;
+    },
+    isLoading() {      
+      return this.$store.state.isLoading;
+    }
   },
 };
 </script>
-
-<style>
-
-</style>
