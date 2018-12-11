@@ -18,6 +18,7 @@ services:
     build: server
     image: bytegenesis/sonos-web-server
     env_file: ./server/.env
+    network_mode: host
     ports:
       - "5051:5051"
     volumes:
