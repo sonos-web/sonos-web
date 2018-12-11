@@ -3,7 +3,7 @@ module.exports = {
     port: process.env.PORT || 5050,
     proxy: {
       '/api': {
-        target: 'http://sonos-web-server:5051',
+        target: 'http://localhost:5051',
       },
     },
   },

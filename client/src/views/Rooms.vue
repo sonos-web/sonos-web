@@ -1,0 +1,88 @@
+<template>
+  <v-container fill-height fluid grid-list-lg>
+    <v-layout row wrap>
+      <v-flex xs4 v-for="group in zoneGroups" :key="group.id">
+        <v-card class="px-4" hover color="tertiary">          
+          <v-layout>
+            <v-flex xs12>
+              <v-card-title primary-title class="pa-0 pt-3">
+                <div class="display-1 text-truncate" v-for="zone in group.members" :key="zone.id" v-if="zone.isCoordinator">
+                  {{zone.name}}
+                </div>
+              </v-card-title>
+            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex xs12 v-if="group.members.length > 1">
+              <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="zone in group.members" :key="zone.id" v-if="!zone.isCoordinator">
+                <div class="subheading grey--text text--lighten-2" >
+                  {{zone.name}}
+                </div>
+              </v-chip>
+            </v-flex>
+          </v-layout>
+          <v-divider v-if="group.members.length > 1"></v-divider>
+          <v-layout>            
+            <v-flex xs5>
+              <v-img
+                src="https://cdn.vuetifyjs.com/images/cards/foster.jpg"
+                height="125px"
+                contain
+              ></v-img>
+            </v-flex>
+            <v-flex xs7>
+              <v-card-title primary-title>
+                <div>
+                  <div class="headline">Supermodel</div>
+                  <div>Foster the People</div>
+                  <div>(2014)</div>
+                </div>
+              </v-card-title>
+            </v-flex>
+          </v-layout>
+          <v-divider></v-divider>
+          <v-card-actions class="pa-3">
+            Rate this album
+            <v-spacer></v-spacer>
+            <v-icon>star_border</v-icon>
+            <v-icon>star_border</v-icon>
+            <v-icon>star_border</v-icon>
+            <v-icon>star_border</v-icon>
+            <v-icon>star_border</v-icon>
+          </v-card-actions>          
+        </v-card>
+      </v-flex>
+    </v-layout>
+  </v-container>    
+</template>
+
+<script>
+import roomsAPI from '@/services/API/rooms';
+
+export default {
+  name: 'Rooms',
+  data: () => ({
+    zoneGroups: [],
+    zones: []
+  }),
+  created() {
+    try {
+      this.getRooms();
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  methods: {
+    async getRooms() {
+      const response = await roomsAPI.getRooms();      
+      this.zoneGroups = response.data.zoneGroups
+      this.zones = response.data.zones
+      console.log(this.zones)
+    },
+  },
+};
+</script>
+
+<style>
+
+</style>

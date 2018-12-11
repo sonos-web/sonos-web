@@ -6,6 +6,7 @@ import Router from 'vue-router';
 // const Home = () => import(/* webpackChunkName: "Home" */ './views/Home.vue');
 
 import NowPlaying from './views/NowPlaying.vue';
+import Rooms from './views/Rooms.vue';
 
 Vue.use(Router);
 
@@ -15,8 +16,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'NowPlaying',
       component: NowPlaying,
+    },
+    {
+      path: '/rooms',
+      name: 'Rooms',
+      component: Rooms,
     },
   ],
 });
