@@ -6,14 +6,17 @@ import zonesAPI from '@/services/API/zones';
 
 Vue.use(Vuex);
 
-
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
     isLoading: false,
     zoneGroups: [],
+    zones: [],
   },
   getters: {
+    getZoneById: state => (id) => {
+      state.zones.find(zone => zone.zoneID === id);
+    },
     coordinatorZones: (state) => {
       const zones = [];
       state.zoneGroups.forEach((zoneGroup) => {
@@ -37,7 +40,16 @@ export default new Vuex.Store({
     SET_IS_LOADING(state, loading) {
       state.isLoading = loading;
     },
-    SET_ZONES(state, zones) {
+    SET_ZONE(state, zone) {
+      const index = state.zones.findIndex(z => zone.zoneID === z.zoneID);
+      // Add or merge zone
+      if (index > -1) {
+        state.zones[index] = { ...state.zones[index], ...zone };
+      } else {
+        state.zones.push(zone);
+      }
+    },
+    SET_ZONE_GROUPS(state, zones) {
       state.zoneGroups = zones;
     },
   },
@@ -47,7 +59,7 @@ export default new Vuex.Store({
         context.commit('SET_IS_LOADING', true);
         const response = await zonesAPI.fetchZoneGroups();
         context.commit('SET_IS_LOADING', false);
-        context.commit('SET_ZONES', response.data.zoneGroups);
+        context.commit('SET_ZONE_GROUPS', response.data.zoneGroups);
       } catch (error) {
         console.log(error);
       }

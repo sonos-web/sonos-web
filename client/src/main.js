@@ -5,6 +5,7 @@ import router from './router';
 import 'roboto-fontface/css/roboto/roboto-fontface.css';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import store from './store';
+import './services/socket';
 
 import LoadingView from '@/components/LoadingView.vue';
 

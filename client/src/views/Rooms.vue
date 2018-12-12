@@ -35,7 +35,7 @@
             <v-flex xs7>
               <v-card-title primary-title>
                 <div>
-                  <div class="headline">Supermodel</div>
+                  <div class="headline"></div>
                   <div>Foster the People</div>
                   <div>(2014)</div>
                 </div>
@@ -74,6 +74,9 @@ export default {
     isLoading() {
       return this.$store.state.isLoading;
     },
+    zones() {
+      return this.$store.state.zones;
+    }
   },
 };
 </script>

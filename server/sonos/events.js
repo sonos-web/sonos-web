@@ -1,6 +1,9 @@
 const {DeviceDiscovery, Listener} = require('sonos');
+var socketio = require('socket.io')
 
-module.exports = async function () {
+module.exports = async function (app) {
+    const io = socketio.listen(app)    
+    
   DeviceDiscovery(function(device) {        
         Listener.subscribeTo(device).catch(error => {
           switch (error.statusCode) {
@@ -14,10 +17,17 @@ module.exports = async function () {
               console.log(error)
           }          
         });
-        device.on('AVTransport', function (data) {
-            let transportInfo = parseAVTransportInfo(device, data)
+        device.on('AVTransport', async function (data) {
+            let transportInfo = await parseAVTransportInfo(device, data)
+            io.emit('AVTransport State Changed', transportInfo)
         })
+
+        device.on('RenderingControl', async function (data) {
+         //console.log(data)
+        })        
   })
+
+  return io
 }
 
 async function parseAVTransportInfo(device, data) {
