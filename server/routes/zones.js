@@ -1,13 +1,16 @@
-const zones = require('express').Router()
-const {DeviceDiscovery} = require('sonos')
-// const {parseZoneGroups} = require('../sonos/helpers')
+const router = require('express').Router();
 
-// // Retrieve all
-// zones.get('/', function (req, res) {
-//     DeviceDiscovery().once('DeviceAvailable', async function (device) {              
-//         let groups = await device.getAllGroups()        
-//         res.status(200).send(parseZoneGroups(groups))
-//     })
-// })
+module.exports = function Zones(sonosNetwork) {
+  this.router = router;
+  this.sonosNetwork = sonosNetwork;
 
-module.exports = zones
+  // Retrieve all
+  this.router.get('/', (req, res) => {
+    console.log(this.sonosNetwork.devices);
+    res.status(200).send('hi');
+    // DeviceDiscovery().once('DeviceAvailable', async function (device) {
+    //     let groups = await device.getAllGroups()
+    //     res.status(200).send(parseZoneGroups(groups))
+    // })
+  });
+};

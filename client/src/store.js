@@ -2,7 +2,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import zonesAPI from '@/services/API/zones';
+import zonesAPI from './services/API/zones';
 
 Vue.use(Vuex);
 
@@ -10,6 +10,7 @@ export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
     isLoading: false,
+    devices: [],
     zoneGroups: [],
     zones: [],
   },
@@ -39,6 +40,9 @@ export default new Vuex.Store({
   mutations: {
     SET_IS_LOADING(state, loading) {
       state.isLoading = loading;
+    },
+    SET_DEVICES(state, devices) {
+      state.devices = devices;
     },
     SET_ZONE(state, zone) {
       const index = state.zones.findIndex(z => zone.zoneID === z.zoneID);

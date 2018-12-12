@@ -1,13 +1,16 @@
 const app = require('./express')()
 const http = require('http').Server(app)
-const routes = require('./routes')
-const sonosEvents = require('./sonos/events')
+const socketio = require('./socketio')
+const Routes = require('./routes')
+const SonosNetwork = require('./sonos')
+
+
+const io = socketio.listen(http);
+const sonosNetwork = new SonosNetwork(io)
+const routes = new Routes(sonosNetwork)
 
 //Connect all our routes to our app
-app.use('/api', routes)
-
-// Initialize Sonos listeners and socketio
-sonosEvents(http)
+app.use('/api', routes.router)
 
 const PORT = process.env.PORT || 5051
 http.listen(PORT, function() {
