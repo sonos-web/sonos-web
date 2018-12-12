@@ -7,9 +7,9 @@ socket.on('Discovering Sonos Devices', () => {
   store.commit('SET_IS_LOADING', true);
 });
 
-socket.on('Sonos Device Discovery Complete', (devices) => {
+socket.on('Sonos Device Discovery Complete', (zoneGroups) => {
   store.commit('SET_IS_LOADING', false);
-  store.commit('SET_DEVICES', devices);
+  store.commit('SET_ZONE_GROUPS', zoneGroups);
 });
 
 socket.on('AVTransport State Changed', (transportInfo) => {

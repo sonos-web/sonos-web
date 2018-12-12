@@ -6,10 +6,13 @@ const SonosNetwork = function SonosNetwork(socketio) {
   this.zoneGroups = [];
   // Discover the Sonos network on initialization
   this.discover().then(() => {
+    // Build the zone groups
+    this._parseZoneGroups().then(() => {
+      console.log('zones finished parsing');
+      this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
+    });
     // Now that we have the devices, listen for events on them
     this._listen();
-    // Build the zone groups
-    this._parseZoneGroups();
   });
 };
 
@@ -52,7 +55,6 @@ SonosNetwork.prototype.discover = async function discover(timeout = 5000) {
     });
 
     sonosSearch.on('timeout', () => {
-      this.socketio.emit('Sonos Device Discovery Complete', this.devices);
       resolve(this.devices);
     });
   });
@@ -84,95 +86,48 @@ SonosNetwork.prototype._parseAVTransportInfo = function parseAVTransportInfo(dat
   };
 };
 
-// getAllGroups
-// [ { Coordinator: 'RINCON_5CAAFD0E804401400',
-//     ID: 'RINCON_5CAAFD0E804401400:100',
-//     ZoneGroupMember: [ [Object] ] },
-//   { Coordinator: 'RINCON_5CAAFD08506001400',
-//     ID: 'RINCON_5CAAFD08506001400:71',
-//     ZoneGroupMember: [ [Object] ] },
-//   { Coordinator: 'RINCON_5CAAFDA4679401400',
-//     ID: 'RINCON_5CAAFDA4679401400:118',
-//     ZoneGroupMember: [ [Object] ] } ]
+/**
+ * Updates this.zoneGroups with the current zone group info
+ */
+SonosNetwork.prototype._parseZoneGroups = async function parseZoneGroups() {
+  return new Promise((resolve, reject) => {
+    if (this.devices.length === 0) { resolve(this.zoneGroups); }
 
-// ZoneGroupMember
-// [ { UUID: 'RINCON_5CAAFD08506001400',
-//     Location: 'http://192.168.0.14:1400/xml/device_description.xml',
-//     ZoneName: 'Kitchen',
-//     Icon: 'x-rincon-roomicon:kitchen',
-//     Configuration: '1',
-//     SoftwareVersion: '47.2-59120',
-//     MinCompatibleVersion: '46.0-00000',
-//     LegacyCompatibleVersion: '36.0-00000',
-//     BootSeq: '674',
-//     TVConfigurationError: '0',
-//     HdmiCecAvailable: '0',
-//     WirelessMode: '1',
-//     WirelessLeafOnly: '0',
-//     HasConfiguredSSID: '1',
-//     ChannelFreq: '2462',
-//     BehindWifiExtender: '0',
-//     WifiEnabled: '1',
-//     Orientation: '0',
-//     RoomCalibrationState: '1',
-//     SecureRegState: '3',
-//     VoiceState: '0',
-//     AirPlayEnabled: '1',
-//     IdleState: '1' } ]
+    const zoneGroups = [];
 
+    this.devices[0].getAllGroups().then((rawGroups) => {
+      rawGroups.forEach((group) => {
+        zoneGroups.push({
+          id: group.ID,
+          coordinator: {},
+          members: [],
+        });
+        group.ZoneGroupMember.forEach((member) => {
+          const zone = {
+            id: member.UUID,
+            name: member.ZoneName,
+            device: this.devices.find(device => device.id === member.UUID),
+          };
+          const zoneGroup = zoneGroups.find(zg => zg.id === group.ID);
+          if (zone.id === group.Coordinator) {
+            zoneGroup.coordinator = zone;
+          } else {
+            zoneGroup.members.push(zone);
+          }
+        });
+      });
+      // Sort all the members of each zone alphabetically
+      // eslint-disable-next-line max-len
+      zoneGroups.map(group => group.members.sort((member1, member2) => member1.name > member2.name));
+      // Sort all the zones alphabetically by coordinator
+      zoneGroups.sort((group1, group2) => group1.coordinator.name > group2.coordinator.name);
 
-SonosNetwork.prototype._parseZoneGroups = function parseZoneGroups() {
-  if (this.devices.length === 0) { return; }
-  console.log('parsing zone groups');
+      this.zoneGroups = zoneGroups;
+      resolve(this.zoneGroups);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
 };
-
-
-// /// Return a subset of the zone group information that is relevant
-// const parseZoneGroups = function (groups) {
-//   var zoneGroups = []    
-
-//   for(group of groups) {        
-//       zoneGroups.push({
-//           id: group.ID,
-//           coordinator_name: null,
-//           coordinator: group.Coordinator,            
-//           members: []
-//       })
-//       // iterate over all the members in this group...
-//       for(zone of group.ZoneGroupMember) {
-//           // find the zone group for this zone             
-//           let zoneGroup = zoneGroups.filter(function(zoneGroup) {
-//               return zoneGroup.coordinator === group.Coordinator
-//           })[0]
-//           let room = {
-//               id: zone.UUID,                
-//               name: zone.ZoneName,
-//               isCoordinator: zone.UUID === group.Coordinator,
-//           }
-//           zoneGroup.members.push(room)
-//       }
-//   }
-
-//   for(zoneGroup of zoneGroups) {
-//       // assign the coordinator name to the group for referencing
-//       let coordinator = zoneGroup.members.filter(function(member) {
-//           return member.isCoordinator
-//       })[0]
-//       zoneGroup.coordinator_name = coordinator.name
-
-//       // sort members alphabetically
-//       zoneGroup.members.sort(function(member1, member2) {
-//           return member1.name > member2.name
-//       })     
-//   }
-
-//   zoneGroups.sort(function(group1, group2) {
-//       return group1.coordinator_name > group2.coordinator_name
-//   })           
-
-//   return {zoneGroups}
-// }
- 
-// }
 
 module.exports = SonosNetwork;
