@@ -3,10 +3,13 @@ const { DeviceDiscovery, Listener } = require('sonos');
 const SonosNetwork = function SonosNetwork(socketio) {
   this.socketio = socketio;
   this.devices = [];
+  this.zoneGroups = [];
   // Discover the Sonos network on initialization
   this.discover().then(() => {
     // Now that we have the devices, listen for events on them
-    this.listen();
+    this._listen();
+    // Build the zone groups
+    this._parseZoneGroups();
   });
 };
 
@@ -31,7 +34,6 @@ SonosNetwork.prototype.discover = async function discover(timeout = 5000) {
         device.displayName = description.displayName;
         const UUID = description.UDN.split('uuid:')[1];
         device.id = UUID;
-        console.log(device);
         Listener.subscribeTo(device).then(() => {
           this.devices.push(device);
         }).catch((error) => {
@@ -59,37 +61,70 @@ SonosNetwork.prototype.discover = async function discover(timeout = 5000) {
 /**
  * Listen to all Sonos devices on the network
  */
-SonosNetwork.prototype.listen = function listen() {
+SonosNetwork.prototype._listen = function listen() {
   this.devices.forEach((device) => {
-    device.on('AVTransport', async (data) => {
-      console.log(data);
-      // let transportInfo = await parseAVTransportInfo(device, data)
+    device.on('AVTransport', (data) => {
+      const transportInfo = this._parseAVTransportInfo(data);
+      console.log(transportInfo);
       // io.emit('AVTransport State Changed', transportInfo)
     });
-    device.on('RenderingControl', async (data) => {
+    device.on('RenderingControl', (data) => {
       console.log(data);
     });
   });
 };
 
-// async function parseAVTransportInfo(device, data) {
-//   try {
-//     let deviceInfo = await device.deviceDescription()
-//     let deviceID = deviceInfo.UDN.split('uuid:')[1]
+SonosNetwork.prototype._parseAVTransportInfo = function parseAVTransportInfo(data) {
+  return {
+    currentTrack: data.CurrentTrackMetaDataParsed,
+    nextTrack: data['r:NextTrackMetaDataParsed'],
+    currentTransportActions: data.CurrentTransportActions,
+    state: data.TransportState,
+    currentPlayMode: data.CurrentPlayMode,
+  };
+};
 
-//     return {
-//       zoneID: deviceID,
-//       zoneName: deviceInfo.roomName,
-//       currentTrack: data.CurrentTrackMetaDataParsed,
-//       nextTrack: data['r:NextTrackMetaDataParsed'],
-//       currentTransportActions: data.CurrentTransportActions,
-//       state: data.TransportState,
-//       currentPlayMode: data.CurrentPlayMode
-//     }    
-//   } catch (error) {
-//     console.log(error)
-//   }    
-// }
+// getAllGroups
+// [ { Coordinator: 'RINCON_5CAAFD0E804401400',
+//     ID: 'RINCON_5CAAFD0E804401400:100',
+//     ZoneGroupMember: [ [Object] ] },
+//   { Coordinator: 'RINCON_5CAAFD08506001400',
+//     ID: 'RINCON_5CAAFD08506001400:71',
+//     ZoneGroupMember: [ [Object] ] },
+//   { Coordinator: 'RINCON_5CAAFDA4679401400',
+//     ID: 'RINCON_5CAAFDA4679401400:118',
+//     ZoneGroupMember: [ [Object] ] } ]
+
+// ZoneGroupMember
+// [ { UUID: 'RINCON_5CAAFD08506001400',
+//     Location: 'http://192.168.0.14:1400/xml/device_description.xml',
+//     ZoneName: 'Kitchen',
+//     Icon: 'x-rincon-roomicon:kitchen',
+//     Configuration: '1',
+//     SoftwareVersion: '47.2-59120',
+//     MinCompatibleVersion: '46.0-00000',
+//     LegacyCompatibleVersion: '36.0-00000',
+//     BootSeq: '674',
+//     TVConfigurationError: '0',
+//     HdmiCecAvailable: '0',
+//     WirelessMode: '1',
+//     WirelessLeafOnly: '0',
+//     HasConfiguredSSID: '1',
+//     ChannelFreq: '2462',
+//     BehindWifiExtender: '0',
+//     WifiEnabled: '1',
+//     Orientation: '0',
+//     RoomCalibrationState: '1',
+//     SecureRegState: '3',
+//     VoiceState: '0',
+//     AirPlayEnabled: '1',
+//     IdleState: '1' } ]
+
+
+SonosNetwork.prototype._parseZoneGroups = function parseZoneGroups() {
+  if (this.devices.length === 0) { return; }
+  console.log('parsing zone groups');
+};
 
 
 // /// Return a subset of the zone group information that is relevant
@@ -137,19 +172,6 @@ SonosNetwork.prototype.listen = function listen() {
 
 //   return {zoneGroups}
 // }
-
-// /// Returns an instance of Sonos given its UUID
-// /// There has to be a better way of doing this
-// const getDeviceById = async function (deviceId) {
-//   return new Promise(function (resolve) {
-//       DeviceDiscovery(async function (device) {
-//           let deviceInfo = await device.deviceDescription()
-//           let deviceID = deviceInfo.UDN.split('uuid:')[1]
-//           if (deviceID === deviceId) {
-//              return resolve(device)
-//           }
-//       })
-//   })  
  
 // }
 
