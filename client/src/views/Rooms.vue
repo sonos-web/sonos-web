@@ -1,4 +1,4 @@
-<template>  
+<template>
   <LoadingView v-if="isLoading"></LoadingView>
   <v-container fill-height fluid grid-list-xl v-else>
     <v-layout row wrap>
@@ -15,6 +15,7 @@
           </v-layout>
           <v-layout>
             <v-flex xs12 v-if="memberZones.length > 1">
+              <!--eslint-disable-next-line max-len -->
               <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="zone in memberZones" :key="zone.id">
                 <div class="subheading grey--text text--lighten-2" >
                   {{zone.name}}
@@ -64,15 +65,15 @@ export default {
     this.$store.dispatch('fetchZones');
   },
   computed: {
-    zoneGroups() {      
+    zoneGroups() {
       return this.$store.state.zoneGroups;
     },
     memberZones() {
       return this.$store.getters.memberZones;
     },
-    isLoading() {      
+    isLoading() {
       return this.$store.state.isLoading;
-    }
+    },
   },
 };
 </script>
