@@ -1,5 +1,10 @@
 const {Sonos, DeviceDiscovery} = require('sonos');
 
+
+var SonosHelper = function SonosHelper(sonos) {
+
+}
+
 /// Return a subset of the zone group information that is relevant
 const parseZoneGroups = function (groups) {
     var zoneGroups = []    
