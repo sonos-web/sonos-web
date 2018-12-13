@@ -5,11 +5,15 @@ const SonosNetwork = function SonosNetwork(socketio) {
   this.devices = [];
   this.zoneGroups = [];
   // Discover the Sonos network on initialization
+  this.socketio.on('connection', (socket) => {
+    socket.emit('Discovering Sonos Devices');
+  });
   this.discover().then(() => {
     // Build the zone groups
     this._parseZoneGroups().then(() => {
-      console.log('zones finished parsing');
       this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
+    }).catch(() => {
+      this.socketio.emit('No Sonos Devices Found On Network');
     });
     // Now that we have the devices, listen for events on them
     this._listen();
@@ -23,10 +27,7 @@ const SonosNetwork = function SonosNetwork(socketio) {
  */
 SonosNetwork.prototype.discover = async function discover(timeout = 5000) {
   return new Promise((resolve) => {
-    this.socketio.on('connection', (socket) => {
-      console.log('connected client');
-      socket.emit('Discovering Sonos Devices');
-    });
+    this.socketio.emit('Discovering Sonos Devices');
 
     const sonosSearch = DeviceDiscovery({ timeout });
 
@@ -91,7 +92,8 @@ SonosNetwork.prototype._parseAVTransportInfo = function parseAVTransportInfo(dat
  */
 SonosNetwork.prototype._parseZoneGroups = async function parseZoneGroups() {
   return new Promise((resolve, reject) => {
-    if (this.devices.length === 0) { resolve(this.zoneGroups); }
+    // If there are no devices, we cannot
+    if (this.devices.length === 0) { reject(); }
 
     const zoneGroups = [];
 

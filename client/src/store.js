@@ -10,6 +10,8 @@ export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
     isLoading: false,
+    loadingMessage: 'Searching for your Sonos System...',
+    discoveringSonos: true,
     zoneGroups: [],
     zones: [],
   },
@@ -39,6 +41,12 @@ export default new Vuex.Store({
   mutations: {
     SET_IS_LOADING(state, loading) {
       state.isLoading = loading;
+    },
+    SET_LOADING_MESSAGE(state, message) {
+      state.loadingMessage = message;
+    },
+    SET_DISCOVERING_SONOS(state, discovering) {
+      state.discoveringSonos = discovering;
     },
     SET_ZONE(state, zone) {
       const index = state.zones.findIndex(z => zone.zoneID === z.zoneID);

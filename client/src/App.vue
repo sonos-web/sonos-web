@@ -1,30 +1,37 @@
 <template>
   <v-app dark>
     <v-content>
-      <!-- eslint-disable-next-line -->
-      <v-navigation-drawer fixed app clipped floating :permanent="true" :mini-variant.sync="miniNav">
-        <v-list class="nav-link-list">
-          <template v-for="item in items">
-            <v-list-tile :key="item.text" :to="{path: item.path}">
-              <v-list-tile-action>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>
-                  {{ item.text }}
-                </v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </template>
-        </v-list>
-      </v-navigation-drawer>
-      <v-container fluid fill-height>
-        <v-layout>
-          <router-view/>
+      <v-container fluid fill-height v-if="discoveringSonos">
+        <v-layout align-center justify-center>
+          <LoadingView></LoadingView>
         </v-layout>
       </v-container>
-      <v-toolbar fixed clipped-left flat color="secondary" class="now-playing-bar" height="90px">
-      </v-toolbar>
+      <div v-else>
+        <!-- eslint-disable-next-line -->
+        <v-navigation-drawer fixed app clipped floating :permanent="true" :mini-variant.sync="miniNav">
+          <v-list class="nav-link-list">
+            <template v-for="item in items">
+              <v-list-tile :key="item.text" :to="{path: item.path}">
+                <v-list-tile-action>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                  <v-list-tile-title>
+                    {{ item.text }}
+                  </v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            </template>
+          </v-list>
+        </v-navigation-drawer>
+        <v-container fluid fill-height>
+          <v-layout>
+            <router-view/>
+          </v-layout>
+        </v-container>
+        <v-toolbar fixed clipped-left flat color="secondary" class="now-playing-bar" height="90px">
+        </v-toolbar>
+      </div>
     </v-content>
   </v-app>
 </template>
@@ -53,6 +60,11 @@ export default {
   methods: {
     windowSizeChanged() {
       this.windowWidth = window.innerWidth;
+    },
+  },
+  computed: {
+    discoveringSonos() {
+      return this.$store.state.discoveringSonos;
     },
   },
   watch: {
