@@ -7,16 +7,20 @@ const SonosNetwork = function SonosNetwork(socketio, timeout = 5000) {
   this.timeout = timeout;
   // Discover the Sonos network on connection
   this.socketio.on('connection', () => {
-    this.discover(timeout).then(() => {
-      // Build the zone groups
-      this._parseZoneGroups().then(() => {
-        this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
-      }).catch(() => {
-        this.socketio.emit('No Sonos Devices Found On Network');
+    if (this.devices.length === 0) {
+      this.discover(timeout).then(() => {
+        // Build the zone groups
+        this._parseZoneGroups().then(() => {
+          this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
+        }).catch(() => {
+          this.socketio.emit('No Sonos Devices Found On Network');
+        });
+        // Now that we have the devices, listen for events on them
+        this._listen();
       });
-      // Now that we have the devices, listen for events on them
-      this._listen();
-    });
+    } else {
+      this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
+    }
   });
 };
 
