@@ -61,9 +61,6 @@
 <script>
 export default {
   name: 'Rooms',
-  created() {
-    this.$store.dispatch('fetchZones');
-  },
   computed: {
     zoneGroups() {
       return this.$store.state.zoneGroups;
@@ -74,9 +71,6 @@ export default {
     isLoading() {
       return this.$store.state.isLoading;
     },
-    zones() {
-      return this.$store.state.zones;
-    }
   },
 };
 </script>

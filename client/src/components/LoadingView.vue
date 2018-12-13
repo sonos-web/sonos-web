@@ -14,9 +14,9 @@ export default {
   name: 'LoadingView',
   computed: {
     loadingMessage() {
-      return this.$store.state.loadingMessage
-    }
-  }
+      return this.$store.state.loadingMessage;
+    },
+  },
 };
 
 </script>

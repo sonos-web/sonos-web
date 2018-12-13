@@ -1,37 +1,42 @@
 <template>
   <v-app dark>
     <v-content>
-      <v-container fluid fill-height v-if="discoveringSonos">
-        <v-layout align-center justify-center>
-          <LoadingView></LoadingView>
-        </v-layout>
-      </v-container>
-      <div v-else>
-        <!-- eslint-disable-next-line -->
-        <v-navigation-drawer fixed app clipped floating :permanent="true" :mini-variant.sync="miniNav">
-          <v-list class="nav-link-list">
-            <template v-for="item in items">
-              <v-list-tile :key="item.text" :to="{path: item.path}">
-                <v-list-tile-action>
-                  <v-icon>{{ item.icon }}</v-icon>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                  <v-list-tile-title>
-                    {{ item.text }}
-                  </v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
-            </template>
-          </v-list>
-        </v-navigation-drawer>
-        <v-container fluid fill-height>
-          <v-layout>
-            <router-view/>
+      <transition name="fade">
+        <v-container fluid fill-height v-if="discoveringSonos">
+          <v-layout align-center justify-center>
+            <LoadingView></LoadingView>
           </v-layout>
         </v-container>
-        <v-toolbar fixed clipped-left flat color="secondary" class="now-playing-bar" height="90px">
-        </v-toolbar>
-      </div>
+      </transition>
+      <transition name="fade">
+        <div v-if="!discoveringSonos">
+          <!-- eslint-disable-next-line -->
+          <v-navigation-drawer fixed app clipped floating :permanent="true" :mini-variant.sync="miniNav">
+            <v-list class="nav-link-list">
+              <template v-for="item in items">
+                <v-list-tile :key="item.text" :to="{path: item.path}">
+                  <v-list-tile-action>
+                    <v-icon>{{ item.icon }}</v-icon>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>
+                      {{ item.text }}
+                    </v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </template>
+            </v-list>
+          </v-navigation-drawer>
+          <v-container fluid fill-height>
+            <v-layout>
+              <router-view/>
+            </v-layout>
+          </v-container>
+          <!-- eslint-disable-next-line -->
+          <v-toolbar fixed clipped-left flat color="secondary" class="now-playing-bar" height="90px">
+          </v-toolbar>
+        </div>
+      </transition>
     </v-content>
   </v-app>
 </template>
@@ -78,7 +83,17 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+
+.fade-enter-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
+
 .theme--dark.application {
   background: #141e30; /* fallback for old browsers */
   background: -webkit-linear-gradient(to top, #141e30, #243b55);

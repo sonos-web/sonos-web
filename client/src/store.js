@@ -2,8 +2,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import zonesAPI from './services/API/zones';
-
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -11,32 +9,31 @@ export default new Vuex.Store({
   state: {
     isLoading: false,
     loadingMessage: 'Searching for your Sonos System...',
-    discoveringSonos: true,
+    discoveringSonos: false,
     zoneGroups: [],
-    zones: [],
   },
   getters: {
-    getZoneById: state => (id) => {
-      state.zones.find(zone => zone.zoneID === id);
-    },
-    coordinatorZones: (state) => {
-      const zones = [];
-      state.zoneGroups.forEach((zoneGroup) => {
-        const match = zoneGroup.members.filter(zone => zone.isCoordinator)[0];
-        zones.push(match);
-      });
-      return zones;
-    },
-    memberZones: (state) => {
-      const zones = [];
-      state.zoneGroups.forEach((zoneGroup) => {
-        const matches = zoneGroup.members.filter(zone => !zone.isCoordinator);
-        matches.forEach((match) => {
-          zones.push(match);
-        });
-      });
-      return zones;
-    },
+    // getZoneById: state => (id) => {
+    //   state.zones.find(zone => zone.zoneID === id);
+    // },
+    // coordinatorZones: (state) => {
+    //   const zones = [];
+    //   state.zoneGroups.forEach((zoneGroup) => {
+    //     const match = zoneGroup.members.filter(zone => zone.isCoordinator)[0];
+    //     zones.push(match);
+    //   });
+    //   return zones;
+    // },
+    // memberZones: (state) => {
+    //   const zones = [];
+    //   state.zoneGroups.forEach((zoneGroup) => {
+    //     const matches = zoneGroup.members.filter(zone => !zone.isCoordinator);
+    //     matches.forEach((match) => {
+    //       zones.push(match);
+    //     });
+    //   });
+    //   return zones;
+    // },
   },
   mutations: {
     SET_IS_LOADING(state, loading) {
@@ -62,15 +59,6 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async fetchZones(context) {
-      try {
-        context.commit('SET_IS_LOADING', true);
-        const response = await zonesAPI.fetchZoneGroups();
-        context.commit('SET_IS_LOADING', false);
-        context.commit('SET_ZONE_GROUPS', response.data.zoneGroups);
-      } catch (error) {
-        console.log(error);
-      }
-    },
+
   },
 });
