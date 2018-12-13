@@ -1,35 +1,36 @@
 const { DeviceDiscovery, Listener } = require('sonos');
 
-const SonosNetwork = function SonosNetwork(socketio) {
+const SonosNetwork = function SonosNetwork(socketio, timeout = 5000) {
   this.socketio = socketio;
   this.devices = [];
   this.zoneGroups = [];
-  // Discover the Sonos network on initialization
-  this.socketio.on('connection', (socket) => {
-    socket.emit('Discovering Sonos Devices');
-  });
-  this.discover().then(() => {
-    // Build the zone groups
-    this._parseZoneGroups().then(() => {
-      this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
-    }).catch(() => {
-      this.socketio.emit('No Sonos Devices Found On Network');
+  this.timeout = timeout;
+  // Discover the Sonos network on connection
+  this.socketio.on('connection', () => {
+    this.discover(timeout).then(() => {
+      // Build the zone groups
+      this._parseZoneGroups().then(() => {
+        this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
+      }).catch(() => {
+        this.socketio.emit('No Sonos Devices Found On Network');
+      });
+      // Now that we have the devices, listen for events on them
+      this._listen();
     });
-    // Now that we have the devices, listen for events on them
-    this._listen();
   });
 };
 
 /**
  * Get Sonos Devices on the network
+ * Can we improve this? There should be a way to return quicker once all the devices are found...
  * @param {Number} timeout
  * @returns {Array}
  */
-SonosNetwork.prototype.discover = async function discover(timeout = 5000) {
+SonosNetwork.prototype.discover = async function discover() {
   return new Promise((resolve) => {
     this.socketio.emit('Discovering Sonos Devices');
 
-    const sonosSearch = DeviceDiscovery({ timeout });
+    const sonosSearch = DeviceDiscovery({ timeout: this.timeout });
 
     sonosSearch.on('DeviceAvailable', async (sonosDevice) => {
       const device = sonosDevice;
