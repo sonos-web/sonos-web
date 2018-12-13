@@ -8,37 +8,35 @@
             <v-flex xs12>
               <v-card-title primary-title class="pa-0 pt-3">
                 <div class="display-1 text-truncate">
-                  {{group.coordinator_name}}
+                  {{group.coordinator.name}}
                 </div>
               </v-card-title>
             </v-flex>
           </v-layout>
-          <v-layout>
-            <v-flex xs12 v-if="memberZones.length > 1">
+          <v-layout v-if="group.members.length > 0">
+            <v-flex xs12 class="pt-0">
               <!--eslint-disable-next-line max-len -->
-              <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="zone in memberZones" :key="zone.id">
+              <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="member in group.members" :key="member.id">
                 <div class="subheading grey--text text--lighten-2" >
-                  {{zone.name}}
+                  {{member.name}}
                 </div>
               </v-chip>
             </v-flex>
           </v-layout>
-          <v-divider v-if="memberZones.length > 1"></v-divider>
+          <v-divider v-if="group.members.length > 0"></v-divider>
           <v-layout>
             <v-flex xs5>
               <v-img
-                src="https://cdn.vuetifyjs.com/images/cards/foster.jpg"
+                :src="group.track.albumArtURL"
                 height="125px"
                 contain
               ></v-img>
             </v-flex>
             <v-flex xs7>
-              <v-card-title primary-title>
-                <div>
-                  <div class="headline"></div>
-                  <div>Foster the People</div>
-                  <div>(2014)</div>
-                </div>
+              <v-card-title primary-title>                
+                <div class="headline text-truncate">{{ group.track.title }}</div>
+                <div class="text-truncate">{{ group.track.artist }}</div>
+                <div class="text-truncate">{{ group.track.album }}</div>                
               </v-card-title>
             </v-flex>
           </v-layout>
@@ -64,9 +62,6 @@ export default {
   computed: {
     zoneGroups() {
       return this.$store.state.zoneGroups;
-    },
-    memberZones() {
-      return this.$store.getters.memberZones;
     },
     isLoading() {
       return this.$store.state.isLoading;

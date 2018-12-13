@@ -71,10 +71,14 @@ SonosNetwork.prototype.discover = async function discover() {
  */
 SonosNetwork.prototype._listen = function listen() {
   this.devices.forEach((device) => {
-    device.on('AVTransport', (data) => {
-      const transportInfo = this._parseAVTransportInfo(data);
-      console.log(transportInfo);
-      // io.emit('AVTransport State Changed', transportInfo)
+    // We don't use the data returned, because it is insufficent
+    // We need more than it provides
+    device.on('AVTransport', () => {
+      this.getAVTransportInfo(device).then((transportInfo) => {
+        this.socketio.emit('AVTransport State Changed', { deviceId: device.id, transportInfo });
+        // Update our own zone group with the new data
+        // this.updateZoneGroup(device.id);
+      });
     });
     device.on('RenderingControl', (data) => {
       console.log(data);
@@ -82,13 +86,47 @@ SonosNetwork.prototype._listen = function listen() {
   });
 };
 
-SonosNetwork.prototype._parseAVTransportInfo = function parseAVTransportInfo(data) {
+/**
+ * Returns AVTransportInfo
+ * @param {Sonos} device
+ * @returns {Object}
+ */
+SonosNetwork.prototype.getAVTransportInfo = async function getAVTransportInfo(device) {
+  /**
+   * PlayMode
+   * RecQualityMode
+   */
+  const transportSettings = await device.avTransportService().GetTransportSettings();
+  /**
+   * CurrentTransportState
+   * CurrentTransportStatus
+   * CurrentSpeed
+   */
+  const transportInfo = await device.avTransportService().GetTransportInfo();
+
+  /**
+   * Actions
+   */
+  const transportActions = await device.avTransportService().GetCurrentTransportActions();
+
+  /**
+   * title
+   * artist
+   * album
+   * albumArtURI
+   * position
+   * duration
+   * albumArtURL
+   * uri
+   * queuePosition
+   */
+  const currentTrack = await device.avTransportService().CurrentTrack();
+
   return {
-    currentTrack: data.CurrentTrackMetaDataParsed,
-    nextTrack: data['r:NextTrackMetaDataParsed'],
-    currentTransportActions: data.CurrentTransportActions,
-    state: data.TransportState,
-    currentPlayMode: data.CurrentPlayMode,
+    track: currentTrack,
+    state: transportInfo.CurrentTransportState,
+    playMode: transportSettings.PlayMode,
+    actions: transportActions.Actions,
   };
 };
 
@@ -102,14 +140,14 @@ SonosNetwork.prototype._parseZoneGroups = async function parseZoneGroups() {
 
     const zoneGroups = [];
 
-    this.devices[0].getAllGroups().then((rawGroups) => {
+    this.devices[0].getAllGroups().then(async (rawGroups) => {
       rawGroups.forEach((group) => {
         zoneGroups.push({
           id: group.ID,
           coordinator: {},
           members: [],
         });
-        group.ZoneGroupMember.forEach((member) => {
+        group.ZoneGroupMember.forEach(async (member) => {
           const zone = {
             id: member.UUID,
             name: member.ZoneName,
@@ -123,9 +161,17 @@ SonosNetwork.prototype._parseZoneGroups = async function parseZoneGroups() {
           }
         });
       });
+
+      // Fetch the transport info for all zones
+      await Promise.all(zoneGroups.map(async (group, index) => {
+        const transportInfo = await this.getAVTransportInfo(group.coordinator.device);
+        // merge transportInfo in with zoneGroup
+        zoneGroups[index] = { ...group, ...transportInfo };
+      }));
+
       // Sort all the members of each zone alphabetically
       // eslint-disable-next-line max-len
-      zoneGroups.map(group => group.members.sort((member1, member2) => member1.name > member2.name));
+      zoneGroups.forEach(group => group.members.sort((member1, member2) => member1.name > member2.name));
       // Sort all the zones alphabetically by coordinator
       zoneGroups.sort((group1, group2) => group1.coordinator.name > group2.coordinator.name);
 
