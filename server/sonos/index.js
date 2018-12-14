@@ -67,7 +67,7 @@ SonosNetwork.prototype.discover = async function discover() {
 };
 
 /**
- * Listen to all Sonos devices on the network
+ * Listen to events for all Sonos devices on the network
  */
 SonosNetwork.prototype._listen = function listen() {
   this.devices.forEach((device) => {
@@ -75,15 +75,25 @@ SonosNetwork.prototype._listen = function listen() {
     // We need more than it provides
     device.on('AVTransport', () => {
       this.getAVTransportInfo(device).then((transportInfo) => {
-        this.socketio.emit('AVTransport State Changed', { deviceId: device.id, transportInfo });
-        // Update our own zone group with the new data
-        // this.updateZoneGroup(device.id);
+        this.socketio.emit('AVTransport State Changed', { deviceId: device.id, update: transportInfo });
+        // Update our own zone group with the new data to stay in sync
+        this._updateZoneGroup(device.id, transportInfo);
       });
     });
     device.on('RenderingControl', (data) => {
       console.log(data);
     });
   });
+};
+
+/**
+ * Update(merge) internal zone group with new data
+ * @param {Object} data
+ */
+SonosNetwork.prototype._updateZoneGroup = function updateZoneGroup(device, data) {
+  const index = this.zoneGroups.findIndex(group => group.coordinator.id === device.id);
+  // Merge new data in
+  this.zoneGroups[index] = { ...this.zoneGroups[index], ...data };
 };
 
 /**

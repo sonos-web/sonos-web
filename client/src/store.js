@@ -25,13 +25,13 @@ export default new Vuex.Store({
     SET_DISCOVERING_SONOS(state, discovering) {
       state.discoveringSonos = discovering;
     },
-    UPDATE_AVTRANSPORT_DATA(state, data) {
+    UPDATE_ZONE_GROUP(state, data) {
       // find the group that this data belongs to
       // device will always be the coordinator
       const index = state.zoneGroups.findIndex(group => group.coordinator.id === data.deviceId);
       // Merge the zoneGroup with new transport info
       // Must use Vue.set otherwise, our data wont be reactive
-      Vue.set(state.zoneGroups, index, { ...state.zoneGroups[index], ...data.transportInfo });
+      Vue.set(state.zoneGroups, index, { ...state.zoneGroups[index], ...data.update });
     },
     SET_ZONE_GROUPS(state, zones) {
       state.zoneGroups = zones;
