@@ -88,12 +88,13 @@ SonosNetwork.prototype._listen = function listen() {
 
 /**
  * Update(merge) internal zone group with new data
+ * @param {String} deviceId
  * @param {Object} data
  */
-SonosNetwork.prototype._updateZoneGroup = function updateZoneGroup(device, data) {
-  const index = this.zoneGroups.findIndex(group => group.coordinator.id === device.id);
+SonosNetwork.prototype._updateZoneGroup = function _updateZoneGroup(deviceId, data) {
+  const index = this.zoneGroups.findIndex(group => group.coordinator.id === deviceId);
   // Merge new data in
-  this.zoneGroups[index] = { ...this.zoneGroups[index], ...data };
+  this.zoneGroups[index] = { ...this.zoneGroups[index], ...data };  
 };
 
 /**
