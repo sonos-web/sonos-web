@@ -2,7 +2,7 @@
   <LoadingView v-if="isLoading"></LoadingView>
   <v-container fill-height fluid grid-list-xl v-else>
     <v-layout wrap v-bind="layoutBreakpoint">
-      <v-flex d-flex v-bind="flexBreakpoint" v-for="group in zoneGroups" :key="group.id">
+      <v-flex d-flex v-bind="flexBreakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)" :id="group.id">
         <v-card class="px-3" hover color="tertiary">
           <v-layout>
             <v-flex xs12 pa-0 pt-2>
@@ -53,7 +53,13 @@
 <script>
 export default {
   name: 'Rooms',
-  computed: {
+  methods: {
+    groupSelected: function (index) {
+      const id = this.zoneGroups[index].coordinator.id;
+      this.$store.commit('SET_ACTIVE_ZONE_ID', id);
+    },
+  },
+  computed: {    
     zoneGroups() {
       return this.$store.state.zoneGroups;
     },

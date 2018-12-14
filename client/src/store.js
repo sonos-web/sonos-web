@@ -11,6 +11,7 @@ export default new Vuex.Store({
     loadingMessage: 'Searching for your Sonos System...',
     discoveringSonos: false,
     zoneGroups: [],
+    activeZoneId: null,
   },
   getters: {
 
@@ -32,6 +33,9 @@ export default new Vuex.Store({
       // Merge the zoneGroup with new transport info
       // Must use Vue.set otherwise, our data wont be reactive
       Vue.set(state.zoneGroups, index, { ...state.zoneGroups[index], ...data.update });
+    },
+    SET_ACTIVE_ZONE_ID(state, zoneId) {
+      state.activeZoneId = zoneId;
     },
     SET_ZONE_GROUPS(state, zones) {
       state.zoneGroups = zones;
