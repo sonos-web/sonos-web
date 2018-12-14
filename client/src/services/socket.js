@@ -17,6 +17,6 @@ socket.on('No Sonos Devices Found On Network', () => {
   store.commit('SET_IS_LOADING', false);
 });
 
-socket.on('AVTransport State Changed', (data) => {
+socket.on('Sonos Event Data Received', (data) => {
   store.commit('UPDATE_ZONE_GROUP', data);
 });

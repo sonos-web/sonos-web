@@ -7,11 +7,14 @@
           <div v-show="!isActiveGroup(group.coordinator.id)" class="overlay"></div>
           <v-layout>
             <v-flex xs12 pa-0 pt-0>
-              <v-card-title primary-title class="pb-1">
+              <v-card-title primary-title class="pb-1 align-center">
                 <div class="display-1 text-truncate">
                   {{ groupName(group.id) }}
                 </div>
-              </v-card-title>
+                <v-spacer></v-spacer>
+                <v-icon>{{ statusIcon(group.state)}}</v-icon>
+                <v-icon v-if="isPlaying(group.state)">{{ muteIcon(group.mute)}}</v-icon>
+              </v-card-title>              
             </v-flex>
           </v-layout>
           <v-layout v-if="group.members.length > 0">
@@ -62,6 +65,26 @@ export default {
     isActiveGroup: function(groupId) {
       return this.$store.state.activeZoneId === groupId;
     },
+    statusIcon: function(playState) {
+      switch (playState) {
+        case 'PAUSED_PLAYBACK':
+          return 'pause';
+          break;
+        case 'PLAYING':
+          return 'play_arrow';
+          break;
+        case 'STOPPED':
+          return 'stop'
+        default:
+          return ''
+      }
+    },
+    muteIcon: function(mute) {
+      return mute ? 'volume_off' : 'volume_up';
+    },
+    isPlaying(playState) {
+      return playState === 'PLAYING' ? true : false;
+    }
   },
   computed: {
     zoneGroups() {
@@ -79,7 +102,7 @@ export default {
       if (this.$vuetify.breakpoint.lgAndDown) breakpoint.xs6 = true
       if (this.$vuetify.breakpoint.xl) breakpoint.xs4 = true
       return breakpoint
-    }
+    },
   },
 };
 </script>

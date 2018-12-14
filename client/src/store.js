@@ -40,7 +40,7 @@ export default new Vuex.Store({
       // find the group that this data belongs to
       // device will always be the coordinator
       const index = state.zoneGroups.findIndex(group => group.coordinator.id === data.deviceId);
-      // Merge the zoneGroup with new transport info
+      // Merge the zoneGroup with new data
       // Must use Vue.set otherwise, our data wont be reactive
       Vue.set(state.zoneGroups, index, { ...state.zoneGroups[index], ...data.update });
     },
