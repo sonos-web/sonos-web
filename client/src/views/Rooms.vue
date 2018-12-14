@@ -2,10 +2,11 @@
   <LoadingView v-if="isLoading"></LoadingView>
   <v-container fill-height fluid grid-list-xl v-else>
     <v-layout wrap row>
-      <v-flex d-flex v-bind="breakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)" :id="group.id">
-        <v-card class="px-3" hover color="tertiary">
+      <v-flex d-flex v-bind="breakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)">
+        <v-card class="px-3" hover :raised="isActiveGroup(group.coordinator.id)" color="tertiary">
+          <div v-show="!isActiveGroup(group.coordinator.id)" class="overlay"></div>
           <v-layout>
-            <v-flex xs12 pa-0 pt-2>
+            <v-flex xs12 pa-0 pt-0>
               <v-card-title primary-title class="pb-1">
                 <div class="display-1 text-truncate">
                   {{ groupName(group.id) }}
@@ -57,7 +58,10 @@ export default {
     }, 
     groupName: function(groupId) {
       return this.$store.getters.groupName(groupId);
-    }   
+    },
+    isActiveGroup: function(groupId) {
+      return this.$store.state.activeZoneId === groupId;
+    },
   },
   computed: {
     zoneGroups() {
@@ -79,3 +83,16 @@ export default {
   },
 };
 </script>
+
+<style>
+.overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.2);
+  z-index: 1;
+}
+</style>
+
