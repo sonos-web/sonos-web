@@ -67,7 +67,8 @@ SonosNetwork.prototype.discover = async function discover() {
 };
 
 /**
- * Listen to events for all Sonos devices on the network
+ * Listen to events for all Sonos devices on the network (ex. Play, Next Track, Mute, Volume, etc.)
+ * And listen to any changes to Sonos ZoneGroupTopology (Grouping Rooms)
  */
 SonosNetwork.prototype._listen = function listen() {
   this.devices.forEach((device) => {
@@ -83,6 +84,17 @@ SonosNetwork.prototype._listen = function listen() {
     device.on('RenderingControl', (data) => {
       console.log(data);
     });
+  });
+
+  Listener.on('ZonesChanged', (zoneData) => {
+    if (zoneData) {
+      // const zones = JSON.parse(JSON.stringify(zoneData, ' ', 2));
+      this._parseZoneGroups().then(() => {
+        this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
+      }).catch(() => {
+        this.socketio.emit('No Sonos Devices Found On Network');
+      });
+    }
   });
 };
 
