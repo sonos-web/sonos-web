@@ -4,6 +4,8 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
+const emptyAlbumArtURL = require('./assets/empty-album-art.png');
+
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
@@ -12,6 +14,7 @@ export default new Vuex.Store({
     discoveringSonos: false,
     zoneGroups: [],
     activeZoneId: null,
+    defaultAlbumArtURL: emptyAlbumArtURL,
   },
   getters: {
     // eslint-disable-next-line arrow-body-style

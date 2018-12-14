@@ -27,7 +27,7 @@
           <v-layout mb-3>
             <div class="pt-3 pl-3 pr-0">
               <v-img
-                :src="group.track.albumArtURL"
+                :src="group.track.albumArtURL || defaultAlbumArtURL"
                 height="125px"
                 width="125px"
                 contain
@@ -59,12 +59,15 @@ export default {
       return this.$store.getters.groupName(groupId);
     }   
   },
-  computed: {    
+  computed: {
     zoneGroups() {
       return this.$store.state.zoneGroups;
     },
     isLoading() {
       return this.$store.state.isLoading;
+    },
+    defaultAlbumArtURL() {
+      return this.$store.state.defaultAlbumArtURL;
     },
     breakpoint() {
       const breakpoint = {}
