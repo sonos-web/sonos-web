@@ -76,13 +76,15 @@ SonosNetwork.prototype._listen = function listen() {
     // We need more than it provides
     device.on('AVTransport', () => {
       this.getAVTransportInfo(device).then((transportInfo) => {
-        this.socketio.emit('AVTransport State Changed', { deviceId: device.id, update: transportInfo });
-        // Update our own zone group with the new data to stay in sync
+        this.socketio.emit('Sonos Event Data Received', { deviceId: device.id, update: transportInfo });
         this._updateZoneGroup(device.id, transportInfo);
       });
     });
-    device.on('RenderingControl', (data) => {
-      console.log(data);
+    device.on('RenderingControl', () => {
+      this.getRenderingControlInfo(device).then((renderingInfo) => {
+        this.socketio.emit('Sonos Event Data Received', { deviceId: device.id, update: renderingInfo });
+        this._updateZoneGroup(device.id, renderingInfo);
+      });
     });
   });
 
@@ -107,6 +109,20 @@ SonosNetwork.prototype._updateZoneGroup = function _updateZoneGroup(deviceId, da
   const index = this.zoneGroups.findIndex(group => group.coordinator.id === deviceId);
   // Merge new data in
   this.zoneGroups[index] = { ...this.zoneGroups[index], ...data };
+};
+
+/**
+ * Returns RenderingControlInfo
+ * @param {Sonos} device
+ * @returns {Object}
+ */
+SonosNetwork.prototype.getRenderingControlInfo = async function getRenderingControlInfo(device) {
+  const volume = await device.renderingControlService().GetVolume();
+  const mute = await device.renderingControlService().GetMute();
+  return {
+    volume,
+    mute,
+  };
 };
 
 /**
@@ -188,8 +204,9 @@ SonosNetwork.prototype._parseZoneGroups = async function parseZoneGroups() {
       // Fetch the transport info for all zones
       await Promise.all(zoneGroups.map(async (group, index) => {
         const transportInfo = await this.getAVTransportInfo(group.coordinator.device);
+        const renderingInfo = await this.getRenderingControlInfo(group.coordinator.device);
         // merge transportInfo in with zoneGroup
-        zoneGroups[index] = { ...group, ...transportInfo };
+        zoneGroups[index] = { ...group, ...transportInfo, ...renderingInfo };
       }));
 
       // Sort all the members of each zone alphabetically
