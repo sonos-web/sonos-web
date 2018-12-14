@@ -1,20 +1,23 @@
 <template>
   <LoadingView v-if="isLoading"></LoadingView>
   <v-container fill-height fluid grid-list-xl v-else>
-    <v-layout row wrap>
-      <v-flex xs4 v-for="group in zoneGroups" :key="group.id">
-        <v-card class="px-4" hover color="tertiary">
+    <v-layout wrap v-bind="layoutBreakpoint">
+      <v-flex d-flex v-bind="flexBreakpoint" v-for="group in zoneGroups" :key="group.id">
+        <v-card class="px-3" hover color="tertiary">
           <v-layout>
-            <v-flex xs12>
-              <v-card-title primary-title class="pa-0 pt-3">
-                <div class="display-1 text-truncate">
+            <v-flex xs12 pa-0 pt-2>
+              <v-card-title primary-title class="pb-1">
+                <div v-if="group.members.length > 0" class="display-1 text-truncate">
+                  {{group.coordinator.name}} + {{group.members.length}}
+                </div>
+                <div v-else class="display-1 text-truncate">
                   {{group.coordinator.name}}
                 </div>
               </v-card-title>
             </v-flex>
           </v-layout>
           <v-layout v-if="group.members.length > 0">
-            <v-flex xs12 class="pt-0">
+            <v-flex xs12 pt-0>
               <!--eslint-disable-next-line max-len -->
               <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="member in group.members" :key="member.id">
                 <div class="subheading grey--text text--lighten-2" >
@@ -24,32 +27,23 @@
             </v-flex>
           </v-layout>
           <v-divider v-if="group.members.length > 0"></v-divider>
-          <v-layout>
-            <v-flex xs5>
+          <v-layout mb-3>
+            <div class="pt-3 pl-3 pr-0">
               <v-img
                 :src="group.track.albumArtURL"
                 height="125px"
+                width="125px"
                 contain
               ></v-img>
-            </v-flex>
-            <v-flex xs7>
-              <v-card-title primary-title>                
+            </div>
+            <v-flex xs8 pl-0>
+              <v-card-title primary-title class="d-block">                
                 <div class="headline text-truncate">{{ group.track.title }}</div>
                 <div class="text-truncate">{{ group.track.artist }}</div>
                 <div class="text-truncate">{{ group.track.album }}</div>                
               </v-card-title>
             </v-flex>
-          </v-layout>
-          <v-divider></v-divider>
-          <v-card-actions class="pa-3">
-            Rate this album
-            <v-spacer></v-spacer>
-            <v-icon>star_border</v-icon>
-            <v-icon>star_border</v-icon>
-            <v-icon>star_border</v-icon>
-            <v-icon>star_border</v-icon>
-            <v-icon>star_border</v-icon>
-          </v-card-actions>
+          </v-layout>          
         </v-card>
       </v-flex>
     </v-layout>
@@ -66,6 +60,18 @@ export default {
     isLoading() {
       return this.$store.state.isLoading;
     },
+    layoutBreakpoint() {
+      const breakpoint = {}
+      if (this.$vuetify.breakpoint.smAndDown) breakpoint.column = true
+      return breakpoint
+    },
+    flexBreakpoint() {
+      const breakpoint = {}
+      if (this.$vuetify.breakpoint.smAndDown) breakpoint.xs12 = true
+      if (this.$vuetify.breakpoint.lgAndDown) breakpoint.xs6 = true
+      if (this.$vuetify.breakpoint.xl) breakpoint.xs4 = true
+      return breakpoint
+    }
   },
 };
 </script>
