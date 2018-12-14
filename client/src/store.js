@@ -14,7 +14,14 @@ export default new Vuex.Store({
     activeZoneId: null,
   },
   getters: {
-
+    // eslint-disable-next-line arrow-body-style
+    getGroupById: state => (groupId) => {
+      return state.zoneGroups.find(group => group.id === groupId);
+    },
+    groupName: (state, getters) => (groupId) => {
+      const zoneGroup = getters.getGroupById(groupId);
+      return zoneGroup.members.length === 0 ? zoneGroup.coordinator.name : `${zoneGroup.coordinator.name} + ${zoneGroup.members.length}`;
+    },
   },
   mutations: {
     SET_IS_LOADING(state, loading) {
@@ -34,7 +41,7 @@ export default new Vuex.Store({
       // Must use Vue.set otherwise, our data wont be reactive
       Vue.set(state.zoneGroups, index, { ...state.zoneGroups[index], ...data.update });
     },
-    SET_ACTIVE_ZONE_ID(state, zoneId) {
+    SET_ACTIVE_ZONE(state, zoneId) {
       state.activeZoneId = zoneId;
     },
     SET_ZONE_GROUPS(state, zones) {
@@ -42,6 +49,11 @@ export default new Vuex.Store({
     },
   },
   actions: {
-
+    setActiveZone(context, group) {
+      context.commit('SET_ACTIVE_ZONE', group.coordinator.id);
+      const zoneGroup = context.getters.getGroupById(group.id);
+      const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
+      document.title = `${zoneGroup.track.title || '[No music selected]'}${artist} - ${context.getters.groupName(zoneGroup.id)}`;
+    },
   },
 });

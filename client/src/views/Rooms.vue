@@ -1,17 +1,14 @@
 <template>
   <LoadingView v-if="isLoading"></LoadingView>
   <v-container fill-height fluid grid-list-xl v-else>
-    <v-layout wrap v-bind="layoutBreakpoint">
-      <v-flex d-flex v-bind="flexBreakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)" :id="group.id">
+    <v-layout wrap row>
+      <v-flex d-flex v-bind="breakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)" :id="group.id">
         <v-card class="px-3" hover color="tertiary">
           <v-layout>
             <v-flex xs12 pa-0 pt-2>
               <v-card-title primary-title class="pb-1">
-                <div v-if="group.members.length > 0" class="display-1 text-truncate">
-                  {{group.coordinator.name}} + {{group.members.length}}
-                </div>
-                <div v-else class="display-1 text-truncate">
-                  {{group.coordinator.name}}
+                <div class="display-1 text-truncate">
+                  {{ groupName(group.id) }}
                 </div>
               </v-card-title>
             </v-flex>
@@ -38,9 +35,9 @@
             </div>
             <v-flex xs8 pl-0>
               <v-card-title primary-title class="d-block">                
-                <div class="headline text-truncate">{{ group.track.title }}</div>
+                <div class="headline text-truncate">{{ group.track.title || '[No music selected]'}}</div>
                 <div class="text-truncate">{{ group.track.artist }}</div>
-                <div class="text-truncate">{{ group.track.album }}</div>                
+                <div class="text-truncate grey--text">{{ group.track.album }}</div>                
               </v-card-title>
             </v-flex>
           </v-layout>          
@@ -55,9 +52,12 @@ export default {
   name: 'Rooms',
   methods: {
     groupSelected: function (index) {
-      const id = this.zoneGroups[index].coordinator.id;
-      this.$store.commit('SET_ACTIVE_ZONE_ID', id);
-    },
+      const group = this.zoneGroups[index];
+      this.$store.dispatch('setActiveZone', group);
+    }, 
+    groupName: function(groupId) {
+      return this.$store.getters.groupName(groupId);
+    }   
   },
   computed: {    
     zoneGroups() {
@@ -66,12 +66,7 @@ export default {
     isLoading() {
       return this.$store.state.isLoading;
     },
-    layoutBreakpoint() {
-      const breakpoint = {}
-      if (this.$vuetify.breakpoint.smAndDown) breakpoint.column = true
-      return breakpoint
-    },
-    flexBreakpoint() {
+    breakpoint() {
       const breakpoint = {}
       if (this.$vuetify.breakpoint.smAndDown) breakpoint.xs12 = true
       if (this.$vuetify.breakpoint.lgAndDown) breakpoint.xs6 = true

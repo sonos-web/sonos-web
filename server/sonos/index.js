@@ -106,7 +106,7 @@ SonosNetwork.prototype._listen = function listen() {
 SonosNetwork.prototype._updateZoneGroup = function _updateZoneGroup(deviceId, data) {
   const index = this.zoneGroups.findIndex(group => group.coordinator.id === deviceId);
   // Merge new data in
-  this.zoneGroups[index] = { ...this.zoneGroups[index], ...data };  
+  this.zoneGroups[index] = { ...this.zoneGroups[index], ...data };
 };
 
 /**
