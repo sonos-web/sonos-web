@@ -57,7 +57,7 @@ export default new Vuex.Store({
       context.commit('SET_ACTIVE_ZONE', group.coordinator.id);
       const zoneGroup = context.getters.getGroupById(group.id);
       const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
-      document.title = `${zoneGroup.track.title || '[No music selected]'}${artist} - ${context.getters.groupName(zoneGroup.id)}`;      
+      document.title = `${zoneGroup.track.title || '[No music selected]'}${artist} - ${context.getters.groupName(zoneGroup.id)}`;
     },
     loadActiveZone(context) {
       let activeZoneId = localStorage.getItem('activeZoneId');

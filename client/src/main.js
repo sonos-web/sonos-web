@@ -7,7 +7,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import store from './store';
 import './services/socket';
 
-import LoadingView from '@/components/LoadingView.vue';
+import LoadingView from './components/LoadingView.vue';
 
 Vue.config.productionTip = false;
 

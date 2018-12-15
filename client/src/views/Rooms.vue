@@ -8,7 +8,7 @@
           <v-layout>
             <v-flex xs12 pa-0 pt-0>
               <v-card-title primary-title class="pb-1 align-center">
-                <div class="display-1 text-truncate">
+                <div @mouseover="tooltipOnOverFlow" class="flex xs10 pa-0 display-1 text-truncate">
                   {{ groupName(group.id) }}
                 </div>
                 <v-spacer></v-spacer>
@@ -39,9 +39,9 @@
             </div>
             <v-flex pl-0 v-bind="albumInfoBreakpoint">
               <v-card-title primary-title class="d-block">                
-                <div class="headline text-truncate">{{ group.track.title || '[No music selected]'}}</div>
-                <div class="text-truncate">{{ group.track.artist }}</div>
-                <div class="text-truncate grey--text">{{ group.track.album }}</div>                
+                <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">{{ group.track.title || '[No music selected]'}}</div>
+                <div @mouseover="tooltipOnOverFlow" class="text-truncate">{{ group.track.artist }}</div>
+                <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">{{ group.track.album }}</div>                
               </v-card-title>
             </v-flex>
           </v-layout>          
@@ -84,6 +84,15 @@ export default {
     },
     isPlaying(playState) {
       return playState === 'PLAYING' ? true : false;
+    },
+    tooltipOnOverFlow(event) {
+      console.log(event.target.offsetWidth)
+      console.log(event.target.scrollWidth)
+      if (event.target.offsetWidth < event.target.scrollWidth) {
+        event.target.title = event.target.textContent
+      } else {
+        event.target.title = ""
+      }
     }
   },
   computed: {
