@@ -2,65 +2,68 @@
   <LoadingView v-if="isLoading"></LoadingView>
   <v-container fill-height fluid grid-list-xl v-else>
     <v-layout wrap row>
-      <!--eslint-disable-next-line max-len -->
-      <v-flex d-flex v-bind="breakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)">
-        <v-card class="px-3" hover :raised="isActiveGroup(group.id)" color="tertiary">
-          <div v-show="!isActiveGroup(group.id)" class="overlay"></div>
-          <v-layout>
-            <v-flex xs12 pa-0 pt-0>
-              <v-card-title primary-title class="pb-1 align-center">
-                <div @mouseover="tooltipOnOverFlow" class="flex xs10 pa-0 display-1 text-truncate">
-                  {{ groupName(group.id) }}
+      <!--eslint-disable-next-line max-len -->      
+        <v-flex d-flex v-bind="breakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)">
+          <draggable class="draggable" v-model="zoneGroups" :options="{group:'zoneGroups'}">
+            <v-card class="px-3 pb-1" hover :raised="isActiveGroup(group.id)" color="tertiary">
+              <div v-show="!isActiveGroup(group.id)" class="overlay"></div>
+              <v-layout>
+                <v-flex xs12 pa-0 pt-0>
+                  <v-card-title primary-title class="pb-1 align-center">
+                    <div @mouseover="tooltipOnOverFlow" class="flex xs10 pa-0 display-1 text-truncate">
+                      {{ groupName(group.id) }}
+                    </div>
+                    <v-spacer></v-spacer>
+                    <v-icon>{{ statusIcon(group.state)}}</v-icon>
+                    <v-icon v-if="isPlaying(group.state)">{{ muteIcon(group.mute)}}</v-icon>
+                  </v-card-title>
+                </v-flex>
+              </v-layout>
+              <v-layout v-if="group.members.length > 0">
+                <v-flex xs12 pt-0>
+                  <!--eslint-disable-next-line max-len -->
+                  <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="member in group.members" :key="member.id" @input="ungroupZone(member.id)">
+                    <div class="subheading grey--text text--lighten-2" >
+                      {{member.name}}
+                    </div>
+                  </v-chip>
+                </v-flex>
+              </v-layout>
+              <v-divider v-if="group.members.length > 0"></v-divider>
+              <v-layout mb-3 v-bind="albumSectionBreakpoint">
+                <div class="pt-3 pl-3 pr-0">
+                  <v-img
+                    :src="group.track.albumArtURL || defaultAlbumArtURL(group.tvPlaying)"
+                    height="125px"
+                    width="125px"
+                    contain
+                  ></v-img>
                 </div>
-                <v-spacer></v-spacer>
-                <v-icon>{{ statusIcon(group.state)}}</v-icon>
-                <v-icon v-if="isPlaying(group.state)">{{ muteIcon(group.mute)}}</v-icon>
-              </v-card-title>
-            </v-flex>
-          </v-layout>
-          <v-layout v-if="group.members.length > 0">
-            <v-flex xs12 pt-0>
-              <!--eslint-disable-next-line max-len -->
-              <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="member in group.members" :key="member.id" @input="ungroupZone(member.id)">
-                <div class="subheading grey--text text--lighten-2" >
-                  {{member.name}}
-                </div>
-              </v-chip>
-            </v-flex>
-          </v-layout>
-          <v-divider v-if="group.members.length > 0"></v-divider>
-          <v-layout mb-3 v-bind="albumSectionBreakpoint">
-            <div class="pt-3 pl-3 pr-0">
-              <v-img
-                :src="group.track.albumArtURL || defaultAlbumArtURL(group.tvPlaying)"
-                height="125px"
-                width="125px"
-                contain
-              ></v-img>
-            </div>
-            <v-flex pl-0 v-bind="albumInfoBreakpoint">
-              <v-card-title primary-title class="d-block">
-                <!--eslint-disable-next-line max-len -->
-                <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">{{ trackTitle(group) }}</div>
-                <!--eslint-disable-next-line max-len -->
-                <div @mouseover="tooltipOnOverFlow" class="text-truncate">{{ group.track.artist }}</div>
-                <!--eslint-disable-next-line max-len -->
-                <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">{{ group.track.album }}</div>
-              </v-card-title>
-            </v-flex>
-          </v-layout>
-        </v-card>
-      </v-flex>
+                <v-flex pl-0 v-bind="albumInfoBreakpoint">
+                  <v-card-title primary-title class="d-block">
+                    <!--eslint-disable-next-line max-len -->
+                    <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">{{ trackTitle(group) }}</div>
+                    <!--eslint-disable-next-line max-len -->
+                    <div @mouseover="tooltipOnOverFlow" class="text-truncate">{{ group.track.artist }}</div>
+                    <!--eslint-disable-next-line max-len -->
+                    <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">{{ group.track.album }}</div>
+                  </v-card-title>
+                </v-flex>
+              </v-layout>
+            </v-card>
+          </draggable>
+        </v-flex>      
     </v-layout>
   </v-container>
 </template>
 
 <script>
-
+import draggable from 'vuedraggable';
 import zonesAPI from '@/services/API/zones';
 
 export default {
   name: 'Rooms',
+  components: {draggable},
   methods: {
     groupSelected(index) {
       const group = this.zoneGroups[index];
@@ -115,8 +118,13 @@ export default {
     },
   },
   computed: {
-    zoneGroups() {
-      return this.$store.state.zoneGroups;
+    zoneGroups: {
+      get () {
+        return this.$store.state.zoneGroups;
+      },
+      set (newValue) {
+        console.log(newValue);
+      }      
     },
     isLoading() {
       return this.$store.state.isLoading;
@@ -161,5 +169,8 @@ export default {
   left: 0;
   background-color: rgba(0,0,0,0.2);
   z-index: 1;
+}
+.draggable {
+  width: 100%;
 }
 </style>
