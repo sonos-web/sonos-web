@@ -1,6 +1,6 @@
 <template>
   <v-app dark>
-    <v-content pb-90>
+    <v-content class="now-playing-bar-padding">
       <transition name="fade">
         <v-container fluid fill-height v-if="discoveringSonos">
           <v-layout align-center justify-center>
@@ -102,6 +102,9 @@ export default {
   top: auto;
   bottom: 0;
   height: 90px;
+}
+.now-playing-bar-padding {
+  padding-bottom: 90px!important;
 }
 .v-navigation-drawer .v-list {
   background: transparent;
