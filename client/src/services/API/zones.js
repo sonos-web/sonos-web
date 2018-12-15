@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export default {
-  fetchZoneGroups() {
-    return axios.get('/api/zones');
+  ungroupZone(zoneId) {
+    return axios.post(`/api/zones/ungroup/${zoneId}`);
   },
 };

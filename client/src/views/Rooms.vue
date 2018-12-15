@@ -20,7 +20,7 @@
           <v-layout v-if="group.members.length > 0">
             <v-flex xs12 pt-0>
               <!--eslint-disable-next-line max-len -->
-              <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="member in group.members" :key="member.id">
+              <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="member in group.members" :key="member.id" @input="ungroupZone(member.id)">
                 <div class="subheading grey--text text--lighten-2" >
                   {{member.name}}
                 </div>
@@ -31,7 +31,7 @@
           <v-layout mb-3 v-bind="albumSectionBreakpoint">
             <div class="pt-3 pl-3 pr-0">
               <v-img
-                :src="group.track.albumArtURL || defaultAlbumArtURL"
+                :src="group.track.albumArtURL || defaultAlbumArtURL(group.tvPlaying)"
                 height="125px"
                 width="125px"
                 contain
@@ -39,7 +39,7 @@
             </div>
             <v-flex pl-0 v-bind="albumInfoBreakpoint">
               <v-card-title primary-title class="d-block">                
-                <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">{{ group.track.title || '[No music selected]'}}</div>
+                <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">{{ trackTitle(group) }}</div>
                 <div @mouseover="tooltipOnOverFlow" class="text-truncate">{{ group.track.artist }}</div>
                 <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">{{ group.track.album }}</div>                
               </v-card-title>
@@ -52,20 +52,23 @@
 </template>
 
 <script>
+
+import zonesAPI from '@/services/API/zones'
+
 export default {
   name: 'Rooms',
   methods: {
-    groupSelected: function (index) {
+    groupSelected(index) {
       const group = this.zoneGroups[index];
       this.$store.dispatch('setActiveZone', group);
     }, 
-    groupName: function(groupId) {
+    groupName(groupId) {
       return this.$store.getters.groupName(groupId);
     },
-    isActiveGroup: function(groupId) {
+    isActiveGroup(groupId) {
       return this.$store.state.activeZoneId === groupId;
     },
-    statusIcon: function(playState) {
+    statusIcon(playState) {
       switch (playState) {
         case 'PAUSED_PLAYBACK':
           return 'pause';
@@ -79,11 +82,28 @@ export default {
           return ''
       }
     },
-    muteIcon: function(mute) {
+    muteIcon(mute) {
       return mute ? 'volume_off' : 'volume_up';
+    },
+    trackTitle(group) {
+      if (group.tvPlaying) {
+        return 'TV'
+      } else {
+        return group.track.title || '[No music selected]'
+      }      
     },
     isPlaying(playState) {
       return playState === 'PLAYING' ? true : false;
+    },
+    defaultAlbumArtURL(tvPlaying) {
+      if (tvPlaying) {
+        return this.$store.state.tvAlbumArtURL;
+      } else {
+        return this.$store.state.defaultAlbumArtURL;
+      }
+    },
+    ungroupZone(zoneId) {
+      zonesAPI.ungroupZone(zoneId);
     },
     tooltipOnOverFlow(event) {
       console.log(event.target.offsetWidth)
@@ -101,9 +121,6 @@ export default {
     },
     isLoading() {
       return this.$store.state.isLoading;
-    },
-    defaultAlbumArtURL() {
-      return this.$store.state.defaultAlbumArtURL;
     },
     breakpoint() {
       const breakpoint = {}

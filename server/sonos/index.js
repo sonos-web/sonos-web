@@ -101,6 +101,15 @@ SonosNetwork.prototype._listen = function listen() {
 };
 
 /**
+ * Ungroup zone from zoneGroup
+ * @param deviceId
+ */
+SonosNetwork.prototype.leaveGroup = async function leaveGroup(deviceId) {
+  const zone = this.devices.find(device => device.id === deviceId);
+  await zone.leaveGroup();
+};
+
+/**
  * Update(merge) internal zone group with new data
  * @param {String} deviceId
  * @param {Object} data
@@ -149,6 +158,18 @@ SonosNetwork.prototype.getAVTransportInfo = async function getAVTransportInfo(de
   const transportActions = await device.avTransportService().GetCurrentTransportActions();
 
   /**
+   * Track
+   * TrackDuration
+   * TrackMetaData
+   * TrackURI
+   * RelTime
+   * AbsTime
+   * RelCount
+   * AbsCount
+   */
+  const positionInfo = await device.avTransportService().GetPositionInfo();
+
+  /**
    * title
    * artist
    * album
@@ -161,11 +182,14 @@ SonosNetwork.prototype.getAVTransportInfo = async function getAVTransportInfo(de
    */
   const currentTrack = await device.avTransportService().CurrentTrack();
 
+  const tvPlaying = positionInfo.TrackURI.match(/^x-sonos-htastream:/) !== null;
+
   return {
     track: currentTrack,
     state: transportInfo.CurrentTransportState,
     playMode: transportSettings.PlayMode,
     actions: transportActions.Actions,
+    tvPlaying,
   };
 };
 
