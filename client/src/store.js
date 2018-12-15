@@ -53,10 +53,28 @@ export default new Vuex.Store({
   },
   actions: {
     setActiveZone(context, group) {
+      localStorage.setItem('activeZoneId', group.coordinator.id);
       context.commit('SET_ACTIVE_ZONE', group.coordinator.id);
       const zoneGroup = context.getters.getGroupById(group.id);
       const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
-      document.title = `${zoneGroup.track.title || '[No music selected]'}${artist} - ${context.getters.groupName(zoneGroup.id)}`;
+      document.title = `${zoneGroup.track.title || '[No music selected]'}${artist} - ${context.getters.groupName(zoneGroup.id)}`;      
+    },
+    loadActiveZone(context) {
+      let activeZoneId = localStorage.getItem('activeZoneId');
+      if (!activeZoneId) {
+        // can't continue if there are no zone groups...
+        if (context.state.zoneGroups.lenth === 0) return;
+
+        // Try to find a zoneGroup that is playing, else pick first zoneGroup in list
+        const zoneGroup = context.state.zoneGroups.find(zg => zg.state === 'PLAYING');
+        if (zoneGroup) {
+          activeZoneId = zoneGroup.coordinator.id;
+        } else {
+          activeZoneId = context.state.zoneGroups[0].coordinator.id;
+        }
+      }
+      localStorage.setItem('activeZoneId', activeZoneId);
+      context.commit('SET_ACTIVE_ZONE', activeZoneId);
     },
   },
 });

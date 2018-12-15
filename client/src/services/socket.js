@@ -11,6 +11,7 @@ socket.on('Discovering Sonos Devices', () => {
 socket.on('Sonos Device Discovery Complete', (zoneGroups) => {
   store.commit('SET_DISCOVERING_SONOS', false);
   store.commit('SET_ZONE_GROUPS', zoneGroups);
+  store.dispatch('loadActiveZone');
 });
 
 socket.on('No Sonos Devices Found On Network', () => {
