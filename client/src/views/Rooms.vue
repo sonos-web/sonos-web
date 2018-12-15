@@ -28,7 +28,7 @@
             </v-flex>
           </v-layout>
           <v-divider v-if="group.members.length > 0"></v-divider>
-          <v-layout mb-3>
+          <v-layout mb-3 v-bind="albumSectionBreakpoint">
             <div class="pt-3 pl-3 pr-0">
               <v-img
                 :src="group.track.albumArtURL || defaultAlbumArtURL"
@@ -37,7 +37,7 @@
                 contain
               ></v-img>
             </div>
-            <v-flex xs8 pl-0>
+            <v-flex pl-0 v-bind="albumInfoBreakpoint">
               <v-card-title primary-title class="d-block">                
                 <div class="headline text-truncate">{{ group.track.title || '[No music selected]'}}</div>
                 <div class="text-truncate">{{ group.track.artist }}</div>
@@ -103,6 +103,26 @@ export default {
       if (this.$vuetify.breakpoint.xl) breakpoint.xs4 = true
       return breakpoint
     },
+    albumInfoBreakpoint() {
+      const breakpoint = {}
+      if (this.$vuetify.breakpoint.smAndUp) breakpoint.xs8 = true
+      if (this.$vuetify.breakpoint.xs) breakpoint.xs12 = true
+      return breakpoint
+    },
+    albumSectionBreakpoint() {
+       const breakpoint = {}
+      if (this.$vuetify.breakpoint.smAndUp){
+        breakpoint.column = false;
+        breakpoint.wrap = false;
+        breakpoint["align-center"] = false;
+      } 
+      if (this.$vuetify.breakpoint.xs){
+        breakpoint.column = true;
+        breakpoint.wrap = true;
+        breakpoint["align-center"] = true;
+      }
+      return breakpoint
+    }
   },
 };
 </script>

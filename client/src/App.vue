@@ -1,6 +1,6 @@
 <template>
   <v-app dark>
-    <v-content>
+    <v-content pb-90>
       <transition name="fade">
         <v-container fluid fill-height v-if="discoveringSonos">
           <v-layout align-center justify-center>
@@ -33,7 +33,7 @@
             </v-layout>
           </v-container>
           <!-- eslint-disable-next-line -->
-          <v-toolbar fixed clipped-left flat color="secondary" class="now-playing-bar" height="90px">
+          <v-toolbar fixed clipped-left flat color="secondary" class="now-playing-bar">
           </v-toolbar>
         </div>
       </transition>
@@ -84,7 +84,6 @@ export default {
 </script>
 
 <style>
-
 .fade-enter-active {
   transition: opacity 0.5s;
 }
@@ -102,6 +101,7 @@ export default {
 .v-toolbar--fixed.now-playing-bar {
   top: auto;
   bottom: 0;
+  height: 90px;
 }
 .v-navigation-drawer .v-list {
   background: transparent;
