@@ -3,8 +3,8 @@
   <v-container fill-height fluid grid-list-xl v-else>
     <v-layout wrap row>
       <v-flex d-flex v-bind="breakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)">
-        <v-card class="px-3" hover :raised="isActiveGroup(group.coordinator.id)" color="tertiary">
-          <div v-show="!isActiveGroup(group.coordinator.id)" class="overlay"></div>
+        <v-card class="px-3" hover :raised="isActiveGroup(group.id)" color="tertiary">
+          <div v-show="!isActiveGroup(group.id)" class="overlay"></div>
           <v-layout>
             <v-flex xs12 pa-0 pt-0>
               <v-card-title primary-title class="pb-1 align-center">
@@ -60,13 +60,13 @@ export default {
   methods: {
     groupSelected(index) {
       const group = this.zoneGroups[index];
-      this.$store.dispatch('setActiveZone', group);
+      this.$store.dispatch('setActiveZoneGroup', group.id);
     }, 
     groupName(groupId) {
       return this.$store.getters.groupName(groupId);
     },
     isActiveGroup(groupId) {
-      return this.$store.state.activeZoneId === groupId;
+      return this.$store.state.activeZoneGroupId === groupId;
     },
     statusIcon(playState) {
       switch (playState) {

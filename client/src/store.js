@@ -14,7 +14,7 @@ export default new Vuex.Store({
     loadingMessage: 'Searching for your Sonos System...',
     discoveringSonos: false,
     zoneGroups: [],
-    activeZoneId: null,
+    activeZoneGroupId: null,
     defaultAlbumArtURL: emptyAlbumArtURL,
     tvAlbumArtURL,
   },
@@ -47,36 +47,41 @@ export default new Vuex.Store({
       Vue.set(state.zoneGroups, index, { ...state.zoneGroups[index], ...data.update });
     },
     SET_ACTIVE_ZONE(state, zoneId) {
-      state.activeZoneId = zoneId;
+      state.activeZoneGroupId = zoneId;
     },
     SET_ZONE_GROUPS(state, zones) {
       state.zoneGroups = zones;
     },
   },
   actions: {
-    setActiveZone(context, group) {
-      localStorage.setItem('activeZoneId', group.coordinator.id);
-      context.commit('SET_ACTIVE_ZONE', group.coordinator.id);
-      const zoneGroup = context.getters.getGroupById(group.id);
-      const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
-      document.title = `${zoneGroup.track.title || '[No music selected]'}${artist} - ${context.getters.groupName(zoneGroup.id)}`;
+    setActiveZoneGroup(context, groupId) {
+      localStorage.setItem('activeZoneGroupId', groupId);
+      context.commit('SET_ACTIVE_ZONE', groupId);
+      context.dispatch('updateDocumentTitle', groupId);
     },
-    loadActiveZone(context) {
-      let activeZoneId = localStorage.getItem('activeZoneId');
-      if (!activeZoneId) {
+    updateDocumentTitle(context, groupId) {
+      const zoneGroup = context.getters.getGroupById(groupId);
+      const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
+      const title = zoneGroup.tvPlaying ? 'TV' : zoneGroup.track.title || '[No music selected]';
+      document.title = `${title}${artist} - ${context.getters.groupName(zoneGroup.id)}`;
+    },
+    loadActiveZoneGroup(context) {
+      let activeZoneGroupId = localStorage.getItem('activeZoneGroupId');
+      const validGroupId = context.state.zoneGroups.some(zg => zg.id === activeZoneGroupId);
+      if (!activeZoneGroupId || !validGroupId) {
         // can't continue if there are no zone groups...
         if (context.state.zoneGroups.lenth === 0) return;
 
         // Try to find a zoneGroup that is playing, else pick first zoneGroup in list
         const zoneGroup = context.state.zoneGroups.find(zg => zg.state === 'PLAYING');
         if (zoneGroup) {
-          activeZoneId = zoneGroup.coordinator.id;
+          activeZoneGroupId = zoneGroup.id;
         } else {
-          activeZoneId = context.state.zoneGroups[0].coordinator.id;
+          activeZoneGroupId = context.state.zoneGroups[0].id;
         }
       }
-      localStorage.setItem('activeZoneId', activeZoneId);
-      context.commit('SET_ACTIVE_ZONE', activeZoneId);
+      localStorage.setItem('activeZoneGroupId', activeZoneGroupId);
+      context.commit('SET_ACTIVE_ZONE', activeZoneGroupId);
     },
   },
 });
