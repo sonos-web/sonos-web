@@ -2,6 +2,7 @@
   <LoadingView v-if="isLoading"></LoadingView>
   <v-container fill-height fluid grid-list-xl v-else>
     <v-layout wrap row>
+      <!--eslint-disable-next-line max-len -->
       <v-flex d-flex v-bind="breakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)">
         <v-card class="px-3" hover :raised="isActiveGroup(group.id)" color="tertiary">
           <div v-show="!isActiveGroup(group.id)" class="overlay"></div>
@@ -14,7 +15,7 @@
                 <v-spacer></v-spacer>
                 <v-icon>{{ statusIcon(group.state)}}</v-icon>
                 <v-icon v-if="isPlaying(group.state)">{{ muteIcon(group.mute)}}</v-icon>
-              </v-card-title>              
+              </v-card-title>
             </v-flex>
           </v-layout>
           <v-layout v-if="group.members.length > 0">
@@ -38,13 +39,16 @@
               ></v-img>
             </div>
             <v-flex pl-0 v-bind="albumInfoBreakpoint">
-              <v-card-title primary-title class="d-block">                
+              <v-card-title primary-title class="d-block">
+                <!--eslint-disable-next-line max-len -->
                 <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">{{ trackTitle(group) }}</div>
+                <!--eslint-disable-next-line max-len -->
                 <div @mouseover="tooltipOnOverFlow" class="text-truncate">{{ group.track.artist }}</div>
-                <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">{{ group.track.album }}</div>                
+                <!--eslint-disable-next-line max-len -->
+                <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">{{ group.track.album }}</div>
               </v-card-title>
             </v-flex>
-          </v-layout>          
+          </v-layout>
         </v-card>
       </v-flex>
     </v-layout>
@@ -53,7 +57,7 @@
 
 <script>
 
-import zonesAPI from '@/services/API/zones'
+import zonesAPI from '@/services/API/zones';
 
 export default {
   name: 'Rooms',
@@ -61,7 +65,7 @@ export default {
     groupSelected(index) {
       const group = this.zoneGroups[index];
       this.$store.dispatch('setActiveZoneGroup', group.id);
-    }, 
+    },
     groupName(groupId) {
       return this.$store.getters.groupName(groupId);
     },
@@ -72,14 +76,12 @@ export default {
       switch (playState) {
         case 'PAUSED_PLAYBACK':
           return 'pause';
-          break;
         case 'PLAYING':
           return 'play_arrow';
-          break;
         case 'STOPPED':
-          return 'stop'
+          return 'stop';
         default:
-          return ''
+          return '';
       }
     },
     muteIcon(mute) {
@@ -87,33 +89,30 @@ export default {
     },
     trackTitle(group) {
       if (group.tvPlaying) {
-        return 'TV'
-      } else {
-        return group.track.title || '[No music selected]'
-      }      
+        return 'TV';
+      }
+      return group.track.title || '[No music selected]';
     },
     isPlaying(playState) {
-      return playState === 'PLAYING' ? true : false;
+      return playState === 'PLAYING';
     },
     defaultAlbumArtURL(tvPlaying) {
       if (tvPlaying) {
         return this.$store.state.tvAlbumArtURL;
-      } else {
-        return this.$store.state.defaultAlbumArtURL;
       }
+      return this.$store.state.defaultAlbumArtURL;
     },
     ungroupZone(zoneId) {
       zonesAPI.ungroupZone(zoneId);
     },
     tooltipOnOverFlow(event) {
-      console.log(event.target.offsetWidth)
-      console.log(event.target.scrollWidth)
-      if (event.target.offsetWidth < event.target.scrollWidth) {
-        event.target.title = event.target.textContent
+      const element = event;
+      if (element.offsetWidth < element.scrollWidth) {
+        element.title = element.textContent;
       } else {
-        event.target.title = ""
+        element.title = '';
       }
-    }
+    },
   },
   computed: {
     zoneGroups() {
@@ -123,32 +122,32 @@ export default {
       return this.$store.state.isLoading;
     },
     breakpoint() {
-      const breakpoint = {}
-      if (this.$vuetify.breakpoint.smAndDown) breakpoint.xs12 = true
-      if (this.$vuetify.breakpoint.lgAndDown) breakpoint.xs6 = true
-      if (this.$vuetify.breakpoint.xl) breakpoint.xs4 = true
-      return breakpoint
+      const breakpoint = {};
+      if (this.$vuetify.breakpoint.smAndDown) breakpoint.xs12 = true;
+      if (this.$vuetify.breakpoint.lgAndDown) breakpoint.xs6 = true;
+      if (this.$vuetify.breakpoint.xl) breakpoint.xs4 = true;
+      return breakpoint;
     },
     albumInfoBreakpoint() {
-      const breakpoint = {}
-      if (this.$vuetify.breakpoint.smAndUp) breakpoint.xs8 = true
-      if (this.$vuetify.breakpoint.xs) breakpoint.xs12 = true
-      return breakpoint
+      const breakpoint = {};
+      if (this.$vuetify.breakpoint.smAndUp) breakpoint.xs8 = true;
+      if (this.$vuetify.breakpoint.xs) breakpoint.xs12 = true;
+      return breakpoint;
     },
     albumSectionBreakpoint() {
-       const breakpoint = {}
-      if (this.$vuetify.breakpoint.smAndUp){
+      const breakpoint = {};
+      if (this.$vuetify.breakpoint.smAndUp) {
         breakpoint.column = false;
         breakpoint.wrap = false;
-        breakpoint["align-center"] = false;
-      } 
-      if (this.$vuetify.breakpoint.xs){
+        breakpoint['align-center'] = false;
+      }
+      if (this.$vuetify.breakpoint.xs) {
         breakpoint.column = true;
         breakpoint.wrap = true;
-        breakpoint["align-center"] = true;
+        breakpoint['align-center'] = true;
       }
-      return breakpoint
-    }
+      return breakpoint;
+    },
   },
 };
 </script>
@@ -164,4 +163,3 @@ export default {
   z-index: 1;
 }
 </style>
-
