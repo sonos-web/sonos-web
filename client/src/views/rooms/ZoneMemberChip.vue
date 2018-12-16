@@ -1,5 +1,7 @@
 <template>
-  <v-chip label color="grey darken-3" close class="member-zone pa-0 pr-2"  @input="ungroupZone(zoneMember.id)">
+  <v-chip close label color="grey darken-3"
+    class="member-zone pa-0 pr-2"
+    @input="ungroupZone(zoneMember.id)">
     <div class="subheading grey--text text--lighten-2" >
       {{zoneMember.name}}
     </div>
@@ -15,13 +17,13 @@ export default {
   props: {
     zoneMember: {
       type: Object,
-      required: true,      
+      required: true,
     },
   },
   methods: {
     ungroupZone(zoneId) {
       zonesAPI.ungroupZone(zoneId);
     },
-  }
-}
+  },
+};
 </script>

@@ -1,16 +1,18 @@
 <template>
   <LoadingView v-if="isLoading"></LoadingView>
-  <v-container fill-height fluid grid-list-xl v-else>          
-      <v-layout wrap row>      
-        <!--eslint-disable-next-line max-len -->           
-        <v-flex d-flex v-bind="breakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)">
+  <v-container fill-height fluid grid-list-xl v-else>
+      <v-layout wrap row>
+        <v-flex d-flex v-bind="breakpoint"
+          v-for="(group, index) in zoneGroups" :key="group.id"
+          @click="groupSelected(index)">
           <!--<draggable class="layout wrap row draggable" v-model="zoneGroups" :options="{group: 'zoneGroups', sort: false, draggable:'.zone-group'}">        -->
             <v-card class="px-3 pb-1" hover :raised="isActiveGroup(group.id)" color="tertiary">
               <div v-show="!isActiveGroup(group.id)" class="overlay"></div>
               <v-layout>
                 <v-flex xs12 pa-0 pt-0>
                   <v-card-title primary-title class="pb-0 align-center">
-                    <div @mouseover="tooltipOnOverFlow" class="flex xs10 pa-0 display-1 text-truncate">
+                    <div @mouseover="tooltipOnOverFlow"
+                      class="flex xs10 pa-0 display-1 text-truncate">
                       {{ groupName(group.id) }}
                     </div>
                     <v-spacer></v-spacer>
@@ -19,9 +21,12 @@
                   </v-card-title>
                 </v-flex>
               </v-layout>
-              <v-layout>              
-                <v-flex xs12 pt-0 pb-0>                               
-                  <zone-members-draggable :zoneMembers="group.members" @zoneMembersChanged="zoneMembersChanged(group.id, ...arguments)"></zone-members-draggable>
+              <v-layout>
+                <v-flex xs12 pt-0 pb-0>
+                  <zone-members-draggable
+                  :zoneMembers="group.members"
+                  @zoneMembersChanged="zoneMembersChanged(group.id, ...arguments)">
+                  </zone-members-draggable>
                 </v-flex>
               </v-layout>
               <v-divider v-if="group.members.length > 0" class="mt-1"></v-divider>
@@ -36,40 +41,45 @@
                 </div>
                 <v-flex pl-0 v-bind="albumInfoBreakpoint">
                   <v-card-title primary-title class="d-block">
-                    <!--eslint-disable-next-line max-len -->
-                    <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">{{ trackTitle(group) }}</div>
-                    <!--eslint-disable-next-line max-len -->
-                    <div @mouseover="tooltipOnOverFlow" class="text-truncate">{{ group.track.artist }}</div>
-                    <!--eslint-disable-next-line max-len -->
-                    <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">{{ group.track.album }}</div>
+                    <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">
+                      {{ trackTitle(group) }}
+                    </div>
+                    <div @mouseover="tooltipOnOverFlow" class="text-truncate">
+                      {{ group.track.artist }}
+                    </div>
+                    <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">
+                      {{ group.track.album }}
+                    </div>
                   </v-card-title>
                 </v-flex>
               </v-layout>
             </v-card>
         </v-flex>
-      </v-layout>   
+      </v-layout>
   </v-container>
 </template>
 
 <script>
 import draggable from 'vuedraggable';
 import zonesAPI from '@/services/API/zones';
-import ZoneMembersDraggable from '@/views/rooms/ZoneMembersDraggable'
+import ZoneMembersDraggable from '@/views/rooms/ZoneMembersDraggable.vue';
 
 export default {
   name: 'Rooms',
-  components: {draggable, ZoneMembersDraggable},
+  components: { draggable, ZoneMembersDraggable },
   methods: {
     zoneMembersChanged(groupId, members) {
       const zoneGroup = this.zoneGroups.find(zg => zg.id === groupId);
       // Find the unique member that was just added
-      // the members array we receive are all members, new & existing, but we need to find the new one
+      // the members array we receive are all members, new & existing,
+      // but we need to find the new one
       // so we compare with the unmodified array in the store first
-      const newMember = members.filter(member1 => !zoneGroup.members.some(member2 => member1.id === member2.id))[0]      
-      this.$store.commit('UPDATE_ZONE_GROUP', {groupId, update: {members: members}})
+      // eslint-disable-next-line max-len
+      const newMember = members.filter(member1 => !zoneGroup.members.some(member2 => member1.id === member2.id))[0];
+      this.$store.commit('UPDATE_ZONE_GROUP', { groupId, update: { members } });
       if (newMember) {
         zonesAPI.joinGroup(groupId, newMember.id);
-      }      
+      }
     },
     groupSelected(index) {
       const group = this.zoneGroups[index];
@@ -122,12 +132,12 @@ export default {
   },
   computed: {
     zoneGroups: {
-      get () {
+      get() {
         return this.$store.state.zoneGroups;
       },
-      set (newValue) {
+      set(newValue) {
         console.log(newValue);
-      }      
+      },
     },
     isLoading() {
       return this.$store.state.isLoading;
