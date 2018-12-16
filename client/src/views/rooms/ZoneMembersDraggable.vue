@@ -1,7 +1,7 @@
 <template>
   <draggable class="draggable"
     v-model="zoneMembersCopy"
-    :options="{group: 'zoneGroups', sort: false, draggable: '.member-zone'}">
+    :options="{group: {name: 'zoneGroupMembers', put: ['zoneGroup', 'zoneGroupMembers'], pull: ['zoneGroupMembers']}, sort: false, draggable: '.member-zone'}">
 
     <zone-member-chip v-for="member in zoneMembersCopy" :key="member.id"
       :zoneMember="member">
