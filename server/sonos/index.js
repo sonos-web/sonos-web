@@ -78,8 +78,10 @@ SonosNetwork.prototype._listen = function listen() {
       this.getAVTransportInfo(device).then((transportInfo) => {
         // Find the zone group this device is in
         const zoneGroup = this.zoneGroups.find(zg => zg.coordinator.id === device.id);
-        this.socketio.emit('Sonos Event Data Received', { groupId: zoneGroup.id, update: transportInfo });
-        this._updateZoneGroup(device.id, transportInfo);
+        if (zoneGroup) {
+          this.socketio.emit('Sonos Event Data Received', { groupId: zoneGroup.id, update: transportInfo });
+          this._updateZoneGroup(device.id, transportInfo);
+        }
       });
     });
     device.on('RenderingControl', () => {
@@ -104,11 +106,21 @@ SonosNetwork.prototype._listen = function listen() {
 };
 
 /**
- * Ungroup zone from zoneGroup
- * @param deviceId
+ * @param {String} groupId
+ * @param {String} zoneId
  */
-SonosNetwork.prototype.leaveGroup = async function leaveGroup(deviceId) {
-  const zone = this.devices.find(device => device.id === deviceId);
+SonosNetwork.prototype.joinGroup = async function joinGroup(groupId, zoneId) {
+  const zone = this.devices.find(device => device.id === zoneId);
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  await zone.setAVTransportURI({ uri: `x-rincon:${group.coordinator.id}`, onlySetUri: true });
+};
+
+/**
+ * Ungroup zone from zoneGroup
+ * @param {String} zoneId
+ */
+SonosNetwork.prototype.leaveGroup = async function leaveGroup(zoneId) {
+  const zone = this.devices.find(device => device.id === zoneId);
   await zone.leaveGroup();
 };
 

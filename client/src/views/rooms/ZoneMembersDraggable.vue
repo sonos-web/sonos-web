@@ -7,10 +7,10 @@
 
 <script>
 import draggable from 'vuedraggable';
-import ZoneMemberChip from '@/views/ZoneMemberChip'
+import ZoneMemberChip from '@/views/rooms/ZoneMemberChip'
 
 export default {
-  name: 'ZoneMemberChips',
+  name: 'ZoneMembersDraggable',
   components: { draggable,ZoneMemberChip},
   props: {
     zoneMembers: {

@@ -21,7 +21,7 @@
               </v-layout>
               <v-layout>              
                 <v-flex xs12 pt-0 pb-0>                               
-                  <zone-member-chips :zoneMembers="group.members" @zoneMembersChanged="zoneMembersChanged(group.id, ...arguments)"></zone-member-chips>
+                  <zone-members-draggable :zoneMembers="group.members" @zoneMembersChanged="zoneMembersChanged(group.id, ...arguments)"></zone-members-draggable>
                 </v-flex>
               </v-layout>
               <v-divider v-if="group.members.length > 0" class="mt-1"></v-divider>
@@ -54,11 +54,11 @@
 <script>
 import draggable from 'vuedraggable';
 import zonesAPI from '@/services/API/zones';
-import ZoneMemberChips from '@/views/ZoneMemberChips'
+import ZoneMembersDraggable from '@/views/rooms/ZoneMembersDraggable'
 
 export default {
   name: 'Rooms',
-  components: {draggable, ZoneMemberChips},
+  components: {draggable, ZoneMembersDraggable},
   methods: {
     zoneMembersChanged(groupId, members) {
       const zoneGroup = this.zoneGroups.find(zg => zg.id === groupId);
@@ -110,9 +110,6 @@ export default {
         return this.$store.state.tvAlbumArtURL;
       }
       return this.$store.state.defaultAlbumArtURL;
-    },
-    ungroupZone(zoneId) {
-      zonesAPI.ungroupZone(zoneId);
     },
     tooltipOnOverFlow(event) {
       const element = event;

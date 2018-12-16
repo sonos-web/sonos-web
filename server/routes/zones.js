@@ -8,8 +8,8 @@ module.exports = function Zones(sonosNetwork) {
     await this.sonosNetwork.leaveGroup(req.params.id);
     res.status(200).send();
   });
-  this.router.post('/join', (req, res) => {
-    console.log(req.body);
+  this.router.post('/join', async (req, res) => {
+    await this.sonosNetwork.joinGroup(req.body.groupId, req.body.zoneId);
     res.status(200).send();
   });
 };

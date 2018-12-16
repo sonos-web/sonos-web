@@ -8,6 +8,8 @@
 
 
 <script>
+import zonesAPI from '@/services/API/zones';
+
 export default {
   name: 'ZoneMemberChip',
   props: {
@@ -16,5 +18,10 @@ export default {
       required: true,      
     },
   },
+  methods: {
+    ungroupZone(zoneId) {
+      zonesAPI.ungroupZone(zoneId);
+    },
+  }
 }
 </script>
