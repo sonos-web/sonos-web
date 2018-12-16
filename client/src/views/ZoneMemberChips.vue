@@ -1,0 +1,32 @@
+<template>
+  <draggable class="draggable" v-model="zoneMembersCopy" :options="{group: 'zoneGroups', sort: false, draggable: '.member-zone'}">
+    <!--eslint-disable-next-line max-len -->
+    <zone-member-chip v-for="member in zoneMembersCopy" :key="member.id" :zoneMember="member"></zone-member-chip>
+  </draggable>
+</template>
+
+<script>
+import draggable from 'vuedraggable';
+import ZoneMemberChip from '@/views/ZoneMemberChip'
+
+export default {
+  name: 'ZoneMemberChips',
+  components: { draggable,ZoneMemberChip},
+  props: {
+    zoneMembers: {
+      type: Array,
+      required: true,      
+    },
+  },
+  computed: {
+    zoneMembersCopy: {
+      get() {
+        return this.zoneMembers;
+      },
+      set(members) {
+        this.$emit('zoneMembersChanged', members);
+      },
+    },
+  },
+}
+</script>

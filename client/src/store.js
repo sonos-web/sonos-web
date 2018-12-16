@@ -38,10 +38,10 @@ export default new Vuex.Store({
     SET_DISCOVERING_SONOS(state, discovering) {
       state.discoveringSonos = discovering;
     },
+    // Expect data to be in format: {deviceId:String, update: Object}
     UPDATE_ZONE_GROUP(state, data) {
       // find the group that this data belongs to
-      // device will always be the coordinator
-      const index = state.zoneGroups.findIndex(group => group.coordinator.id === data.deviceId);
+      const index = state.zoneGroups.findIndex(group => group.id === data.groupId);
       // Merge the zoneGroup with new data
       // Must use Vue.set otherwise, our data wont be reactive
       Vue.set(state.zoneGroups, index, { ...state.zoneGroups[index], ...data.update });
@@ -70,7 +70,7 @@ export default new Vuex.Store({
       const validGroupId = context.state.zoneGroups.some(zg => zg.id === activeZoneGroupId);
       if (!activeZoneGroupId || !validGroupId) {
         // can't continue if there are no zone groups...
-        if (context.state.zoneGroups.lenth === 0) return;
+        if (context.state.zoneGroups.length === 0) return;
 
         // Try to find a zoneGroup that is playing, else pick first zoneGroup in list
         const zoneGroup = context.state.zoneGroups.find(zg => zg.state === 'PLAYING');

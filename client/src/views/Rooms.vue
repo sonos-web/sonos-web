@@ -1,15 +1,15 @@
 <template>
   <LoadingView v-if="isLoading"></LoadingView>
-  <v-container fill-height fluid grid-list-xl v-else>
-    <v-layout wrap row>
-      <!--eslint-disable-next-line max-len -->      
+  <v-container fill-height fluid grid-list-xl v-else>          
+      <v-layout wrap row>      
+        <!--eslint-disable-next-line max-len -->           
         <v-flex d-flex v-bind="breakpoint" v-for="(group, index) in zoneGroups" :key="group.id" @click="groupSelected(index)">
-          <draggable class="draggable" v-model="zoneGroups" :options="{group:'zoneGroups'}">
+          <!--<draggable class="layout wrap row draggable" v-model="zoneGroups" :options="{group: 'zoneGroups', sort: false, draggable:'.zone-group'}">        -->
             <v-card class="px-3 pb-1" hover :raised="isActiveGroup(group.id)" color="tertiary">
               <div v-show="!isActiveGroup(group.id)" class="overlay"></div>
               <v-layout>
                 <v-flex xs12 pa-0 pt-0>
-                  <v-card-title primary-title class="pb-1 align-center">
+                  <v-card-title primary-title class="pb-0 align-center">
                     <div @mouseover="tooltipOnOverFlow" class="flex xs10 pa-0 display-1 text-truncate">
                       {{ groupName(group.id) }}
                     </div>
@@ -19,17 +19,12 @@
                   </v-card-title>
                 </v-flex>
               </v-layout>
-              <v-layout v-if="group.members.length > 0">
-                <v-flex xs12 pt-0>
-                  <!--eslint-disable-next-line max-len -->
-                  <v-chip label color="grey darken-3" close class="pa-0 pr-2" v-for="member in group.members" :key="member.id" @input="ungroupZone(member.id)">
-                    <div class="subheading grey--text text--lighten-2" >
-                      {{member.name}}
-                    </div>
-                  </v-chip>
+              <v-layout>              
+                <v-flex xs12 pt-0 pb-0>                               
+                  <zone-member-chips :zoneMembers="group.members" @zoneMembersChanged="zoneMembersChanged(group.id, ...arguments)"></zone-member-chips>
                 </v-flex>
               </v-layout>
-              <v-divider v-if="group.members.length > 0"></v-divider>
+              <v-divider v-if="group.members.length > 0" class="mt-1"></v-divider>
               <v-layout mb-3 v-bind="albumSectionBreakpoint">
                 <div class="pt-3 pl-3 pr-0">
                   <v-img
@@ -51,20 +46,31 @@
                 </v-flex>
               </v-layout>
             </v-card>
-          </draggable>
-        </v-flex>      
-    </v-layout>
+        </v-flex>
+      </v-layout>   
   </v-container>
 </template>
 
 <script>
 import draggable from 'vuedraggable';
 import zonesAPI from '@/services/API/zones';
+import ZoneMemberChips from '@/views/ZoneMemberChips'
 
 export default {
   name: 'Rooms',
-  components: {draggable},
+  components: {draggable, ZoneMemberChips},
   methods: {
+    zoneMembersChanged(groupId, members) {
+      const zoneGroup = this.zoneGroups.find(zg => zg.id === groupId);
+      // Find the unique member that was just added
+      // the members array we receive are all members, new & existing, but we need to find the new one
+      // so we compare with the unmodified array in the store first
+      const newMember = members.filter(member1 => !zoneGroup.members.some(member2 => member1.id === member2.id))[0]      
+      this.$store.commit('UPDATE_ZONE_GROUP', {groupId, update: {members: members}})
+      if (newMember) {
+        zonesAPI.joinGroup(groupId, newMember.id);
+      }      
+    },
     groupSelected(index) {
       const group = this.zoneGroups[index];
       this.$store.dispatch('setActiveZoneGroup', group.id);
@@ -169,8 +175,19 @@ export default {
   left: 0;
   background-color: rgba(0,0,0,0.2);
   z-index: 1;
+  pointer-events: none;
+}
+.zone-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+.zone-group > * {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 .draggable {
-  width: 100%;
+  min-height:10px;
 }
 </style>

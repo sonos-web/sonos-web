@@ -76,13 +76,16 @@ SonosNetwork.prototype._listen = function listen() {
     // We need more than it provides
     device.on('AVTransport', () => {
       this.getAVTransportInfo(device).then((transportInfo) => {
-        this.socketio.emit('Sonos Event Data Received', { deviceId: device.id, update: transportInfo });
+        // Find the zone group this device is in
+        const zoneGroup = this.zoneGroups.find(zg => zg.coordinator.id === device.id);
+        this.socketio.emit('Sonos Event Data Received', { groupId: zoneGroup.id, update: transportInfo });
         this._updateZoneGroup(device.id, transportInfo);
       });
     });
     device.on('RenderingControl', () => {
       this.getRenderingControlInfo(device).then((renderingInfo) => {
-        this.socketio.emit('Sonos Event Data Received', { deviceId: device.id, update: renderingInfo });
+        const zoneGroup = this.zoneGroups.find(zg => zg.coordinator.id === device.id);
+        this.socketio.emit('Sonos Event Data Received', { groupId: zoneGroup.id, update: renderingInfo });
         this._updateZoneGroup(device.id, renderingInfo);
       });
     });
