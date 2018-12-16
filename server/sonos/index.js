@@ -93,16 +93,16 @@ SonosNetwork.prototype._listen = function listen() {
     });
   });
 
-  // Listener.on('ZonesChanged', (zoneData) => {
-  //   if (zoneData) {
-  //     // const zones = JSON.parse(JSON.stringify(zoneData, ' ', 2));
-  //     this._parseZoneGroups().then(() => {
-  //       this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
-  //     }).catch(() => {
-  //       this.socketio.emit('No Sonos Devices Found On Network');
-  //     });
-  //   }
-  // });
+  Listener.on('ZonesChanged', (zoneData) => {
+    if (zoneData) {
+      // const zones = JSON.parse(JSON.stringify(zoneData, ' ', 2));
+      this._parseZoneGroups().then(() => {
+        this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
+      }).catch(() => {
+        this.socketio.emit('No Sonos Devices Found On Network');
+      });
+    }
+  });
 };
 
 /**
@@ -219,7 +219,6 @@ SonosNetwork.prototype._parseZoneGroups = async function _parseZoneGroups() {
     const zoneGroups = [];
 
     this.devices[0].getAllGroups().then(async (rawGroups) => {
-      console.log(rawGroups);
       rawGroups.forEach((group) => {
         zoneGroups.push({
           id: group.ID,
@@ -256,7 +255,6 @@ SonosNetwork.prototype._parseZoneGroups = async function _parseZoneGroups() {
       zoneGroups.sort((group1, group2) => group1.coordinator.name > group2.coordinator.name);
 
       this.zoneGroups = zoneGroups;
-      console.log(this.zoneGroups.length);
       resolve(this.zoneGroups);
     }).catch((error) => {
       reject(error);
