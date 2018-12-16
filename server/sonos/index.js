@@ -87,8 +87,10 @@ SonosNetwork.prototype._listen = function listen() {
     device.on('RenderingControl', () => {
       this.getRenderingControlInfo(device).then((renderingInfo) => {
         const zoneGroup = this.zoneGroups.find(zg => zg.coordinator.id === device.id);
-        this.socketio.emit('Sonos Event Data Received', { groupId: zoneGroup.id, update: renderingInfo });
-        this._updateZoneGroup(device.id, renderingInfo);
+        if (zoneGroup) {
+          this.socketio.emit('Sonos Event Data Received', { groupId: zoneGroup.id, update: renderingInfo });
+          this._updateZoneGroup(device.id, renderingInfo);
+        }
       });
     });
   });

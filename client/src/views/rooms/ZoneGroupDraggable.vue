@@ -79,8 +79,6 @@ export default {
       // this means we dropped a whole group in to the members, so we should
       // add this group and its members to the new members
       if (newMember && newMember.coordinator) {
-        console.log(newMembers);
-        console.log(newMember)
         const index = newMembers.findIndex(member => member.coordinator === newMember.coordinator);                                
         // Add coordinator to list of members
         newMembers[index] = newMember.coordinator;
@@ -149,7 +147,7 @@ export default {
         return this.$store.state.zoneGroups;
       },
       set(newValue) {
-        console.log(newValue);
+        return;
       },
     },
     zoneGroupAsArray: {
