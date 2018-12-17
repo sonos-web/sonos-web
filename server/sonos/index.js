@@ -108,6 +108,7 @@ SonosNetwork.prototype._listen = function listen() {
 };
 
 /**
+ * Join a zone to a group
  * @param {String} groupId
  * @param {String} zoneId
  */
@@ -118,12 +119,23 @@ SonosNetwork.prototype.joinGroup = async function joinGroup(groupId, zoneId) {
 };
 
 /**
- * Ungroup zone from zoneGroup
+ * Ungroup zone from zoneGroup. Zone will become coordinator of its own group
  * @param {String} zoneId
  */
 SonosNetwork.prototype.leaveGroup = async function leaveGroup(zoneId) {
   const zone = this.devices.find(device => device.id === zoneId);
   await zone.leaveGroup();
+};
+
+/**
+ *  Join all zones to the group specified
+ * @param {String} groupId
+ */
+SonosNetwork.prototype.partyMode = async function partyMode(groupId) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  await Promise.all(this.devices.map(async (device) => {
+    await device.setAVTransportURI({ uri: `x-rincon:${group.coordinator.id}`, onlySetUri: true });
+  }));
 };
 
 /**

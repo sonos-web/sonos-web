@@ -90,6 +90,8 @@ export default {
       } else if (newMember) {
         zonesAPI.joinGroup(groupId, newMember.id);
       }
+      console.log(groupId)
+      console.log(newMembers)
       this.$store.commit('UPDATE_ZONE_GROUP', { groupId, update: { newMembers } });
     },
     groupSelected(index) {

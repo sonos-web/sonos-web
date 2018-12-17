@@ -7,4 +7,7 @@ export default {
   joinGroup(groupId, zoneId) {
     return axios.post('/api/zones/join', { groupId, zoneId });
   },
+  partyMode(groupId) {
+    return axios.post(`/api/zones/partymode/${groupId}`);
+  },
 };

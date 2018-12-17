@@ -1,11 +1,14 @@
 <template>
   <LoadingView v-if="isLoading"></LoadingView>
-  <v-container fill-height fluid grid-list-xl v-else>
+  <v-container fill-height fluid grid-list-xl v-else>    
       <v-layout wrap row>
+        <v-flex xs12>
+          <v-btn round color="secondary" @click="partyMode">Enable Party Mode</v-btn>
+        </v-flex>  
         <v-flex d-flex v-bind="breakpoint"
           v-for="(group, index) in zoneGroups" :key="group.id"
           @click="groupSelected(index)">
-          <zone-group-draggable :zoneGroup="group"></zone-group-draggable>
+          <zone-group-draggable :zoneGroup="group">Enable Party Mode</zone-group-draggable>
         </v-flex>
       </v-layout>
   </v-container>
@@ -13,7 +16,7 @@
 
 <script>
 import ZoneGroupDraggable from '@/views/rooms/ZoneGroupDraggable.vue';
-
+import zonesAPI from '@/services/API/zones';
 export default {
   name: 'Rooms',
   components: { ZoneGroupDraggable },
@@ -22,15 +25,13 @@ export default {
       const group = this.zoneGroups[index];
       this.$store.dispatch('setActiveZoneGroup', group.id);
     },
+    partyMode() {
+      zonesAPI.partyMode(this.$store.state.activeZoneGroupId);
+    }
   },
   computed: {
-    zoneGroups: {
-      get() {
-        return this.$store.state.zoneGroups;
-      },
-      set(newValue) {
-        return;
-      },
+    zoneGroups() {
+      return this.$store.state.zoneGroups;
     },
     isLoading() {
       return this.$store.state.isLoading;
