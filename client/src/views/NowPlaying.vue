@@ -13,7 +13,7 @@
             </v-list>
           </v-menu>
         </div>    
-        <v-img class="album-art" :src="albumArtURL(activeZoneGroup.id)"></v-img>
+        <v-img class="album-art" contain :src="albumArtURL(activeZoneGroup.id)"></v-img>
         <v-flex xs12>
           <div class="text-xs-center">
             <v-card-title primary-title class="d-block">
@@ -81,7 +81,9 @@ export default {
 
 <style>
 .album-art {
-  max-width: 325px;
+  width: calc(100vh - 400px);
+  max-width: 500px;
+  min-width: 150px;
   margin: 0 auto;
 }
 .zone-group-selector {
