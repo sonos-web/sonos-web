@@ -3,12 +3,12 @@
   <v-container fill-height fluid grid-list-xl v-else>    
       <v-layout wrap row>
         <v-flex xs12>
-          <v-btn round color="secondary" @click="partyMode">Enable Party Mode</v-btn>
+          <v-btn :disabled="zoneGroups.length === 0" round color="secondary" @click="partyMode">{{ partyModeText }}</v-btn>
         </v-flex>  
         <v-flex d-flex v-bind="breakpoint"
           v-for="(group, index) in zoneGroups" :key="group.id"
           @click="groupSelected(index)">
-          <zone-group-draggable :zoneGroup="group">Enable Party Mode</zone-group-draggable>
+          <zone-group-draggable :zoneGroup="group"></zone-group-draggable>
         </v-flex>
       </v-layout>
   </v-container>
@@ -42,6 +42,9 @@ export default {
       if (this.$vuetify.breakpoint.lgAndDown) breakpoint.xs6 = true;
       if (this.$vuetify.breakpoint.xl) breakpoint.xs4 = true;
       return breakpoint;
+    },
+    partyModeText() {
+      return this.zoneGroups.length > 1 ? 'Enable Party Mode': 'Disable Party Mode';
     },
   },
 };

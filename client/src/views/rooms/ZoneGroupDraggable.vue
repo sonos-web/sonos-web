@@ -74,8 +74,8 @@ export default {
       // but we need to find the new one
       // so we compare with the unmodified array in the store first
       // eslint-disable-next-line max-len
-      const newMember = newMembers.filter(member1 => !zoneGroup.members.some(member2 => member1.id === member2.id))[0];           
-
+      const newMember = newMembers.filter(member1 => !zoneGroup.members.some(member2 => member1.id === member2.id))[0];
+      
       // this means we dropped a whole group in to the members, so we should
       // add this group and its members to the new members
       if (newMember && newMember.coordinator) {
@@ -87,12 +87,13 @@ export default {
         // Join coordinator and all its members to new group
         zonesAPI.joinGroup(groupId, newMember.coordinator.id);
         newMember.members.map(member => zonesAPI.joinGroup(groupId, member.id));
+
+        // Remove this zone group because we have now merged it into another zone group
+        this.$store.commit('REMOVE_ZONE_GROUP', newMember.id);
       } else if (newMember) {
         zonesAPI.joinGroup(groupId, newMember.id);
       }
-      console.log(groupId)
-      console.log(newMembers)
-      this.$store.commit('UPDATE_ZONE_GROUP', { groupId, update: { newMembers } });
+      this.$store.commit('UPDATE_ZONE_GROUP', { groupId, update: { members: newMembers } });
     },
     groupSelected(index) {
       const group = this.zoneGroups[index];

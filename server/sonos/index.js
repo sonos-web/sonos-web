@@ -134,7 +134,9 @@ SonosNetwork.prototype.leaveGroup = async function leaveGroup(zoneId) {
 SonosNetwork.prototype.partyMode = async function partyMode(groupId) {
   const group = this.zoneGroups.find(zg => zg.id === groupId);
   await Promise.all(this.devices.map(async (device) => {
-    await device.setAVTransportURI({ uri: `x-rincon:${group.coordinator.id}`, onlySetUri: true });
+    if (device.id !== group.coordinator.id) {
+      await device.setAVTransportURI({ uri: `x-rincon:${group.coordinator.id}`, onlySetUri: true });
+    }
   }));
 };
 

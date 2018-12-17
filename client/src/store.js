@@ -49,6 +49,10 @@ export default new Vuex.Store({
     SET_ACTIVE_ZONE(state, zoneId) {
       state.activeZoneGroupId = zoneId;
     },
+    REMOVE_ZONE_GROUP(state, groupId) {
+      const index = state.zoneGroups.findIndex(group => group.id === groupId);
+      state.zoneGroups.splice(index, 1);
+    },
     SET_ZONE_GROUPS(state, zones) {
       state.zoneGroups = zones;
     },
