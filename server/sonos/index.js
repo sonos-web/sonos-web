@@ -141,6 +141,16 @@ SonosNetwork.prototype.partyMode = async function partyMode(groupId) {
 };
 
 /**
+ * Ungroup all zones
+ */
+SonosNetwork.prototype.ungroupAllZones = async function ungroupAllZones() {
+  await Promise.all(this.devices.map(async (device) => {
+    await device.leaveGroup();
+  }));
+};
+
+
+/**
  * Update(merge) internal zone group with new data
  * @param {String} deviceId
  * @param {Object} data

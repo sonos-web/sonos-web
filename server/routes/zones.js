@@ -4,6 +4,10 @@ module.exports = function Zones(sonosNetwork) {
   this.router = router;
   this.sonosNetwork = sonosNetwork;
 
+  this.router.post('/ungroup/all', async (req, res) => {
+    await this.sonosNetwork.ungroupAllZones();
+    res.status(200).send();
+  });
   this.router.post('/ungroup/:zoneId', async (req, res) => {
     await this.sonosNetwork.leaveGroup(req.params.zoneId);
     res.status(200).send();

@@ -26,12 +26,36 @@ export default {
       this.$store.dispatch('setActiveZoneGroup', group.id);
     },
     partyMode() {
-      zonesAPI.partyMode(this.$store.state.activeZoneGroupId);
+      if (this.zoneGroups.length > 1) {
+        const groupId = this.activeZoneGroupId;
+        zonesAPI.partyMode(groupId);
+        // Change zoneGroups immediately to make UI feel more responsive
+        const zoneGroupsCopy = JSON.parse(JSON.stringify(this.zoneGroups));        
+        const joiningZoneGroups = zoneGroupsCopy.filter(zgs => zgs.id !== groupId)
+        let newMembers = joiningZoneGroups.map(zg => {
+          zg.members.push(zg.coordinator)
+          // remove the merged zone
+          this.$store.commit('REMOVE_ZONE_GROUP', zg.id);
+          console.log(zg);
+          return zg.members
+        });
+        // Flatten into a single array
+        newMembers = newMembers.concat.apply([], newMembers)
+        console.log(newMembers);
+        // Update the active zone with its new members
+        this.$store.commit('UPDATE_ZONE_GROUP', { groupId, update: { members: newMembers } });
+      } else {
+        // TODO: Rewrite function to ungroup quicker
+        zonesAPI.ungroupAllZones();
+      }
     }
   },
   computed: {
     zoneGroups() {
       return this.$store.state.zoneGroups;
+    },
+    activeZoneGroupId() {
+      return this.$store.state.activeZoneGroupId
     },
     isLoading() {
       return this.$store.state.isLoading;
