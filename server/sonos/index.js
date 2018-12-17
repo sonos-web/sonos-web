@@ -144,9 +144,11 @@ SonosNetwork.prototype.partyMode = async function partyMode(groupId) {
  * Ungroup all zones
  */
 SonosNetwork.prototype.ungroupAllZones = async function ungroupAllZones() {
-  await Promise.all(this.devices.map(async (device) => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const device of this.devices) {
+    // eslint-disable-next-line no-await-in-loop
     await device.leaveGroup();
-  }));
+  }
 };
 
 
