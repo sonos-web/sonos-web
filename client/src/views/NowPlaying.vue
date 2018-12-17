@@ -1,25 +1,35 @@
 <template>
   <LoadingView v-if="isLoading"></LoadingView>
   <v-container fill-height fluid v-else>
-    <v-layout align-center justify-center row wrap>
+    <v-layout align-center justify-center row wrap>      
       <v-flex xs12 align-center justify-center>
+        <div class="text-xs-center pb-3">
+          <v-menu bottom offset-y>
+            <v-btn class="zone-group-selector" large flat slot="activator">{{ activeZoneGroupName }}  <v-icon right>arrow_drop_down</v-icon></v-btn>
+            <v-list>
+              <v-list-tile v-for="zoneGroup in inactiveZoneGroups" :key="zoneGroup.id" @click="groupSelected(zoneGroup.id)">
+                <v-list-tile-title>{{ groupName(zoneGroup.id) }}</v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
+        </div>    
         <v-img class="album-art" :src="albumArtURL(activeZoneGroup.id)"></v-img>
-      </v-flex>
-      <v-flex xs12>
-        <div class="text-xs-center">
-          <v-card-title primary-title class="d-block">
-            <div @mouseover="tooltipOnOverFlow" class="display-1 text-truncate">
-              {{ trackTitle(activeZoneGroup.id) }}
-            </div>
-            <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">
-              {{ activeZoneGroup.track.artist }}
-            </div>
-            <div @mouseover="tooltipOnOverFlow" class="headline text-truncate grey--text">
-              {{ activeZoneGroup.track.album }}
-            </div>
-          </v-card-title>
-        </div>
-      </v-flex>
+        <v-flex xs12>
+          <div class="text-xs-center">
+            <v-card-title primary-title class="d-block">
+              <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">
+                {{ trackTitle(activeZoneGroup.id) }}
+              </div>
+              <div @mouseover="tooltipOnOverFlow" class="text-truncate">
+                {{ activeZoneGroup.track.artist }}
+              </div>
+              <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">
+                {{ activeZoneGroup.track.album }}
+              </div>
+            </v-card-title>
+          </div>
+        </v-flex>
+      </v-flex>      
     </v-layout>
   </v-container>
 </template>
@@ -28,6 +38,12 @@
 export default {
   name: 'NowPlaying',
   methods: {
+    groupSelected(groupId) {      
+      this.$store.dispatch('setActiveZoneGroup', groupId);
+    },
+    groupName(groupId) {
+      return this.$store.getters.groupName(groupId);
+    },
      albumArtURL(groupId) {
       return this.$store.getters.albumArtURLForGroup(groupId);
     },
@@ -52,14 +68,24 @@ export default {
     },
     activeZoneGroup() {      
       return this.$store.getters.activeZoneGroup;
-    },   
+    },
+    activeZoneGroupName() {
+      return this.$store.getters.groupName(this.activeZoneGroup.id)
+    },
+    inactiveZoneGroups() {
+      return this.zoneGroups.filter(zoneGroup => zoneGroup.id !== this.activeZoneGroup.id)
+    }
   },
 };
 </script>
 
 <style>
 .album-art {
-  max-width: 500px;
+  max-width: 325px;
   margin: 0 auto;
+}
+.zone-group-selector {
+  font-size:24px;
+  text-transform: none;
 }
 </style>

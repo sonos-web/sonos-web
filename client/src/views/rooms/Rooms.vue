@@ -1,13 +1,13 @@
 <template>
   <LoadingView v-if="isLoading"></LoadingView>
-  <v-container fill-height fluid grid-list-xl v-else>    
+  <v-container ma-0 fluid grid-list-xl v-else>    
       <v-layout wrap row>
         <v-flex xs12>
           <v-btn :disabled="zoneGroups.length === 0" round color="secondary" @click="partyMode">{{ partyModeText }}</v-btn>
         </v-flex>  
         <v-flex d-flex v-bind="breakpoint"
-          v-for="(group, index) in zoneGroups" :key="group.id"
-          @click="groupSelected(index)">
+          v-for="group in zoneGroups" :key="group.id"
+          @click="groupSelected(group.id)">
           <zone-group-draggable :zoneGroup="group"></zone-group-draggable>
         </v-flex>
       </v-layout>
@@ -21,9 +21,8 @@ export default {
   name: 'Rooms',
   components: { ZoneGroupDraggable },
   methods: {
-    groupSelected(index) {
-      const group = this.zoneGroups[index];
-      this.$store.dispatch('setActiveZoneGroup', group.id);
+    groupSelected(groupId) {      
+      this.$store.dispatch('setActiveZoneGroup', groupId);
     },
     partyMode() {
       if (this.zoneGroups.length > 1) {

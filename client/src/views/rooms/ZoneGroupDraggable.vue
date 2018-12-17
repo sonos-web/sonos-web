@@ -95,10 +95,6 @@ export default {
       }
       this.$store.commit('UPDATE_ZONE_GROUP', { groupId, update: { members: newMembers } });
     },
-    groupSelected(index) {
-      const group = this.zoneGroups[index];
-      this.$store.dispatch('setActiveZoneGroup', group.id);
-    },
     groupName(groupId) {
       return this.$store.getters.groupName(groupId);
     },
@@ -192,6 +188,9 @@ export default {
 }
 .draggableGroup {
   width: 100%;
+}
+.draggableGroup  > *{
+  user-select: none;
 }
 
 .draggable {

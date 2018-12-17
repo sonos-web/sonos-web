@@ -9,7 +9,7 @@
         </v-container>
       </transition>
       <transition name="fade">
-        <div v-if="!discoveringSonos">
+        <div v-if="!discoveringSonos" class="fill-height">
           <!-- eslint-disable-next-line -->
           <v-navigation-drawer fixed app clipped floating :permanent="true" :mini-variant.sync="miniNav">
             <v-list class="nav-link-list">
