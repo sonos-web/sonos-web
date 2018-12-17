@@ -3,10 +3,8 @@ import Router from 'vue-router';
 // route level code-splitting
 // this generates a separate chunk (about.[hash].js) for this route
 // which is lazy-loaded when the route is visited.
-// const Home = () => import(/* webpackChunkName: "Home" */ './views/Home.vue');
 
-import NowPlaying from './views/NowPlaying.vue';
-
+const NowPlaying = () => import(/* webpackChunkName: "Now Playing" */ './views/NowPlaying.vue');
 const Rooms = () => import(/* webpackChunkName: "Rooms" */ './views/rooms/Rooms.vue');
 
 

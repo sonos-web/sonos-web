@@ -26,8 +26,8 @@
       <v-divider v-if="group.members.length > 0" class="mt-1"></v-divider>
       <v-layout mb-3 v-bind="albumSectionBreakpoint">
         <div class="pt-3 pl-3 pr-0">
-          <v-img
-            :src="group.track.albumArtURL || defaultAlbumArtURL(group.tvPlaying)"
+          <v-img            
+            :src="albumArtURL(group.id)"
             height="125px"
             width="125px"
             contain
@@ -36,7 +36,7 @@
         <v-flex pl-0 v-bind="albumInfoBreakpoint">
           <v-card-title primary-title class="d-block">
             <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">
-              {{ trackTitle(group) }}
+              {{ trackTitle(group.id) }}
             </div>
             <div @mouseover="tooltipOnOverFlow" class="text-truncate">
               {{ group.track.artist }}
@@ -120,20 +120,14 @@ export default {
     muteIcon(mute) {
       return mute ? 'volume_off' : 'volume_up';
     },
-    trackTitle(group) {
-      if (group.tvPlaying) {
-        return 'TV';
-      }
-      return group.track.title || '[No music selected]';
+    albumArtURL(groupId) {
+      return this.$store.getters.albumArtURLForGroup(groupId);
+    },
+    trackTitle(groupId) {
+      return this.$store.getters.trackTitleForGroup(groupId)      
     },
     isPlaying(playState) {
       return playState === 'PLAYING';
-    },
-    defaultAlbumArtURL(tvPlaying) {
-      if (tvPlaying) {
-        return this.$store.state.tvAlbumArtURL;
-      }
-      return this.$store.state.defaultAlbumArtURL;
     },
     tooltipOnOverFlow(event) {
       const element = event;

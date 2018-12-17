@@ -23,9 +23,22 @@ export default new Vuex.Store({
     getGroupById: state => (groupId) => {
       return state.zoneGroups.find(group => group.id === groupId);
     },
+    // eslint-disable-next-line arrow-body-style
+    activeZoneGroup: (state, getters) => {
+      return getters.getGroupById(state.activeZoneGroupId);
+    },
     groupName: (state, getters) => (groupId) => {
-      const zoneGroup = getters.getGroupById(groupId);
-      return zoneGroup.members.length === 0 ? zoneGroup.coordinator.name : `${zoneGroup.coordinator.name} + ${zoneGroup.members.length}`;
+      const group = getters.getGroupById(groupId);
+      return group.members.length === 0 ? group.coordinator.name : `${group.coordinator.name} + ${group.members.length}`;
+    },
+    albumArtURLForGroup: (state, getters) => (groupId) => {
+      const group = getters.getGroupById(groupId);
+      // eslint-disable-next-line max-len
+      return group.track.albumArtURL || (group.tvPlaying ? state.tvAlbumArtURL : state.defaultAlbumArtURL);
+    },
+    trackTitleForGroup: (state, getters) => (groupId) => {
+      const group = getters.getGroupById(groupId);
+      return group.tvPlaying ? 'TV' : (group.track.title || '[No music selected]');
     },
   },
   mutations: {
