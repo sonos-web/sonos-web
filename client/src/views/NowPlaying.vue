@@ -37,9 +37,13 @@
 <script>
 export default {
   name: 'NowPlaying',
-  methods: {
+  created() {    
+    this.$store.dispatch('updateDocumentTitle');
+  },
+  methods: {    
     groupSelected(groupId) {      
       this.$store.dispatch('setActiveZoneGroup', groupId);
+      this.$store.dispatch('updateDocumentTitle');
     },
     groupName(groupId) {
       return this.$store.getters.groupName(groupId);
@@ -48,7 +52,7 @@ export default {
       return this.$store.getters.albumArtURLForGroup(groupId);
     },
     trackTitle(groupId) {
-      return this.$store.getters.trackTitleForGroup(groupId)      
+      return this.$store.getters.trackTitleForGroup(groupId); 
     },
     tooltipOnOverFlow(event) {
       const element = event;
@@ -70,10 +74,11 @@ export default {
       return this.$store.getters.activeZoneGroup;
     },
     activeZoneGroupName() {
-      return this.$store.getters.groupName(this.activeZoneGroup.id)
+      const id = this.activeZoneGroup ? this.activeZoneGroup.id : '';
+      return this.$store.getters.groupName(id);
     },
     inactiveZoneGroups() {
-      return this.zoneGroups.filter(zoneGroup => zoneGroup.id !== this.activeZoneGroup.id)
+      return this.zoneGroups.filter(zoneGroup => zoneGroup.id !== this.activeZoneGroup.id);
     }
   },
 };

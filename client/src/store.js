@@ -29,7 +29,10 @@ export default new Vuex.Store({
     },
     groupName: (state, getters) => (groupId) => {
       const group = getters.getGroupById(groupId);
-      return group.members.length === 0 ? group.coordinator.name : `${group.coordinator.name} + ${group.members.length}`;
+      if (group) {
+        return group.members.length === 0 ? group.coordinator.name : `${group.coordinator.name} + ${group.members.length}`;
+      }
+      return '';
     },
     albumArtURLForGroup: (state, getters) => (groupId) => {
       const group = getters.getGroupById(groupId);
@@ -73,14 +76,16 @@ export default new Vuex.Store({
   actions: {
     setActiveZoneGroup(context, groupId) {
       localStorage.setItem('activeZoneGroupId', groupId);
-      context.commit('SET_ACTIVE_ZONE', groupId);
-      context.dispatch('updateDocumentTitle', groupId);
+      context.commit('SET_ACTIVE_ZONE', groupId);      
     },
-    updateDocumentTitle(context, groupId) {
-      const zoneGroup = context.getters.getGroupById(groupId);
-      const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
-      const title = zoneGroup.tvPlaying ? 'TV' : zoneGroup.track.title || '[No music selected]';
-      document.title = `${title}${artist} - ${context.getters.groupName(zoneGroup.id)}`;
+    updateDocumentTitle(context) {
+      const zoneGroup = context.getters.getGroupById(context.state.activeZoneGroupId);
+      console.log(context.state.activeZoneGroupId);
+      if (zoneGroup) {
+        const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
+        const title = zoneGroup.tvPlaying ? 'TV' : zoneGroup.track.title || '[No music selected]';
+        document.title = `${title}${artist} - ${context.getters.groupName(zoneGroup.id)}`;
+      }
     },
     loadActiveZoneGroup(context) {
       let activeZoneGroupId = localStorage.getItem('activeZoneGroupId');
