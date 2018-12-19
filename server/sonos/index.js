@@ -12,8 +12,13 @@ const SonosNetwork = function SonosNetwork(socketio, timeout = 5000) {
         // Build the zone groups
         this._parseZoneGroups().then(() => {
           this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
-        }).catch(() => {
-          this.socketio.emit('No Sonos Devices Found On Network');
+        }).catch((error) => {
+          console.log(error);
+          if (error.message === 'No Devices Found') {
+            this.socketio.emit('No Sonos Devices Found On Network');
+          } else {
+            this.socketio.emit('An Unknown Error Occurred While Retrieving Devices', error);
+          }
         });
         // Now that we have the devices, listen for events on them
         this._listen();
@@ -242,7 +247,7 @@ SonosNetwork.prototype.getAVTransportInfo = async function getAVTransportInfo(de
 SonosNetwork.prototype._parseZoneGroups = async function _parseZoneGroups() {
   return new Promise((resolve, reject) => {
     // If there are no devices, we cannot
-    if (this.devices.length === 0) { reject(); }
+    if (this.devices.length === 0) { reject(new Error('No Devices Found')); }
 
     const zoneGroups = [];
 
