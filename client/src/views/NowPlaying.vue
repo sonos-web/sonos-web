@@ -1,18 +1,21 @@
 <template>
   <LoadingView v-if="isLoading"></LoadingView>
   <v-container fill-height fluid v-else>
-    <v-layout align-center justify-center row wrap>      
+    <v-layout align-center justify-center row wrap>
       <v-flex xs12 align-center justify-center>
         <div class="text-xs-center pb-3">
           <v-menu bottom offset-y>
-            <v-btn class="zone-group-selector" large flat slot="activator">{{ activeZoneGroupName }}  <v-icon right>arrow_drop_down</v-icon></v-btn>
+            <v-btn class="zone-group-selector" large flat slot="activator">{{ activeZoneGroupName }}
+              <v-icon right>arrow_drop_down</v-icon>
+            </v-btn>
             <v-list>
-              <v-list-tile v-for="zoneGroup in inactiveZoneGroups" :key="zoneGroup.id" @click="groupSelected(zoneGroup.id)">
+              <v-list-tile v-for="zoneGroup in inactiveZoneGroups" :key="zoneGroup.id"
+              @click="groupSelected(zoneGroup.id)">
                 <v-list-tile-title>{{ groupName(zoneGroup.id) }}</v-list-tile-title>
               </v-list-tile>
             </v-list>
           </v-menu>
-        </div>    
+        </div>
         <v-img class="album-art" contain :src="albumArtURL(activeZoneGroupId)"></v-img>
         <v-flex xs12>
           <div class="text-xs-center">
@@ -29,7 +32,7 @@
             </v-card-title>
           </div>
         </v-flex>
-      </v-flex>      
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -37,11 +40,11 @@
 <script>
 export default {
   name: 'NowPlaying',
-  created() {    
+  created() {
     this.$store.dispatch('updateDocumentTitle');
   },
-  methods: {    
-    groupSelected(groupId) {      
+  methods: {
+    groupSelected(groupId) {
       this.$store.dispatch('setActiveZoneGroup', groupId);
       this.$store.dispatch('updateDocumentTitle');
     },
@@ -52,8 +55,8 @@ export default {
       return this.$store.getters.albumArtURLForGroup(groupId);
     },
     trackTitle(groupId) {
-      return this.$store.getters.trackTitleForGroup(groupId); 
-    },    
+      return this.$store.getters.trackTitleForGroup(groupId);
+    },
     tooltipOnOverFlow(event) {
       const element = event;
       if (element.offsetWidth < element.scrollWidth) {
@@ -71,28 +74,28 @@ export default {
       return this.$store.state.zoneGroups;
     },
     activeZoneGroupId() {
-      return this.$store.state.activeZoneGroupId
+      return this.$store.state.activeZoneGroupId;
     },
-    activeZoneGroup() {      
+    activeZoneGroup() {
       return this.$store.getters.activeZoneGroup;
     },
-    activeZoneGroupName() {      
+    activeZoneGroupName() {
       return this.$store.getters.groupName(this.activeZoneGroupId);
     },
     inactiveZoneGroups() {
       return this.zoneGroups.filter(zoneGroup => zoneGroup.id !== this.activeZoneGroupId);
     },
     artist() {
-      if (this.activeZoneGroup){
+      if (this.activeZoneGroup) {
         return this.activeZoneGroup.track.artist;
       }
-      return ''
+      return '';
     },
     album() {
-      if (this.activeZoneGroup){
-        return this.activeZoneGroup.track.album; 
+      if (this.activeZoneGroup) {
+        return this.activeZoneGroup.track.album;
       }
-      return ''
+      return '';
     },
   },
 };

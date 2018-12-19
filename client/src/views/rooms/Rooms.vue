@@ -4,8 +4,8 @@
     <div class="text-xs-center">
       <v-snackbar
       top
-      absolute 
-      :timeout="settings.notifications.dragAndDropRooms.timeout" 
+      absolute
+      :timeout="settings.notifications.dragAndDropRooms.timeout"
       v-model="showDragAndDropInfo">
         {{ settings.notifications.dragAndDropRooms.text }}
         <v-btn color="primary" flat @click="disableDragAndDropNotification">
@@ -15,8 +15,11 @@
     </div>
     <v-layout wrap row>
       <v-flex xs12>
-        <v-btn :disabled="zoneGroups.length === 0" round color="secondary" @click="partyMode">{{ partyModeText }}</v-btn>
-      </v-flex>  
+        <v-btn :disabled="zoneGroups.length === 0" round color="secondary"
+          @click="partyMode">
+          {{ partyModeText }}
+        </v-btn>
+      </v-flex>
       <v-flex d-flex v-bind="breakpoint"
         v-for="group in zoneGroups" :key="group.id"
         @click="groupSelected(group.id)">
@@ -29,7 +32,8 @@
 <script>
 import ZoneGroupDraggable from '@/views/rooms/ZoneGroupDraggable.vue';
 import zonesAPI from '@/services/API/zones';
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
+
 export default {
   name: 'Rooms',
   components: { ZoneGroupDraggable },
@@ -40,11 +44,11 @@ export default {
     if (this.settings.notifications.dragAndDropRooms.show) {
       setTimeout(() => {
         this.showDragAndDropInfo = true;
-      },2000);
+      }, 2000);
     }
   },
   methods: {
-    groupSelected(groupId) {      
+    groupSelected(groupId) {
       this.$store.dispatch('setActiveZoneGroup', groupId);
     },
     partyMode() {
@@ -52,16 +56,16 @@ export default {
         const groupId = this.activeZoneGroupId;
         zonesAPI.partyMode(groupId);
         // Change zoneGroups immediately to make UI feel more responsive
-        const zoneGroupsCopy = JSON.parse(JSON.stringify(this.zoneGroups));        
-        const joiningZoneGroups = zoneGroupsCopy.filter(zgs => zgs.id !== groupId)
-        let newMembers = joiningZoneGroups.map(zg => {
-          zg.members.push(zg.coordinator)
+        const zoneGroupsCopy = JSON.parse(JSON.stringify(this.zoneGroups));
+        const joiningZoneGroups = zoneGroupsCopy.filter(zgs => zgs.id !== groupId);
+        let newMembers = joiningZoneGroups.map((zg) => {
+          zg.members.push(zg.coordinator);
           // remove the merged zone
-          this.$store.commit('REMOVE_ZONE_GROUP', zg.id);          
-          return zg.members
+          this.$store.commit('REMOVE_ZONE_GROUP', zg.id);
+          return zg.members;
         });
         // Flatten into a single array
-        newMembers = newMembers.concat.apply([], newMembers)        
+        newMembers = newMembers.concat.apply([], newMembers);
         // Update the active zone with its new members
         this.$store.commit('UPDATE_ZONE_GROUP', { groupId, update: { members: newMembers } });
       } else {
@@ -72,7 +76,7 @@ export default {
     disableDragAndDropNotification() {
       this.showDragAndDropInfo = false;
       this.$store.commit('UPDATE_SETTINGS', { property: 'notifications.dragAndDropRooms.show', value: false });
-    }
+    },
   },
   computed: {
     ...mapState(['zoneGroups', 'activeZoneGroupId', 'isLoading', 'settings']),

@@ -50,7 +50,8 @@ export default new Vuex.Store({
       const group = getters.getGroupById(groupId);
       // eslint-disable-next-line max-len
       if (group) {
-        return group.track.albumArtURL || (group.tvPlaying ? state.tvAlbumArtURL : state.defaultAlbumArtURL);
+        return group.track.albumArtURL
+        || (group.tvPlaying ? state.tvAlbumArtURL : state.defaultAlbumArtURL);
       }
       return state.defaultAlbumArtURL;
     },
@@ -116,7 +117,7 @@ export default new Vuex.Store({
       context.commit('SET_ACTIVE_ZONE', groupId);
     },
     updateDocumentTitle(context) {
-      const zoneGroup = context.getters.getGroupById(context.state.activeZoneGroupId);      
+      const zoneGroup = context.getters.getGroupById(context.state.activeZoneGroupId);
       if (zoneGroup) {
         const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
         const title = context.getters.trackTitleForGroup(zoneGroup.id);

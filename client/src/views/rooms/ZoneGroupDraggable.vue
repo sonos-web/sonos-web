@@ -1,6 +1,12 @@
 <template>
-  <draggable class="draggableGroup" v-model="zoneGroupAsArray" :options="{group: { name: 'zoneGroup',  put: false, pull: ['zoneGroupMembers']}, sort: false, draggable:'.zone-group'}">
-    <v-card class="px-3 pb-1 zone-group" v-for="group in zoneGroupAsArray" :key="group.id" hover :raised="isActiveGroup(group.id)" color="tertiary">
+  <draggable class="draggableGroup" v-model="zoneGroupAsArray"
+    :options="{
+      group: {
+        name: 'zoneGroup',  put: false, pull: ['zoneGroupMembers']
+      },
+      sort: false, draggable:'.zone-group'}">
+    <v-card class="px-3 pb-1 zone-group" v-for="group in zoneGroupAsArray" :key="group.id"
+    hover :raised="isActiveGroup(group.id)" color="tertiary">
       <div v-show="!isActiveGroup(group.id)" class="overlay"></div>
       <v-layout>
         <v-flex xs12 pa-0 pt-0>
@@ -26,7 +32,7 @@
       <v-divider v-if="group.members.length > 0" class="mt-1"></v-divider>
       <v-layout mb-3 v-bind="albumSectionBreakpoint">
         <div class="pt-3 pl-3 pr-0">
-          <v-img            
+          <v-img
             :src="albumArtURL(group.id)"
             height="125px"
             width="125px"
@@ -68,18 +74,18 @@ export default {
   methods: {
     zoneMembersChanged(groupId, members) {
       const zoneGroup = this.zoneGroups.find(zg => zg.id === groupId);
-      let newMembers = members;
+      const newMembers = members;
       // Find the unique member that was just added
       // the members array we receive are all members, new & existing,
       // but we need to find the new one
       // so we compare with the unmodified array in the store first
       // eslint-disable-next-line max-len
       const newMember = newMembers.filter(member1 => !zoneGroup.members.some(member2 => member1.id === member2.id))[0];
-      
+
       // this means we dropped a whole group in to the members, so we should
       // add this group and its members to the new members
       if (newMember && newMember.coordinator) {
-        const index = newMembers.findIndex(member => member.coordinator === newMember.coordinator);                                
+        const index = newMembers.findIndex(member => member.coordinator === newMember.coordinator);
         // Add coordinator to list of members
         newMembers[index] = newMember.coordinator;
         // Add the whole group, its coordinator, and members to the group we dropped onto
@@ -120,7 +126,7 @@ export default {
       return this.$store.getters.albumArtURLForGroup(groupId);
     },
     trackTitle(groupId) {
-      return this.$store.getters.trackTitleForGroup(groupId)      
+      return this.$store.getters.trackTitleForGroup(groupId);
     },
     isPlaying(playState) {
       return playState === 'PLAYING';
@@ -139,18 +145,12 @@ export default {
       get() {
         return this.$store.state.zoneGroups;
       },
-      set(newValue) {
-        return;
-      },
     },
     zoneGroupAsArray: {
-      get () {
+      get() {
         return [this.zoneGroup];
       },
-      set (newValue) {
-        console.log(newValue);
-      }
-    },    
+    },
     albumInfoBreakpoint() {
       const breakpoint = {};
       if (this.$vuetify.breakpoint.smAndUp) breakpoint.xs8 = true;
