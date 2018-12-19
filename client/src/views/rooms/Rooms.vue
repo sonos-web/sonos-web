@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid pa-0>
+  <v-container fluid pa-0 ma-0>
     <vue-headful title="Rooms - Sonos Web"></vue-headful>
     <LoadingView v-if="isLoading"></LoadingView>
     <v-container pa-0 pl-2 ma-0 fluid grid-list-xl v-else>

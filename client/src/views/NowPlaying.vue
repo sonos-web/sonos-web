@@ -68,7 +68,7 @@ export default {
   computed: {
     documentTitle() {
       const title = this.$store.state.documentTitleForActiveGroup;
-      return title ? title : 'Now Playing - Sonos Web';
+      return  title || 'Now Playing - Sonos Web';
     },
     isLoading() {
       return this.$store.state.isLoading;

@@ -9,11 +9,13 @@ import store from './store';
 import './services/socket';
 
 import LoadingView from './components/LoadingView.vue';
+import ErrorView from './components/ErrorView.vue';
 
 Vue.config.productionTip = false;
 
 Vue.component('vue-headful', vueHeadful);
 Vue.component('LoadingView', LoadingView);
+Vue.component('ErrorView', ErrorView);
 
 new Vue({
   router,
@@ -22,5 +24,9 @@ new Vue({
   created() {
     // initialize settings data
     this.$store.dispatch('loadSettings');
+    if (!navigator.onLine) {
+      store.commit('SET_HAS_ERROR', true);
+      store.commit('SET_ERROR_MESSAGE', 'It looks like you are not connected to a local network.');
+    }
   },
 }).$mount('#app');

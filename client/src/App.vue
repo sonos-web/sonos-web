@@ -9,7 +9,14 @@
         </v-container>
       </transition>
       <transition name="fade">
-        <div v-if="!discoveringSonos" class="fill-height">
+        <v-container fluid fill-height v-if="hasError">
+          <v-layout align-center justify-center>
+            <ErrorView></ErrorView>
+          </v-layout>
+        </v-container>
+      </transition>
+      <transition name="fade">
+        <div v-if="!discoveringSonos && !hasError" class="fill-height">
           <!-- eslint-disable-next-line -->
           <v-navigation-drawer fixed app clipped floating :permanent="true" :mini-variant.sync="miniNav">
             <v-list class="nav-link-list">
@@ -71,6 +78,9 @@ export default {
     discoveringSonos() {
       return this.$store.state.discoveringSonos;
     },
+    hasError() {
+      return this.$store.state.hasError;
+    }
   },
   watch: {
     windowWidth(newWidth) {
