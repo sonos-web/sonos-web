@@ -13,18 +13,18 @@
             </v-list>
           </v-menu>
         </div>    
-        <v-img class="album-art" contain :src="albumArtURL(activeZoneGroup.id)"></v-img>
+        <v-img class="album-art" contain :src="albumArtURL(activeZoneGroupId)"></v-img>
         <v-flex xs12>
           <div class="text-xs-center">
             <v-card-title primary-title class="d-block">
               <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">
-                {{ trackTitle(activeZoneGroup.id) }}
+                {{ trackTitle(activeZoneGroupId) }}
               </div>
               <div @mouseover="tooltipOnOverFlow" class="text-truncate">
-                {{ activeZoneGroup.track.artist }}
+                {{ artist }}
               </div>
               <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">
-                {{ activeZoneGroup.track.album }}
+                {{ album }}
               </div>
             </v-card-title>
           </div>
@@ -48,12 +48,12 @@ export default {
     groupName(groupId) {
       return this.$store.getters.groupName(groupId);
     },
-     albumArtURL(groupId) {
+    albumArtURL(groupId) {
       return this.$store.getters.albumArtURLForGroup(groupId);
     },
     trackTitle(groupId) {
       return this.$store.getters.trackTitleForGroup(groupId); 
-    },
+    },    
     tooltipOnOverFlow(event) {
       const element = event;
       if (element.offsetWidth < element.scrollWidth) {
@@ -70,16 +70,30 @@ export default {
     zoneGroups() {
       return this.$store.state.zoneGroups;
     },
+    activeZoneGroupId() {
+      return this.$store.state.activeZoneGroupId
+    },
     activeZoneGroup() {      
       return this.$store.getters.activeZoneGroup;
     },
-    activeZoneGroupName() {
-      const id = this.activeZoneGroup ? this.activeZoneGroup.id : '';
-      return this.$store.getters.groupName(id);
+    activeZoneGroupName() {      
+      return this.$store.getters.groupName(this.activeZoneGroupId);
     },
     inactiveZoneGroups() {
-      return this.zoneGroups.filter(zoneGroup => zoneGroup.id !== this.activeZoneGroup.id);
-    }
+      return this.zoneGroups.filter(zoneGroup => zoneGroup.id !== this.activeZoneGroupId);
+    },
+    artist() {
+      if (this.activeZoneGroup){
+        return this.activeZoneGroup.track.artist;
+      }
+      return ''
+    },
+    album() {
+      if (this.activeZoneGroup){
+        return this.activeZoneGroup.track.album; 
+      }
+      return ''
+    },
   },
 };
 </script>
