@@ -22,6 +22,8 @@ export default new Vuex.Store({
     },
     isLoading: false,
     loadingMessage: 'Searching for your Sonos System...',
+    hasError: false,
+    errorMessage: 'An unknown error occurred.',
     discoveringSonos: false,
     zoneGroups: [],
     activeZoneGroupId: null,
@@ -47,17 +49,23 @@ export default new Vuex.Store({
     albumArtURLForGroup: (state, getters) => (groupId) => {
       const group = getters.getGroupById(groupId);
       // eslint-disable-next-line max-len
-      return group.track.albumArtURL || (group.tvPlaying ? state.tvAlbumArtURL : state.defaultAlbumArtURL);
+      if (group) {
+        return group.track.albumArtURL || (group.tvPlaying ? state.tvAlbumArtURL : state.defaultAlbumArtURL);
+      }
+      return state.defaultAlbumArtURL;
     },
     trackTitleForGroup: (state, getters) => (groupId) => {
       const group = getters.getGroupById(groupId);
-      let title = '[No music selected]';
-      if (group.tvPlaying) {
-        title = 'TV';
-      } else if (group.track.album) {
-        title = group.track.title || '';
+      if (group) {
+        let title = '[No music selected]';
+        if (group.tvPlaying) {
+          title = 'TV';
+        } else if (group.track.album) {
+          title = group.track.title || '';
+        }
+        return title;
       }
-      return title;
+      return '';
     },
   },
   mutations: {
@@ -66,6 +74,12 @@ export default new Vuex.Store({
     },
     SET_LOADING_MESSAGE(state, message) {
       state.loadingMessage = message;
+    },
+    SET_ERROR_MESSAGE(state, message) {
+      state.errorMessage = message;
+    },
+    SET_HAS_ERROR(state, hasError) {
+      state.hasError = hasError;
     },
     SET_DISCOVERING_SONOS(state, discovering) {
       state.discoveringSonos = discovering;
@@ -102,7 +116,7 @@ export default new Vuex.Store({
       context.commit('SET_ACTIVE_ZONE', groupId);
     },
     updateDocumentTitle(context) {
-      const zoneGroup = context.getters.getGroupById(context.state.activeZoneGroupId);
+      const zoneGroup = context.getters.getGroupById(context.state.activeZoneGroupId);      
       if (zoneGroup) {
         const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
         const title = context.getters.trackTitleForGroup(zoneGroup.id);
@@ -131,7 +145,6 @@ export default new Vuex.Store({
     loadSettings(context) {
       const settings = JSON.parse(localStorage.getItem('settings'));
       if (settings) {
-        console.log(settings);
         // Merge together
         context.commit('MERGE_SETTINGS', settings);
       }
