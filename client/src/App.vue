@@ -39,9 +39,7 @@
               <router-view/>
             </v-layout>
           </v-container>
-          <!-- eslint-disable-next-line -->
-          <v-toolbar fixed clipped-left flat color="secondary" class="now-playing-bar">
-          </v-toolbar>
+          <NowPlayingBar></NowPlayingBar>
         </div>
       </transition>
     </v-content>
@@ -49,7 +47,10 @@
 </template>
 
 <script>
+import NowPlayingBar from '@/components/NowPlayingBar.vue';
+
 export default {
+  components: { NowPlayingBar },
   name: 'App',
   data: () => ({
     miniNav: false,
