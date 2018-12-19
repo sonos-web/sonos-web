@@ -1,31 +1,34 @@
 <template>
-  <LoadingView v-if="isLoading"></LoadingView>
-  <v-container ma-0 fluid grid-list-xl v-else>
-    <div class="text-xs-center">
-      <v-snackbar
-      top
-      absolute
-      :timeout="settings.notifications.dragAndDropRooms.timeout"
-      v-model="showDragAndDropInfo">
-        {{ settings.notifications.dragAndDropRooms.text }}
-        <v-btn color="primary" flat @click="disableDragAndDropNotification">
-          Got It
-        </v-btn>
-      </v-snackbar>
-    </div>
-    <v-layout wrap row>
-      <v-flex xs12>
-        <v-btn :disabled="zoneGroups.length === 0" round color="secondary"
-          @click="partyMode">
-          {{ partyModeText }}
-        </v-btn>
-      </v-flex>
-      <v-flex d-flex v-bind="breakpoint"
-        v-for="group in zoneGroups" :key="group.id"
-        @click="groupSelected(group.id)">
-        <zone-group-draggable :zoneGroup="group"></zone-group-draggable>
-      </v-flex>
-    </v-layout>
+  <v-container fluid pa-0>
+    <vue-headful title="Rooms - Sonos Web"></vue-headful>
+    <LoadingView v-if="isLoading"></LoadingView>
+    <v-container pa-0 pl-2 ma-0 fluid grid-list-xl v-else>
+      <div class="text-xs-center">
+        <v-snackbar
+        top
+        absolute
+        :timeout="settings.notifications.dragAndDropRooms.timeout"
+        v-model="showDragAndDropInfo">
+          {{ settings.notifications.dragAndDropRooms.text }}
+          <v-btn color="primary" flat @click="disableDragAndDropNotification">
+            Got It
+          </v-btn>
+        </v-snackbar>
+      </div>
+      <v-layout wrap row>
+        <v-flex xs12>
+          <v-btn :disabled="zoneGroups.length === 0" round color="secondary"
+            @click="partyMode">
+            {{ partyModeText }}
+          </v-btn>
+        </v-flex>
+        <v-flex d-flex v-bind="breakpoint"
+          v-for="group in zoneGroups" :key="group.id"
+          @click="groupSelected(group.id)">
+          <zone-group-draggable :zoneGroup="group"></zone-group-draggable>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </v-container>
 </template>
 

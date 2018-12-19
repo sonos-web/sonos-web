@@ -1,5 +1,8 @@
 <template>
-  <LoadingView v-if="isLoading"></LoadingView>
+  <v-container fluid fill-height>
+    <LoadingView v-if="isLoading"></LoadingView>
+    <vue-headful title="Search - Sonos Web"></vue-headful>
+  </v-container>
 </template>
 
 <script>

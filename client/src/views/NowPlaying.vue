@@ -1,52 +1,51 @@
 <template>
-  <LoadingView v-if="isLoading"></LoadingView>
-  <v-container fill-height fluid v-else>
-    <v-layout align-center justify-center row wrap>
-      <v-flex xs12 align-center justify-center>
-        <div class="text-xs-center pb-3">
-          <v-menu bottom offset-y>
-            <v-btn class="zone-group-selector" large flat slot="activator">{{ activeZoneGroupName }}
-              <v-icon right>arrow_drop_down</v-icon>
-            </v-btn>
-            <v-list>
-              <v-list-tile v-for="zoneGroup in inactiveZoneGroups" :key="zoneGroup.id"
-              @click="groupSelected(zoneGroup.id)">
-                <v-list-tile-title>{{ groupName(zoneGroup.id) }}</v-list-tile-title>
-              </v-list-tile>
-            </v-list>
-          </v-menu>
-        </div>
-        <v-img class="album-art" contain :src="albumArtURL(activeZoneGroupId)"></v-img>
-        <v-flex xs12>
-          <div class="text-xs-center">
-            <v-card-title primary-title class="d-block">
-              <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">
-                {{ trackTitle(activeZoneGroupId) }}
-              </div>
-              <div @mouseover="tooltipOnOverFlow" class="text-truncate">
-                {{ artist }}
-              </div>
-              <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">
-                {{ album }}
-              </div>
-            </v-card-title>
+  <v-container fluid fill-height pa-0>
+    <vue-headful :title="documentTitle"></vue-headful>
+    <LoadingView v-if="isLoading"></LoadingView>
+    <v-container fill-height fluid v-else>
+      <v-layout align-center justify-center row wrap>
+        <v-flex xs12 align-center justify-center>
+          <div class="text-xs-center pb-3">
+            <v-menu bottom offset-y>
+              <v-btn class="zone-group-selector" large flat slot="activator">{{ activeZoneGroupName }}
+                <v-icon right>arrow_drop_down</v-icon>
+              </v-btn>
+              <v-list>
+                <v-list-tile v-for="zoneGroup in inactiveZoneGroups" :key="zoneGroup.id"
+                @click="groupSelected(zoneGroup.id)">
+                  <v-list-tile-title>{{ groupName(zoneGroup.id) }}</v-list-tile-title>
+                </v-list-tile>
+              </v-list>
+            </v-menu>
           </div>
+          <v-img class="album-art" contain :src="albumArtURL(activeZoneGroupId)"></v-img>
+          <v-flex xs12>
+            <div class="text-xs-center">
+              <v-card-title primary-title class="d-block">
+                <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">
+                  {{ trackTitle(activeZoneGroupId) }}
+                </div>
+                <div @mouseover="tooltipOnOverFlow" class="text-truncate">
+                  {{ artist }}
+                </div>
+                <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">
+                  {{ album }}
+                </div>
+              </v-card-title>
+            </div>
+          </v-flex>
         </v-flex>
-      </v-flex>
-    </v-layout>
+      </v-layout>
+    </v-container>
   </v-container>
 </template>
 
 <script>
 export default {
   name: 'NowPlaying',
-  created() {
-    this.$store.dispatch('updateDocumentTitle');
-  },
   methods: {
     groupSelected(groupId) {
       this.$store.dispatch('setActiveZoneGroup', groupId);
-      this.$store.dispatch('updateDocumentTitle');
     },
     groupName(groupId) {
       return this.$store.getters.groupName(groupId);
@@ -67,6 +66,10 @@ export default {
     },
   },
   computed: {
+    documentTitle() {
+      const title = this.$store.state.documentTitleForActiveGroup;
+      return title ? title : 'Now Playing - Sonos Web';
+    },
     isLoading() {
       return this.$store.state.isLoading;
     },

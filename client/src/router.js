@@ -25,27 +25,19 @@ const router = new Router({
       path: '/search',
       name: 'Search',
       component: Search,
-      meta: { title: 'Search - Sonos Web' },
     },
     {
       path: '/rooms',
       name: 'Rooms',
       component: Rooms,
-      meta: { title: 'Rooms - Sonos Web' },
     },
     {
       path: '/library',
       name: 'MusicLibrary',
       component: MusicLibrary,
-      meta: { title: 'Music Library - Sonos Web' },
     },
 
   ],
-});
-
-router.beforeEach((to, from, next) => {
-  document.title = to.meta.title || document.title;
-  next();
 });
 
 export default router;

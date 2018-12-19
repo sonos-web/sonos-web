@@ -24,6 +24,7 @@ export default new Vuex.Store({
     loadingMessage: 'Searching for your Sonos System...',
     hasError: false,
     errorMessage: 'An unknown error occurred.',
+    documentTitleForActiveGroup: null,
     discoveringSonos: false,
     zoneGroups: [],
     activeZoneGroupId: null,
@@ -103,6 +104,9 @@ export default new Vuex.Store({
     SET_ZONE_GROUPS(state, zones) {
       state.zoneGroups = zones;
     },
+    SET_DOCUMENT_TITLE_FOR_ACTIVE_GROUP(state, title) {
+      state.documentTitleForActiveGroup = title;
+    },
     MERGE_SETTINGS(state, settings) {
       state.settings = { ...state.settings, ...settings };
     },
@@ -115,15 +119,7 @@ export default new Vuex.Store({
     setActiveZoneGroup(context, groupId) {
       localStorage.setItem('activeZoneGroupId', groupId);
       context.commit('SET_ACTIVE_ZONE', groupId);
-    },
-    updateDocumentTitle(context) {
-      const zoneGroup = context.getters.getGroupById(context.state.activeZoneGroupId);
-      if (zoneGroup) {
-        const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
-        const title = context.getters.trackTitleForGroup(zoneGroup.id);
-        const groupName = context.getters.groupName(zoneGroup.id);
-        document.title = `${title}${artist} - ${groupName}`;
-      }
+      context.dispatch('setDocumentTitleForActiveGroup');
     },
     loadActiveZoneGroup(context) {
       let activeZoneGroupId = localStorage.getItem('activeZoneGroupId');
@@ -140,8 +136,18 @@ export default new Vuex.Store({
           activeZoneGroupId = context.state.zoneGroups[0].id;
         }
       }
-      localStorage.setItem('activeZoneGroupId', activeZoneGroupId);
-      context.commit('SET_ACTIVE_ZONE', activeZoneGroupId);
+      context.dispatch('setActiveZoneGroup', activeZoneGroupId);
+    },
+    setDocumentTitleForActiveGroup(context) {
+      const zoneGroup = context.getters.getGroupById(context.state.activeZoneGroupId);
+      let documentTitle = null;
+      if (zoneGroup) {
+        const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
+        const title = context.getters.trackTitleForGroup(zoneGroup.id);
+        const groupName = context.getters.groupName(zoneGroup.id);
+        documentTitle = `${title}${artist} - ${groupName}`;
+      }
+      context.commit('SET_DOCUMENT_TITLE_FOR_ACTIVE_GROUP', documentTitle);
     },
     loadSettings(context) {
       const settings = JSON.parse(localStorage.getItem('settings'));
