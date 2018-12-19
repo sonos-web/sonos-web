@@ -1,6 +1,7 @@
 module.exports = {
   devServer: {
-    port: process.env.PORT || 5050,
+    port: process.env.PORT,
+    host: process.env.HOST,
     proxy: {
       '/api': {
         target: 'http://localhost:5051',
