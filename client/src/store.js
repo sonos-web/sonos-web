@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import Vue from 'vue';
 import Vuex from 'vuex';
+import './helpers/extensions/Object';
 
 Vue.use(Vuex);
 
@@ -10,6 +11,15 @@ const tvAlbumArtURL = require('./assets/tv-album-art.png');
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
+    settings: {
+      notifications: {
+        dragAndDropRooms: {
+          show: true,
+          timeout: 8000,
+          text: 'Tip: Drag rooms to group together.',
+        },
+      },
+    },
     isLoading: false,
     loadingMessage: 'Searching for your Sonos System...',
     discoveringSonos: false,
@@ -78,6 +88,13 @@ export default new Vuex.Store({
     SET_ZONE_GROUPS(state, zones) {
       state.zoneGroups = zones;
     },
+    MERGE_SETTINGS(state, settings) {
+      state.settings = { ...state.settings, ...settings };
+    },
+    UPDATE_SETTINGS(state, payload) {
+      Object.prop(state.settings, payload.property, payload.value);
+      localStorage.setItem('settings', JSON.stringify(state.settings));
+    },
   },
   actions: {
     setActiveZoneGroup(context, groupId) {
@@ -110,6 +127,14 @@ export default new Vuex.Store({
       }
       localStorage.setItem('activeZoneGroupId', activeZoneGroupId);
       context.commit('SET_ACTIVE_ZONE', activeZoneGroupId);
+    },
+    loadSettings(context) {
+      const settings = JSON.parse(localStorage.getItem('settings'));
+      if (settings) {
+        console.log(settings);
+        // Merge together
+        context.commit('MERGE_SETTINGS', settings);
+      }
     },
   },
 });

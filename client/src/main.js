@@ -17,4 +17,8 @@ new Vue({
   router,
   store,
   render: h => h(App),
+  created() {
+    // initialize settings data
+    this.$store.dispatch('loadSettings');
+  },
 }).$mount('#app');
