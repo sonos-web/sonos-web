@@ -81,7 +81,7 @@ export default {
     },
     hasError() {
       return this.$store.state.hasError;
-    }
+    },
   },
   watch: {
     windowWidth(newWidth) {
