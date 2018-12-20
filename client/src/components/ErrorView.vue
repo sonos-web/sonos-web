@@ -1,7 +1,9 @@
 <template>
   <v-container fluid>
     <v-layout align-center justify-center>
-      <v-subheader><v-icon class="pr-2">error</v-icon>{{ errorMessage }}</v-subheader>
+      <v-flex xs6>
+        <v-subheader><v-icon class="pr-2">error</v-icon>{{ errorMessage }}</v-subheader>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
