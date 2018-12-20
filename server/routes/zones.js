@@ -20,4 +20,12 @@ module.exports = function Zones(sonosNetwork) {
     await this.sonosNetwork.partyMode(req.params.groupId);
     res.status(200).send();
   });
+  this.router.put('/:zoneId/volume/:volume', async (req, res) => {
+    await this.sonosNetwork.setVolume(req.params.zoneId, req.params.volume);
+    res.status(200).send();
+  });
+  this.router.put('/:zoneId/mute', async (req, res) => {
+    await this.sonosNetwork.setMute(req.body.mute);
+    res.status(200).send();
+  });
 };
