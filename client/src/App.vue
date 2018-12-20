@@ -95,27 +95,20 @@ export default {
 </script>
 
 <style>
-.fade-enter-active {
-  transition: opacity 0.5s;
+.now-playing-bar-padding {
+  padding-bottom: 90px!important;
 }
-
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
-}
-
 .theme--dark.application {
   background: #141e30; /* fallback for old browsers */
   background: -webkit-linear-gradient(to top, #141e30, #243b55);
   background: linear-gradient(to top, #141e30, #243b55);
 }
-.v-toolbar--fixed.now-playing-bar {
-  top: auto;
-  bottom: 0;
-  height: 90px;
+.fade-enter-active {
+  transition: opacity 0.5s;
 }
-.now-playing-bar-padding {
-  padding-bottom: 90px!important;
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
 }
 .v-navigation-drawer .v-list {
   background: transparent;

@@ -18,12 +18,12 @@
               </v-list>
             </v-menu>
           </div>
-          <v-img class="album-art" contain :src="albumArtURL(activeZoneGroupId)"></v-img>
+          <v-img class="album-art" contain :src="albumArtURL"></v-img>
           <v-flex xs12>
             <div class="text-xs-center">
               <v-card-title primary-title class="d-block">
                 <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">
-                  {{ trackTitle(activeZoneGroupId) }}
+                  {{ track }}
                 </div>
                 <div @mouseover="tooltipOnOverFlow" class="text-truncate">
                   {{ artist }}
@@ -50,12 +50,6 @@ export default {
     groupName(groupId) {
       return this.$store.getters.groupName(groupId);
     },
-    albumArtURL(groupId) {
-      return this.$store.getters.albumArtURLForGroup(groupId);
-    },
-    trackTitle(groupId) {
-      return this.$store.getters.trackTitleForGroup(groupId);
-    },
     tooltipOnOverFlow(event) {
       const element = event;
       if (element.offsetWidth < element.scrollWidth) {
@@ -76,6 +70,9 @@ export default {
     zoneGroups() {
       return this.$store.state.zoneGroups;
     },
+    inactiveZoneGroups() {
+      return this.zoneGroups.filter(zoneGroup => zoneGroup.id !== this.activeZoneGroupId);
+    },
     activeZoneGroupId() {
       return this.$store.state.activeZoneGroupId;
     },
@@ -85,9 +82,9 @@ export default {
     activeZoneGroupName() {
       return this.$store.getters.groupName(this.activeZoneGroupId);
     },
-    inactiveZoneGroups() {
-      return this.zoneGroups.filter(zoneGroup => zoneGroup.id !== this.activeZoneGroupId);
-    },
+    track() {
+      return this.$store.getters.trackTitleForGroup(this.activeZoneGroupId);
+    },   
     artist() {
       if (this.activeZoneGroup) {
         return this.activeZoneGroup.track.artist;
@@ -99,6 +96,9 @@ export default {
         return this.activeZoneGroup.track.album;
       }
       return '';
+    },
+    albumArtURL() {
+      return this.$store.getters.albumArtURLForGroup(this.activeZoneGroupId);
     },
   },
 };
