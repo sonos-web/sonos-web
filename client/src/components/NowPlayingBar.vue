@@ -11,7 +11,7 @@
                 </v-list-tile-avatar>
                 <v-list-tile-content class="pl-3">
                   <v-list-tile-title>{{ track }}</v-list-tile-title>
-                  <v-list-tile-sub-title>{{ artist }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title>{{ artist || album }}</v-list-tile-sub-title>
                 </v-list-tile-content>
               </v-list-tile>
              </v-list>
@@ -59,7 +59,7 @@
             <v-list dense class="pa-0 volume-bar">
               <v-list-tile>
                 <v-slider hide-details color="#b3b3b3" track-color="dark-grey"
-                :prepend-icon="volumeIcon" v-model="volume">
+                :prepend-icon="volumeIcon" @click:prepend="toggleMute" v-model="volume">
                 </v-slider>
               </v-list-tile>
             </v-list>
@@ -87,6 +87,12 @@ export default {
       } else {
         element.title = '';
       }
+    },
+    toggleMute() {
+      console.log('toggle');
+    },
+    groupVolumeChanged(volume) {
+      console.log(volume);
     },
   },
   computed: {
@@ -134,7 +140,16 @@ export default {
         console.log(volume);
       },
     },
+    mute: {
+      get() {
+        if (this.activeZoneGroup) {
+          return this.activeZoneGroup.mute;
+        }
+        return false;
+      },
+    },
     volumeIcon() {
+      if(this.mute) return 'volume_mute';
       return this.volume > 50 ? 'volume_up' : 'volume_down';
     },
     previousEnabled() {
@@ -156,8 +171,7 @@ export default {
       return false;
     },
     playStateEnabled() {
-      if (this.activeZoneGroup) {
-        this.activeZoneGroup.actions.forEach(action => console.log(`[${action}]`));
+      if (this.activeZoneGroup) {        
         if (this.activeZoneGroup.actions.some(action => action === 'Play')) {
           return true;
         }
