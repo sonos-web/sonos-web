@@ -188,7 +188,19 @@ SonosNetwork.prototype.setVolume = async function setVolume(zoneId, volume) {
  */
 SonosNetwork.prototype.setMute = async function setMute(zoneId, mute) {
   const zone = this.devices.find(device => device.id === zoneId);
-  await zone.setMute(mute);
+  await zone.setMuted(mute);
+};
+
+/**
+ * Set group mute for all the speakers
+ * @param {String} groupId
+ * @param {Number} mute
+ */
+SonosNetwork.prototype.setGroupMute = async function setGroupMute(groupId, mute) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  [group.coordinator, ...group.members].map(async (member) => {
+    await member.device.setMuted(mute);
+  });
 };
 
 /**

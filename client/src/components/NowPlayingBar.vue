@@ -71,6 +71,8 @@
 </template>
 
 <script>
+import zonesAPI from '@/services/API/zones';
+
 export default {
   name: 'NowPlayingBar',
   methods: {
@@ -89,7 +91,11 @@ export default {
       }
     },
     toggleMute() {
-      console.log('toggle');
+      if (this.activeZoneGroup) {
+        const mute = !this.activeZoneGroup.mute;
+        this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { mute } })
+        zonesAPI.groupMute(this.activeZoneGroupId, mute)
+      }      
     },
     groupVolumeChanged(volume) {
       console.log(volume);
