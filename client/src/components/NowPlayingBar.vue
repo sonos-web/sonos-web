@@ -22,17 +22,17 @@
             <v-list dense class="pa-0 pt-2">
               <v-list-tile>
                 <v-list-tile-action>
-                  <v-btn icon>
+                  <v-btn :disabled="!previousEnabled" icon>
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
                 </v-list-tile-action>
                 <v-list-tile-action>
-                  <v-btn icon>
-                    <v-icon large>play_arrow</v-icon>
+                  <v-btn :disabled="!playStateEnabled" icon>
+                    <v-icon large>{{ playStateIcon }}</v-icon>
                   </v-btn>
                 </v-list-tile-action>
                 <v-list-tile-action>
-                  <v-btn icon>
+                  <v-btn :disabled="!nextEnabled" icon>
                     <v-icon>skip_next</v-icon>
                   </v-btn>
                 </v-list-tile-action>
@@ -52,7 +52,7 @@
           <v-card flat tile>
             <v-list dense class="pa-0 volume-bar">
               <v-list-tile>
-                <v-slider hide-details color="#b3b3b3" track-color="dark-grey" prepend-icon="volume_down" :value="10">                                    
+                <v-slider hide-details color="#b3b3b3" track-color="dark-grey" :prepend-icon="volumeIcon" v-model="volume">                                    
                 </v-slider>
               </v-list-tile>
             </v-list>
@@ -116,6 +116,62 @@ export default {
     albumArtURL() {
       return this.$store.getters.albumArtURLForGroup(this.activeZoneGroupId);
     },
+    volume: {
+      get() {
+        if (this.activeZoneGroup) {
+          return this.activeZoneGroup.volume
+        }
+        return 0 
+      },
+      set(volume) {
+        console.log(volume)
+      },
+    },
+    volumeIcon() {
+      return this.volume > 50 ? 'volume_up': 'volume_down';
+    },
+    previousEnabled() {
+      if (this.activeZoneGroup) {        
+        if (this.activeZoneGroup.actions.some(action => action === 'Previous')){          
+          return true;
+        } else {          
+          return false;
+        }
+      }
+      return false;
+    },
+    nextEnabled() {
+      if (this.activeZoneGroup) {
+        if (this.activeZoneGroup.actions.some(action => action === 'Next')){
+          return true;
+        } else {
+          return false;
+        }
+      }
+      return false;
+    },
+    playStateEnabled() {
+      if (this.activeZoneGroup) {
+        this.activeZoneGroup.actions.forEach(action => console.log(`[${action}]`))
+        if (this.activeZoneGroup.actions.some(action => action === 'Play')){          
+          return true;
+        } else {
+          return false;
+        }
+      }
+      return false;
+    },
+    playStateIcon() {
+      if (this.activeZoneGroup) {
+        switch (this.activeZoneGroup.state) {
+          case 'PLAYING':
+            return 'pause';
+          default:
+            return 'play_arrow';
+        }
+      }
+      return 'play_arrow';
+    }
   },
 };
 </script>

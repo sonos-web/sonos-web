@@ -236,7 +236,7 @@ SonosNetwork.prototype.getAVTransportInfo = async function getAVTransportInfo(de
     track: currentTrack,
     state: transportInfo.CurrentTransportState,
     playMode: transportSettings.PlayMode,
-    actions: transportActions.Actions,
+    actions: transportActions.Actions.split(', '),
     tvPlaying,
   };
 };
