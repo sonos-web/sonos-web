@@ -7,7 +7,8 @@
         <v-flex xs12 align-center justify-center>
           <div class="text-xs-center pb-3">
             <v-menu bottom offset-y>
-              <v-btn class="zone-group-selector" large flat slot="activator">{{ activeZoneGroupName }}
+              <v-btn class="zone-group-selector" large flat slot="activator">
+                {{ activeZoneGroupName }}
                 <v-icon right>arrow_drop_down</v-icon>
               </v-btn>
               <v-list>
@@ -62,7 +63,7 @@ export default {
   computed: {
     documentTitle() {
       const title = this.$store.state.documentTitleForActiveGroup;
-      return  title || 'Now Playing - Sonos Web';
+      return title || 'Now Playing - Sonos Web';
     },
     isLoading() {
       return this.$store.state.isLoading;
@@ -84,7 +85,7 @@ export default {
     },
     track() {
       return this.$store.getters.trackTitleForGroup(this.activeZoneGroupId);
-    },   
+    },
     artist() {
       if (this.activeZoneGroup) {
         return this.activeZoneGroup.track.artist;
