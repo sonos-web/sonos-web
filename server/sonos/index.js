@@ -166,20 +166,27 @@ SonosNetwork.prototype.setVolume = async function setVolume(zoneId, volume) {
   await zone.setVolume(volume);
 };
 
+/**
+ * Set the volume of all zones in a group as a percentage of the group volume given
+ *
+ * Will modify each zones' volume based on its previous volume as a percentage
+ * of the new group volume
+ *
+ * Group volume is simply an average of all the volumes of its members.
+ * It only exists as a calculated value, not a real one.
+ * @param {String} groupId
+ * @param {Number} volume The average volume for the group
+ */
 SonosNetwork.prototype.setGroupVolume = async function setGroupVolume(groupId, volume) {
   const group = this.zoneGroups.find(zg => zg.id === groupId);
   const zones = [group.coordinator, ...group.members];
   const currentVolume = group.volume;
-  console.log(`Current group volume: ${currentVolume}`);
-  console.log(`New group volume: ${volume}`);
   // If the volume is zero we don't want to divide by 0 -- (NaN)
   // We want to divide by 1
   const volumeDivisor = currentVolume === 0 ? 1 : currentVolume;
   const volumeChangePercentage = 1 + ((volume - currentVolume) / volumeDivisor);
-  console.log(`Volume change percentage: ${volumeChangePercentage}`);
   await Promise.all(zones.map(async (zone) => {
     let zoneVolume = await zone.device.getVolume();
-    console.log(`${zone.name} current volume: ${zoneVolume}`);
     // Anything multiplid by zero is zero...we would never be able to
     // increase the volume, so change it to 1
     zoneVolume = zoneVolume === 0 ? 1 : zoneVolume;
@@ -188,7 +195,6 @@ SonosNetwork.prototype.setGroupVolume = async function setGroupVolume(groupId, v
     // clamp volume between 0 and 100
     newVolume = Math.max(0, Math.min(newVolume, 100));
     await zone.device.setVolume(newVolume);
-    console.log(`${zone.name} new volume: ${newVolume}`);
   }));
 };
 
