@@ -274,7 +274,7 @@ SonosNetwork.prototype._updateZoneGroupTransportInfo = function _updateZoneGroup
   const index = this.zoneGroups.findIndex(group => group.coordinator.id === deviceId);
   if (index !== -1) {
     // Merge new data in
-    this.zoneGroups[index] = { ...this.zoneGroups[index], ...data.transportInfo };
+    this.zoneGroups[index] = { ...this.zoneGroups[index], ...data };
   }
 };
 
@@ -352,19 +352,19 @@ SonosNetwork.prototype.getRenderingControlInfo = async function getRenderingCont
  */
 SonosNetwork.prototype.getAVTransportInfo = async function getAVTransportInfo(device) {
   /**
-   * PlayMode
+   * PlayMode - NORMAL, SUFFLE_NOREPEAT, SHUFFLE, REPEAT_ALL, SHUFFLE_REPEAT_ONE, REPEAT_ONE
    * RecQualityMode
    */
   const transportSettings = await device.avTransportService().GetTransportSettings();
   /**
-   * CurrentTransportState
-   * CurrentTransportStatus
-   * CurrentSpeed
+   * CurrentTransportState - PLAYING, PAUSED_PLAYBACK, TRANSITIONING, STOPPED
+   * CurrentTransportStatus - OK, ?
+   * CurrentSpeed - 1, ?
    */
   const transportInfo = await device.avTransportService().GetTransportInfo();
 
   /**
-   * Actions
+   * Actions - Set, Stop, Pause, Play, X_DLNA_SeekTime, Next, Previous, X_DLNA_SeekTrackNr
    */
   const transportActions = await device.avTransportService().GetCurrentTransportActions();
 
