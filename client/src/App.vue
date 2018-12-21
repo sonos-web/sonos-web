@@ -131,15 +131,15 @@ export default {
 .album-art-image .v-image__image {
   z-index: unset;
 }
-.album-art-image .v-image__image:before {    
+.album-art-image .v-image__image:before {
     content: ' ';
     z-index: -1;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;    
+    height: 100%;
     background-size: contain;
-    background-image: url("http://localhost:5050/img/empty-album-art.b8a07499.png");    
+    background-image: url("http://localhost:5050/img/empty-album-art.b8a07499.png");
 }
 </style>

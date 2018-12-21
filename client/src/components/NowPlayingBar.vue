@@ -11,7 +11,9 @@
                 </v-list-tile-avatar>
                 <v-list-tile-content class="pl-3">
                   <v-list-tile-title @mouseover="tooltipOnOverFlow">{{ track }}</v-list-tile-title>
-                  <v-list-tile-sub-title @mouseover="tooltipOnOverFlow">{{ artist || album }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title @mouseover="tooltipOnOverFlow">
+                    {{ artist || album }}
+                  </v-list-tile-sub-title>
                 </v-list-tile-content>
               </v-list-tile>
              </v-list>
@@ -83,7 +85,7 @@ export default {
     groupName(groupId) {
       return this.$store.getters.groupName(groupId);
     },
-    tooltipOnOverFlow(event) {      
+    tooltipOnOverFlow(event) {
       const element = event.target;
       if (element.offsetWidth < element.scrollWidth) {
         element.title = element.textContent.trim();
@@ -92,7 +94,11 @@ export default {
       }
     },
     playOrPause() {
-      this.playStateIcon === 'pause' ? this.pause() : this.play();  
+      if (this.playStateIcon === 'pause') {
+        this.pause();
+      } else {
+        this.play();
+      }
     },
     play() {
       groupsAPI.play(this.activeZoneGroupId);
@@ -114,7 +120,7 @@ export default {
         this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { mute } });
         groupsAPI.mute(this.activeZoneGroupId, mute);
       }
-    },    
+    },
   },
   computed: {
     zoneGroups() {
@@ -164,7 +170,7 @@ export default {
         }
       },
     },
-    mute() {      
+    mute() {
       if (this.activeZoneGroup) {
         return this.activeZoneGroup.mute;
       }
@@ -206,7 +212,7 @@ export default {
         switch (this.activeZoneGroup.state) {
           case PlayState.playing:
           case PlayState.transitioning:
-            return 'pause';          
+            return 'pause';
           default:
             return 'play_arrow';
         }
