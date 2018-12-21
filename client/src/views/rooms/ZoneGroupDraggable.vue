@@ -59,9 +59,10 @@
 </template>
 
 <script>
-import groupsAPI from '@/services/API/groups';
 import draggable from 'vuedraggable';
+import groupsAPI from '@/services/API/groups';
 import ZoneMembersDraggable from '@/views/rooms/ZoneMembersDraggable.vue';
+import PlayState from '@/enums/PlayState';
 
 export default {
   name: 'ZoneGroupDraggable',
@@ -110,14 +111,14 @@ export default {
     },
     statusIcon(playState) {
       switch (playState) {
-        case 'PAUSED_PLAYBACK':
+        case PlayState.paused:
           return 'pause';
-        case 'PLAYING':
+        case PlayState.playing:
           return 'play_arrow';
-        case 'STOPPED':
+        case PlayState.stopped:
           return 'stop';
         default:
-          return '';
+          return 'play_arrow';
       }
     },
     muteIcon(mute) {
@@ -130,7 +131,7 @@ export default {
       return this.$store.getters.trackTitleForGroup(groupId);
     },
     isPlaying(playState) {
-      return playState === 'PLAYING';
+      return playState === PlayState.playing;
     },
     tooltipOnOverFlow(event) {
       const element = event.target;

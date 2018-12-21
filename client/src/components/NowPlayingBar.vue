@@ -72,6 +72,7 @@
 
 <script>
 import groupsAPI from '@/services/API/groups';
+import PlayState from '@/enums/PlayState';
 
 export default {
   name: 'NowPlayingBar',
@@ -95,9 +96,11 @@ export default {
     },
     play() {
       groupsAPI.play(this.activeZoneGroupId);
+      this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { state: PlayState.playing } });
     },
     pause() {
-      groupsAPI.pause(this.activeZoneGroupId);      
+      groupsAPI.pause(this.activeZoneGroupId);
+      this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { state: PlayState.paused } });
     },
     next() {
       groupsAPI.next(this.activeZoneGroupId);
@@ -201,7 +204,7 @@ export default {
     playStateIcon() {
       if (this.activeZoneGroup) {
         switch (this.activeZoneGroup.state) {
-          case 'PLAYING':
+          case PlayState.playing:
             return 'pause';
           default:
             return 'play_arrow';
