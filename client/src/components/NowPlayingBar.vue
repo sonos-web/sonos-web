@@ -155,16 +155,17 @@ export default {
         return 0;
       },
       set(volume) {
-        console.log(volume);
+        if (this.activeZoneGroup) {
+          this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { volume } });
+          groupsAPI.volume(this.activeZoneGroupId, volume);
+        }
       },
     },
-    mute: {
-      get() {
-        if (this.activeZoneGroup) {
-          return this.activeZoneGroup.mute;
-        }
-        return false;
-      },
+    mute() {      
+      if (this.activeZoneGroup) {
+        return this.activeZoneGroup.mute;
+      }
+      return false;
     },
     volumeIcon() {
       if (this.mute) return 'volume_mute';

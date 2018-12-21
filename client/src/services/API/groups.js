@@ -22,6 +22,9 @@ export default {
   previous(groupId) {
     return axios.put(`/api/groups/${groupId}/previous`);
   },
+  volume(groupId, volume) {
+    return axios.put(`/api/groups/${groupId}/volume/${volume}`);
+  },
   mute(groupId, mute) {
     return axios.put(`/api/groups/${groupId}/mute`, { mute });
   },

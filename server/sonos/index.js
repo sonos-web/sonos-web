@@ -166,13 +166,31 @@ SonosNetwork.prototype.setVolume = async function setVolume(zoneId, volume) {
   await zone.setVolume(volume);
 };
 
-// SonosNetwork.prototype.setGroupVolume = async function setGroupVolume(groupId, volume) {
-//   const group = this.zoneGroups.find(zg => zg.id === groupId);
-//   const zones = [group.coordinator, ...group.members];
-//   zones.map(async (zone) => {
-//     await zone.device.setVolume(volume);
-//   });
-// };
+SonosNetwork.prototype.setGroupVolume = async function setGroupVolume(groupId, volume) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  const zones = [group.coordinator, ...group.members];
+  const currentVolume = group.volume;
+  console.log(`Current group volume: ${currentVolume}`);
+  console.log(`New group volume: ${volume}`);
+  // If the volume is zero we don't want to divide by 0 -- (NaN)
+  // We want to divide by 1
+  const volumeDivisor = currentVolume === 0 ? 1 : currentVolume;
+  const volumeChangePercentage = 1 + ((volume - currentVolume) / volumeDivisor);
+  console.log(`Volume change percentage: ${volumeChangePercentage}`);
+  await Promise.all(zones.map(async (zone) => {
+    let zoneVolume = await zone.device.getVolume();
+    console.log(`${zone.name} current volume: ${zoneVolume}`);
+    // Anything multiplid by zero is zero...we would never be able to
+    // increase the volume, so change it to 1
+    zoneVolume = zoneVolume === 0 ? 1 : zoneVolume;
+    // round the volume...needs to be an int
+    let newVolume = Math.round(zoneVolume * volumeChangePercentage);
+    // clamp volume between 0 and 100
+    newVolume = Math.max(0, Math.min(newVolume, 100));
+    await zone.device.setVolume(newVolume);
+    console.log(`${zone.name} new volume: ${newVolume}`);
+  }));
+};
 
 /**
  * Set mute for a specific zone
