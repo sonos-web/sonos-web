@@ -52,9 +52,9 @@ export default {
       return this.$store.getters.groupName(groupId);
     },
     tooltipOnOverFlow(event) {
-      const element = event;
+      const element = event.target;
       if (element.offsetWidth < element.scrollWidth) {
-        element.title = element.textContent;
+        element.title = element.textContent.trim();
       } else {
         element.title = '';
       }

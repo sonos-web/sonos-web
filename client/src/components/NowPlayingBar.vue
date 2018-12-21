@@ -10,8 +10,8 @@
                   <v-img class="album-art-image" :src="albumArtURL"></v-img>
                 </v-list-tile-avatar>
                 <v-list-tile-content class="pl-3">
-                  <v-list-tile-title>{{ track }}</v-list-tile-title>
-                  <v-list-tile-sub-title>{{ artist || album }}</v-list-tile-sub-title>
+                  <v-list-tile-title @mouseover="tooltipOnOverFlow">{{ track }}</v-list-tile-title>
+                  <v-list-tile-sub-title @mouseover="tooltipOnOverFlow">{{ artist || album }}</v-list-tile-sub-title>
                 </v-list-tile-content>
               </v-list-tile>
              </v-list>
@@ -82,10 +82,10 @@ export default {
     groupName(groupId) {
       return this.$store.getters.groupName(groupId);
     },
-    tooltipOnOverFlow(event) {
-      const element = event;
+    tooltipOnOverFlow(event) {      
+      const element = event.target;
       if (element.offsetWidth < element.scrollWidth) {
-        element.title = element.textContent;
+        element.title = element.textContent.trim();
       } else {
         element.title = '';
       }
