@@ -16,6 +16,22 @@ module.exports = function Groups(sonosNetwork) {
     await this.sonosNetwork.joinGroup(req.params.id, req.body.zoneId);
     res.status(200).send();
   });
+  this.router.put('/:id/play', async (req, res) => {
+    await this.sonosNetwork.play(req.params.id);
+    res.status(200).send();
+  });
+  this.router.put('/:id/pause', async (req, res) => {
+    await this.sonosNetwork.pause(req.params.id);
+    res.status(200).send();
+  });
+  this.router.put('/:id/next', async (req, res) => {
+    await this.sonosNetwork.next(req.params.id);
+    res.status(200).send();
+  });
+  this.router.put('/:id/previous', async (req, res) => {
+    await this.sonosNetwork.previous(req.params.id);
+    res.status(200).send();
+  });
   this.router.put('/:id/volume/:volume', async (req, res) => {
     await this.sonosNetwork.setGroupVolume(req.params.id, req.params.volume);
     res.status(200).send();

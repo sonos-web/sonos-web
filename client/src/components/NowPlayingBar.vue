@@ -22,17 +22,17 @@
             <v-list dense class="pa-0 pt-2">
               <v-list-tile>
                 <v-list-tile-action>
-                  <v-btn :disabled="!previousEnabled" icon>
+                  <v-btn :disabled="!previousEnabled" icon @click="previous">
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
                 </v-list-tile-action>
                 <v-list-tile-action>
-                  <v-btn :disabled="!playStateEnabled" icon>
+                  <v-btn :disabled="!playStateEnabled" icon @click="playOrPause">
                     <v-icon large>{{ playStateIcon }}</v-icon>
                   </v-btn>
                 </v-list-tile-action>
                 <v-list-tile-action>
-                  <v-btn :disabled="!nextEnabled" icon>
+                  <v-btn :disabled="!nextEnabled" icon @click="next">
                     <v-icon>skip_next</v-icon>
                   </v-btn>
                 </v-list-tile-action>
@@ -90,16 +90,28 @@ export default {
         element.title = '';
       }
     },
+    playOrPause() {
+      this.playStateIcon === 'pause' ? this.pause() : this.play();  
+    },
+    play() {
+      groupsAPI.play(this.activeZoneGroupId);
+    },
+    pause() {
+      groupsAPI.pause(this.activeZoneGroupId);      
+    },
+    next() {
+      groupsAPI.next(this.activeZoneGroupId);
+    },
+    previous() {
+      groupsAPI.previous(this.activeZoneGroupId);
+    },
     toggleMute() {
       if (this.activeZoneGroup) {
         const mute = !this.activeZoneGroup.mute;
         this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { mute } });
-        groupsAPI.groupMute(this.activeZoneGroupId, mute);
+        groupsAPI.mute(this.activeZoneGroupId, mute);
       }
-    },
-    groupVolumeChanged(volume) {
-      console.log(volume);
-    },
+    },    
   },
   computed: {
     zoneGroups() {

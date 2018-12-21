@@ -7,10 +7,22 @@ export default {
   ungroupAllZones() {
     return axios.post('/api/groups/ungroup');
   },
-  joinGroup(groupId, zoneId) {
+  join(groupId, zoneId) {
     return axios.post(`/api/groups/${groupId}/join`, { zoneId });
   },
-  groupMute(groupId, mute) {
+  play(groupId) {
+    return axios.put(`/api/groups/${groupId}/play`);
+  },
+  pause(groupId) {
+    return axios.put(`/api/groups/${groupId}/pause`);
+  },
+  next(groupId) {
+    return axios.put(`/api/groups/${groupId}/next`);
+  },
+  previous(groupId) {
+    return axios.put(`/api/groups/${groupId}/previous`);
+  },
+  mute(groupId, mute) {
     return axios.put(`/api/groups/${groupId}/mute`, { mute });
   },
 };
