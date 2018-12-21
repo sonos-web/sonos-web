@@ -114,6 +114,7 @@ export default {
         case PlayState.paused:
           return 'pause';
         case PlayState.playing:
+        case PlayState.transitioning:
           return 'play_arrow';
         case PlayState.stopped:
           return 'stop';
@@ -131,7 +132,7 @@ export default {
       return this.$store.getters.trackTitleForGroup(groupId);
     },
     isPlaying(playState) {
-      return playState === PlayState.playing;
+      return playState === PlayState.playing || playState === PlayState.transitioning;
     },
     tooltipOnOverFlow(event) {
       const element = event.target;

@@ -205,7 +205,8 @@ export default {
       if (this.activeZoneGroup) {
         switch (this.activeZoneGroup.state) {
           case PlayState.playing:
-            return 'pause';
+          case PlayState.transitioning:
+            return 'pause';          
           default:
             return 'play_arrow';
         }
