@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import zonesAPI from '@/services/API/zones';
+import groupsAPI from '@/services/API/groups';
 import draggable from 'vuedraggable';
 import ZoneMembersDraggable from '@/views/rooms/ZoneMembersDraggable.vue';
 
@@ -91,13 +91,13 @@ export default {
         // Add the whole group, its coordinator, and members to the group we dropped onto
         newMembers.push(...newMember.members);
         // Join coordinator and all its members to new group
-        zonesAPI.joinGroup(groupId, newMember.coordinator.id);
-        newMember.members.map(member => zonesAPI.joinGroup(groupId, member.id));
+        groupsAPI.joinGroup(groupId, newMember.coordinator.id);
+        newMember.members.map(member => groupsAPI.joinGroup(groupId, member.id));
 
         // Remove this zone group because we have now merged it into another zone group
         this.$store.commit('REMOVE_ZONE_GROUP', newMember.id);
       } else if (newMember) {
-        zonesAPI.joinGroup(groupId, newMember.id);
+        groupsAPI.joinGroup(groupId, newMember.id);
       }
       this.$store.commit('UPDATE_ZONE_GROUP', { groupId, update: { members: newMembers } });
     },

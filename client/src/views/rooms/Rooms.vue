@@ -34,7 +34,7 @@
 
 <script>
 import ZoneGroupDraggable from '@/views/rooms/ZoneGroupDraggable.vue';
-import zonesAPI from '@/services/API/zones';
+import groupsAPI from '@/services/API/groups';
 import { mapState } from 'vuex';
 
 export default {
@@ -57,7 +57,7 @@ export default {
     partyMode() {
       if (this.zoneGroups.length > 1) {
         const groupId = this.activeZoneGroupId;
-        zonesAPI.partyMode(groupId);
+        groupsAPI.partyMode(groupId);
         // Change zoneGroups immediately to make UI feel more responsive
         const zoneGroupsCopy = JSON.parse(JSON.stringify(this.zoneGroups));
         const joiningZoneGroups = zoneGroupsCopy.filter(zgs => zgs.id !== groupId);
@@ -73,7 +73,7 @@ export default {
         this.$store.commit('UPDATE_ZONE_GROUP', { groupId, update: { members: newMembers } });
       } else {
         // TODO: Rewrite function to ungroup quicker
-        zonesAPI.ungroupAllZones();
+        groupsAPI.ungroupAllZones();
       }
     },
     disableDragAndDropNotification() {

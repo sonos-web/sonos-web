@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import zonesAPI from '@/services/API/zones';
+import groupsAPI from '@/services/API/groups';
 
 export default {
   name: 'NowPlayingBar',
@@ -93,9 +93,9 @@ export default {
     toggleMute() {
       if (this.activeZoneGroup) {
         const mute = !this.activeZoneGroup.mute;
-        this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { mute } })
-        zonesAPI.groupMute(this.activeZoneGroupId, mute)
-      }      
+        this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { mute } });
+        groupsAPI.groupMute(this.activeZoneGroupId, mute);
+      }
     },
     groupVolumeChanged(volume) {
       console.log(volume);
@@ -155,7 +155,7 @@ export default {
       },
     },
     volumeIcon() {
-      if(this.mute) return 'volume_mute';
+      if (this.mute) return 'volume_mute';
       return this.volume > 50 ? 'volume_up' : 'volume_down';
     },
     previousEnabled() {
@@ -177,7 +177,7 @@ export default {
       return false;
     },
     playStateEnabled() {
-      if (this.activeZoneGroup) {        
+      if (this.activeZoneGroup) {
         if (this.activeZoneGroup.actions.some(action => action === 'Play')) {
           return true;
         }

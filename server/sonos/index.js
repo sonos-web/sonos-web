@@ -120,6 +120,83 @@ SonosNetwork.prototype._listen = function listen() {
 };
 
 /**
+ * Resume/Play current queue for provided group
+ * @param {String} groupId
+ */
+SonosNetwork.prototype.play = async function play(groupId) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  if (group) await group.coordinator.device.play();
+};
+
+/**
+ * Pause current queue for provided group
+ * @param {String} groupId
+ */
+SonosNetwork.prototype.pause = async function pause(groupId) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  if (group) await group.coordinator.device.pause();
+};
+
+/**
+ * Play next in queue for provided group
+ * @param {String} groupId
+ */
+SonosNetwork.prototype.next = async function next(groupId) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  if (group) await group.coordinator.device.next();
+};
+
+/**
+ * Play previous in queue for provided group
+ * @param {String} groupId
+ */
+SonosNetwork.prototype.previous = async function previous(groupId) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  if (group) await group.coordinator.device.previous();
+};
+
+
+/**
+ * Set the volume for a specific zone
+ * @param {String} zoneId
+ * @param {Number} volume
+ */
+SonosNetwork.prototype.setVolume = async function setVolume(zoneId, volume) {
+  const zone = this.devices.find(device => device.id === zoneId);
+  await zone.setVolume(volume);
+};
+
+// SonosNetwork.prototype.setGroupVolume = async function setGroupVolume(groupId, volume) {
+//   const group = this.zoneGroups.find(zg => zg.id === groupId);
+//   const zones = [group.coordinator, ...group.members];
+//   zones.map(async (zone) => {
+//     await zone.device.setVolume(volume);
+//   });
+// };
+
+/**
+ * Set mute for a specific zone
+ * @param {String} zoneId
+ * @param {Number} mute
+ */
+SonosNetwork.prototype.setMute = async function setMute(zoneId, mute) {
+  const zone = this.devices.find(device => device.id === zoneId);
+  await zone.setMuted(mute);
+};
+
+/**
+ * Set group mute for all the speakers
+ * @param {String} groupId
+ * @param {Number} mute
+ */
+SonosNetwork.prototype.setGroupMute = async function setGroupMute(groupId, mute) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  [group.coordinator, ...group.members].map(async (member) => {
+    await member.device.setMuted(mute);
+  });
+};
+
+/**
  * Join a zone to a group
  * @param {String} groupId
  * @param {String} zoneId
@@ -161,46 +238,6 @@ SonosNetwork.prototype.ungroupAllZones = async function ungroupAllZones() {
     // eslint-disable-next-line no-await-in-loop
     await device.leaveGroup();
   }
-};
-
-/**
- * Set the volume for a specific zone
- * @param {String} zoneId
- * @param {Number} volume
- */
-SonosNetwork.prototype.setVolume = async function setVolume(zoneId, volume) {
-  const zone = this.devices.find(device => device.id === zoneId);
-  await zone.setVolume(volume);
-};
-
-// SonosNetwork.prototype.setGroupVolume = async function setGroupVolume(groupId, volume) {
-//   const group = this.zoneGroups.find(zg => zg.id === groupId);
-//   const zones = [group.coordinator, ...group.members];
-//   zones.map(async (zone) => {
-//     await zone.device.setVolume(volume);
-//   });
-// };
-
-/**
- * Set mute for a specific zone
- * @param {String} zoneId
- * @param {Number} mute
- */
-SonosNetwork.prototype.setMute = async function setMute(zoneId, mute) {
-  const zone = this.devices.find(device => device.id === zoneId);
-  await zone.setMuted(mute);
-};
-
-/**
- * Set group mute for all the speakers
- * @param {String} groupId
- * @param {Number} mute
- */
-SonosNetwork.prototype.setGroupMute = async function setGroupMute(groupId, mute) {
-  const group = this.zoneGroups.find(zg => zg.id === groupId);
-  [group.coordinator, ...group.members].map(async (member) => {
-    await member.device.setMuted(mute);
-  });
 };
 
 /**
@@ -390,21 +427,7 @@ SonosNetwork.prototype._parseZoneGroups = async function _parseZoneGroups() {
           };
         }));
 
-
-        // const zones = [group.coordinator, ...group.members];
-        // // Group will be NOT muted if at least one zone is not muted
-        // const mute = !zones.some(zone => !zone.mute);
-        // // Average of all volumes
-        // // eslint-disable-next-line arrow-body-style
-        // const volumeSum = zones.reduce((accumulator, current) => {
-        //   return (accumulator.volume + current.volume);
-        // });
-        // // If there is only one element in zones array, it will return the object
-        // // otherwise we will have a number in volumeSum
-        // const volume = typeof (volumeSum) === 'object' ? volumeSum.volume : volumeSum / zones.length;
-
         const renderingInfo = this.getGroupRenderingControlInfo(group);
-
         // merge data in with zoneGroup
         zoneGroups[index] = { ...group, ...transportInfo, ...renderingInfo };
       }));

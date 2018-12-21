@@ -5,6 +5,7 @@ const history = require('connect-history-api-fallback');
 const router = require('express').Router();
 
 const Zones = require('./zones');
+const Groups = require('./groups');
 
 
 module.exports = function Routes(sonosNetwork) {
@@ -23,7 +24,10 @@ module.exports = function Routes(sonosNetwork) {
 
   // All router
   const zones = new Zones(this.sonosNetwork);
+  const groups = new Groups(this.sonosNetwork);
+
   this.router.use('/zones', zones.router);
+  this.router.use('/groups', groups.router);
   // End All router
 
   // This MUST come last - all router that we do not have endpoints for

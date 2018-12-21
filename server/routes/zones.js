@@ -4,37 +4,16 @@ module.exports = function Zones(sonosNetwork) {
   this.router = router;
   this.sonosNetwork = sonosNetwork;
 
-  this.router.post('/ungroup/all', async (req, res) => {
-    await this.sonosNetwork.ungroupAllZones();
+  this.router.post('/:id/ungroup', async (req, res) => {
+    await this.sonosNetwork.leaveGroup(req.params.id);
     res.status(200).send();
   });
-  this.router.post('/:zoneId/ungroup', async (req, res) => {
-    await this.sonosNetwork.leaveGroup(req.params.zoneId);
+  this.router.put('/:id/volume/:volume', async (req, res) => {
+    await this.sonosNetwork.setVolume(req.params.id, req.params.volume);
     res.status(200).send();
   });
-  this.router.post('/join', async (req, res) => {
-    await this.sonosNetwork.joinGroup(req.body.groupId, req.body.zoneId);
-    res.status(200).send();
-  });
-  this.router.post('/:groupId/partyMode', async (req, res) => {
-    await this.sonosNetwork.partyMode(req.params.groupId);
-    res.status(200).send();
-  });
-
-  this.router.put('/:zoneId/volume/:volume', async (req, res) => {
-    await this.sonosNetwork.setVolume(req.params.zoneId, req.params.volume);
-    res.status(200).send();
-  });
-  this.router.put('/:zoneId/mute', async (req, res) => {
+  this.router.put('/:id/mute', async (req, res) => {
     await this.sonosNetwork.setMute(req.body.mute);
-    res.status(200).send();
-  });
-  this.router.put('/:groupId/groupVolume/:volume', async (req, res) => {
-    await this.sonosNetwork.setGroupVolume(req.params.groupId, req.params.volume);
-    res.status(200).send();
-  });
-  this.router.put('/:groupId/groupMute', async (req, res) => {
-    await this.sonosNetwork.setGroupMute(req.params.groupId, req.body.mute);
     res.status(200).send();
   });
 };
