@@ -33,6 +33,7 @@
       <v-layout mb-3 v-bind="albumSectionBreakpoint">
         <div class="pt-3 pl-3 pr-0">
           <v-img
+            class="album-art-image"
             :src="albumArtURL(group.id)"
             height="125px"
             width="125px"

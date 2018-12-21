@@ -19,7 +19,7 @@
               </v-list>
             </v-menu>
           </div>
-          <v-img class="album-art" contain :src="albumArtURL"></v-img>
+          <v-img class="album-art album-art-image" :src="albumArtURL"></v-img>
           <v-flex xs12>
             <div class="text-xs-center">
               <v-card-title primary-title class="d-block">
@@ -100,6 +100,9 @@ export default {
     },
     albumArtURL() {
       return this.$store.getters.albumArtURLForGroup(this.activeZoneGroupId);
+    },
+    albumArtPlaceholderURL() {
+      return this.$store.state.defaultAlbumArtURL;
     },
   },
 };

@@ -126,4 +126,20 @@ export default {
     left: 0px;
     background-color: #3898d6;
 }
+
+/** Set a default image for album art until it loads **/
+.album-art-image .v-image__image {
+  z-index: unset;
+}
+.album-art-image .v-image__image:before {    
+    content: ' ';
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;    
+    background-size: contain;
+    background-image: url("http://localhost:5050/img/empty-album-art.b8a07499.png");    
+}
 </style>

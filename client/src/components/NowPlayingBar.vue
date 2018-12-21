@@ -7,7 +7,7 @@
             <v-list two-line>
               <v-list-tile avatar>
                 <v-list-tile-avatar tile size="60px">
-                  <v-img :src="albumArtURL"></v-img>
+                  <v-img class="album-art-image" :src="albumArtURL"></v-img>
                 </v-list-tile-avatar>
                 <v-list-tile-content class="pl-3">
                   <v-list-tile-title>{{ track }}</v-list-tile-title>
