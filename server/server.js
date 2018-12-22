@@ -12,7 +12,7 @@ const sonosNetwork = new SonosNetwork(io);
 const routes = new Routes(sonosNetwork);
 
 // Connect all our routes to our app
-app.use('/api', routes.router);
+app.use('/', routes.router);
 
 const PORT = process.env.PORT || 5051;
 http.listen(PORT, () => {
@@ -30,11 +30,9 @@ function exitGracefully() {
 }
 
 process.on('SIGINT', () => {
-  console.log('sigint');
   exitGracefully();
 });
 
 process.on('SIGTERM', () => {
-  console.log('sigterm');
   exitGracefully();
 });

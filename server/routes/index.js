@@ -26,19 +26,20 @@ module.exports = function Routes(sonosNetwork) {
   const zones = new Zones(this.sonosNetwork);
   const groups = new Groups(this.sonosNetwork);
 
-  this.router.use('/zones', zones.router);
-  this.router.use('/groups', groups.router);
+  this.router.use('/api/zones', zones.router);
+  this.router.use('/api/groups', groups.router);
   // End All router
 
   // This MUST come last - all router that we do not have endpoints for
   if (process.env.NODE_ENV === 'production') {
     // send back to the client index
     this.router.get('*', (req, res) => {
-      res.sendFile(`${clientDir}/index.html`);
+      res.sendFile(clientIndex);
     });
   } else {
     // send 404 error message
     this.router.get('*', (req, res) => {
+      console.log('404');
       res.status(404).send({ status: '404', message: 'endpoint not found' });
     });
   }
