@@ -42,14 +42,12 @@
             </v-list>
             <v-list dense class="pa-0 progress-bar">
               <v-list-tile>
-                <v-slider hide-details color="#b3b3b3" track-color="dark-grey" :value="10">
-                  <div class="caption grey--text text--lighten-1 progress-time"
-                    slot="prepend">
-                    0:00
+                <v-slider hide-details color="#b3b3b3" step="0" track-color="dark-grey" v-model="trackPosition">
+                  <div class="caption grey--text text--lighten-1 progress-time" slot="prepend">
+                    {{ trackElapsedTime }}
                   </div>
-                  <div class="caption grey--text text--lighten-1 progress-time"
-                    slot="append">
-                    4:23
+                  <div class="caption grey--text text--lighten-1 progress-time" slot="append">
+                    {{ trackDuration }}
                   </div>
                 </v-slider>
               </v-list-tile>
@@ -75,6 +73,7 @@
 <script>
 import groupsAPI from '@/services/API/groups';
 import PlayState from '@/enums/PlayState';
+import secondsToTimeString from '@/helpers/secondsToTimeString';
 
 export default {
   name: 'NowPlayingBar',
@@ -168,7 +167,34 @@ export default {
           this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { volume } });
           groupsAPI.volume(this.activeZoneGroupId, volume);
         }
+      },      
+    },
+    trackElapsedTime() {
+      if (this.activeZoneGroup) {
+        return secondsToTimeString(this.activeZoneGroup.track.position);
+      }
+      return '';
+    },
+    trackDuration() {      
+      if (this.activeZoneGroup) {
+        return secondsToTimeString(this.activeZoneGroup.track.duration);
+      }
+      return '';
+    },
+    trackPosition: {
+      get() {
+        if (this.activeZoneGroup) {
+          return ((this.activeZoneGroup.track.position / this.activeZoneGroup.track.duration) * 100) || 0;
+        }
       },
+      set(position) {
+        if (this.activeZoneGroup) {
+          const positionPercentage = position * 0.01
+          const newPosition = Math.round(this.activeZoneGroup.track.duration * positionPercentage);
+          const track = {...this.activeZoneGroup.track, position: newPosition }
+          this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { track } });
+        }
+      }
     },
     mute() {
       if (this.activeZoneGroup) {
@@ -258,9 +284,6 @@ export default {
 }
 .now-playing-bar .v-input--is-readonly .v-slider__thumb {
   display: none;
-}
-.now-playing-bar .v-input--is-label-active .v-slider__thumb {
-  left: -12px;
 }
 .now-playing-bar-left {
   width: 30%;
