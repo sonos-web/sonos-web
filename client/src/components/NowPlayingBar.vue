@@ -59,9 +59,15 @@
           <v-card flat tile>
             <v-list dense class="pa-0 volume-bar">
               <v-list-tile>
-                <v-slider hide-details color="#b3b3b3" track-color="dark-grey"
-                :prepend-icon="volumeIcon" @click:prepend="toggleMute" v-model="volume">
-                </v-slider>
+                <v-menu offset-y top :open-on-click="hasMembers" :close-on-content-click="false" :close-delay="4000">                  
+                  <v-slider slot="activator" hide-details color="#b3b3b3" track-color="dark-grey"
+                  :prepend-icon="volumeIcon" @click:prepend="toggleMute" v-model="volume">                  
+                  </v-slider>
+
+                  <v-card color="secondary pa-2">
+                    <member-volume-bar v-for="member in activeZoneGroupMembers" :key="member.id" :zoneMember="member"></member-volume-bar>
+                  </v-card>                  
+                </v-menu>
               </v-list-tile>
             </v-list>
           </v-card>
@@ -72,6 +78,7 @@
 </template>
 
 <script>
+import MemberVolumeBar from '@/components/MemberVolumeBar.vue';
 import groupsAPI from '@/services/API/groups';
 import PlayState from '@/enums/PlayState';
 import TransportActions from '@/enums/TransportActions';
@@ -79,6 +86,7 @@ import secondsToTimeString from '@/helpers/secondsToTimeString';
 
 export default {
   name: 'NowPlayingBar',
+  components: { MemberVolumeBar },
   methods: {
     groupSelected(groupId) {
       this.$store.dispatch('setActiveZoneGroup', groupId);
@@ -138,6 +146,19 @@ export default {
     },
     activeZoneGroupName() {
       return this.$store.getters.groupName(this.activeZoneGroupId);
+    },
+    activeZoneGroupMembers() {
+      if (this.activeZoneGroup) {
+        // For the volume bar, we want the coordinator and its members
+        return [this.activeZoneGroup.coordinator, ...this.activeZoneGroup.members];
+      }
+      return [];
+    },
+    hasMembers() {
+      if (this.activeZoneGroup) {
+        return this.activeZoneGroup.members.length > 0
+      }
+      return false;
     },
     track() {
       return this.$store.getters.trackTitleForGroup(this.activeZoneGroupId);
@@ -282,23 +303,6 @@ export default {
   -ms-flex-pack: center;
   justify-content: center;
 }
-.now-playing-bar .v-slider__thumb {
-  transform: translateY(-50%) scale(0.35);
-  background-color:#b3b3b3!important;
-  left: -8px;
-}
-.now-playing-bar .v-slider__thumb-container:before {
-  left: -12px;
-}
-.now-playing-bar .v-slider--is-active .v-slider__track-fill {
-  background-color:#3898d6!important;
-}
-.now-playing-bar .v-slider--is-active .v-slider__thumb {
-  transform: translateY(-50%) scale(0.45);
-}
-.now-playing-bar .v-input--is-readonly .v-slider__thumb {
-  display: none;
-}
 .now-playing-bar-left {
   width: 30%;
   min-width: 180px;
@@ -320,7 +324,25 @@ export default {
 .now-playing-bar .progress-bar {
   margin-top:-4px;
 }
-.now-playing-bar .volume-bar {
+.now-playing-bar .volume-bar, .volume-control {
   width: 180px;
+}
+/***** Slider controls ******/
+.v-slider__thumb {
+  transform: translateY(-50%) scale(0.35);
+  background-color:#b3b3b3!important;
+  left: -8px;
+}
+.v-slider__thumb-container:before {
+  left: -12px;
+}
+.v-slider--is-active .v-slider__track-fill {
+  background-color:#3898d6!important;
+}
+.v-slider--is-active .v-slider__thumb {
+  transform: translateY(-50%) scale(0.45);
+}
+.v-input--is-readonly .v-slider__thumb {
+  display: none;
 }
 </style>

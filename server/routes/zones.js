@@ -13,7 +13,7 @@ module.exports = function Zones(sonosNetwork) {
     res.status(200).send();
   });
   this.router.put('/:id/mute', async (req, res) => {
-    await this.sonosNetwork.setMute(req.body.mute);
+    await this.sonosNetwork.setMute(req.params.id, req.body.mute);
     res.status(200).send();
   });
 };
