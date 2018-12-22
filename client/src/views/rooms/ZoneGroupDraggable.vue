@@ -17,7 +17,7 @@
             </div>
             <v-spacer></v-spacer>
             <v-icon v-if="isPlaying(group.state)">{{ muteIcon(group.mute)}}</v-icon>
-            <v-icon>{{ statusIcon(group.state)}}</v-icon>            
+            <v-icon>{{ statusIcon(group.state)}}</v-icon>
           </v-card-title>
         </v-flex>
       </v-layout>

@@ -4,7 +4,6 @@ import Vuex from 'vuex';
 import './helpers/extensions/Object';
 import PlayState from './enums/PlayState';
 import groupsAPI from './services/API/groups';
-import groups from './services/API/groups';
 
 Vue.use(Vuex);
 
