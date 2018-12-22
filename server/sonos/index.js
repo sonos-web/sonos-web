@@ -6,6 +6,7 @@ const SonosNetwork = function SonosNetwork(socketio, timeout = 5000) {
   this.zoneGroups = [];
   this.timeout = timeout;
   this.initializing = true;
+  this.listener = Listener;
 
   this.init();
 
@@ -63,7 +64,7 @@ SonosNetwork.prototype.discover = async function discover() {
         device.displayName = description.displayName;
         const UUID = description.UDN.split('uuid:')[1];
         device.id = UUID;
-        Listener.subscribeTo(device).then(() => {
+        this.listener.subscribeTo(device).then(() => {
           this.devices.push(device);
         }).catch((error) => {
           switch (error.statusCode) {
@@ -118,7 +119,7 @@ SonosNetwork.prototype._listen = function listen() {
     });
   });
 
-  Listener.on('ZonesChanged', (zoneData) => {
+  this.listener.on('ZonesChanged', (zoneData) => {
     if (zoneData) {
       // const zones = JSON.parse(JSON.stringify(zoneData, ' ', 2));
       this._parseZoneGroups().then(() => {
