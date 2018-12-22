@@ -12,7 +12,7 @@ module.exports = function Routes(sonosNetwork) {
   this.router = router;
   this.sonosNetwork = sonosNetwork;
 
-  // the directory of the client code in the docker container in production
+  // the directory of the client code in production
   const clientDir = `${process.env.PWD}/dist`;
   const clientIndex = `${clientDir}/index.html`;
   if (process.env.NODE_ENV === 'production') {
