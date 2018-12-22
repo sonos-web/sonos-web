@@ -2,7 +2,9 @@
   <v-container fluid>
     <v-layout align-center justify-center>
       <v-flex xs6>
-        <v-subheader><v-icon class="pr-2">error</v-icon>{{ errorMessage }}</v-subheader>
+        <v-subheader class="justify-center">
+          <v-icon class="pr-2">error</v-icon>{{ errorMessage }}
+        </v-subheader>
       </v-flex>
     </v-layout>
   </v-container>
