@@ -345,6 +345,15 @@ SonosNetwork.prototype.getRenderingControlInfo = async function getRenderingCont
   };
 };
 
+SonosNetwork.prototype.getTrackPosition = async function getTrackPosition(groupId) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  if (group) {
+    const track = await group.coordinator.device.avTransportService().CurrentTrack();
+    return track.position;
+  }
+  return null;
+};
+
 /**
  * Returns AVTransportInfo
  * @param {Sonos} device

@@ -4,6 +4,11 @@ module.exports = function Groups(sonosNetwork) {
   this.router = router;
   this.sonosNetwork = sonosNetwork;
 
+  this.router.get('/:id/trackPosition', async (req, res) => {
+    const position = await this.sonosNetwork.getTrackPosition(req.params.id);
+    res.status(200).send({ position });
+  });
+
   this.router.post('/:id/party', async (req, res) => {
     await this.sonosNetwork.partyMode(req.params.id);
     res.status(200).send();
