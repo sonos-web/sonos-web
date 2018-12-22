@@ -16,8 +16,8 @@
               {{ groupName(group.id) }}
             </div>
             <v-spacer></v-spacer>
-            <v-icon>{{ statusIcon(group.state)}}</v-icon>
             <v-icon v-if="isPlaying(group.state)">{{ muteIcon(group.mute)}}</v-icon>
+            <v-icon>{{ statusIcon(group.state)}}</v-icon>            
           </v-card-title>
         </v-flex>
       </v-layout>
@@ -123,7 +123,8 @@ export default {
       }
     },
     muteIcon(mute) {
-      return mute ? 'volume_off' : 'volume_up';
+      if (mute) return 'volume_mute';
+      return this.zoneGroup.volume > 50 ? 'volume_up' : 'volume_down';
     },
     albumArtURL(groupId) {
       return this.$store.getters.albumArtURLForGroup(groupId);
