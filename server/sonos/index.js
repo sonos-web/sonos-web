@@ -93,6 +93,7 @@ SonosNetwork.prototype._listen = function listen() {
       this.getRenderingControlInfo(device).then((renderingInfo) => {
         const zoneGroup = this._zoneGroupForDeviceId(device.id);
         if (zoneGroup) {
+          // eslint-disable-next-line max-len
           const updatedZone = this._updateZoneGroupRenderingInfo(zoneGroup.id, device.id, renderingInfo);
           if (updatedZone) {
             this.socketio.emit('Sonos Event Data Received', { groupId: updatedZone.id, update: updatedZone });
