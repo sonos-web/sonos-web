@@ -10,6 +10,7 @@ socket.on('Discovering Sonos Devices', () => {
 
 socket.on('Sonos Device Discovery Complete', (zoneGroups) => {
   store.commit('SET_DISCOVERING_SONOS', false);
+  store.commit('SET_HAS_ERROR', false);
   store.commit('SET_ZONE_GROUPS', zoneGroups);
   store.dispatch('loadActiveZoneGroup');
 });
@@ -26,5 +27,5 @@ socket.on('An Unknown Error Occurred While Retrieving Devices', (error) => {
 });
 
 socket.on('Sonos Event Data Received', (data) => {
-  store.commit('UPDATE_ZONE_GROUP', data);
+  store.dispatch('updateZoneGroup', data);
 });

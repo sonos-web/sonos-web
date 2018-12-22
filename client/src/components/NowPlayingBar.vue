@@ -102,11 +102,11 @@ export default {
     },
     play() {
       groupsAPI.play(this.activeZoneGroupId);
-      this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { state: PlayState.playing } });
+      this.$store.dispatch('updateZoneGroup', { groupId: this.activeZoneGroupId, update: { state: PlayState.playing } });
     },
     pause() {
       groupsAPI.pause(this.activeZoneGroupId);
-      this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { state: PlayState.paused } });
+      this.$store.dispatch('updateZoneGroup', { groupId: this.activeZoneGroupId, update: { state: PlayState.paused } });
     },
     next() {
       groupsAPI.next(this.activeZoneGroupId);

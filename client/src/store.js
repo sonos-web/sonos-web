@@ -2,6 +2,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import './helpers/extensions/Object';
+import PlayState from './enums/PlayState';
+import groupsAPI from './services/API/groups';
+import groups from './services/API/groups';
 
 Vue.use(Vuex);
 
@@ -29,6 +32,7 @@ export default new Vuex.Store({
     zoneGroups: [],
     activeZoneGroupId: null,
     defaultAlbumArtURL: emptyAlbumArtURL,
+    currentTrackTimer: null,
     tvAlbumArtURL,
   },
   getters: {
@@ -114,46 +118,88 @@ export default new Vuex.Store({
       Object.prop(state.settings, payload.property, payload.value);
       localStorage.setItem('settings', JSON.stringify(state.settings));
     },
+    SET_TRACK_TIMER(state, timer) {
+      clearInterval(state.currentTrackTimer);
+      state.currentTrackTimer = timer;
+    },
+    CLEAR_TRACK_TIMER(state) {
+      clearInterval(state.currentTrackTimer);
+    },
   },
   actions: {
-    setActiveZoneGroup(context, groupId) {
-      localStorage.setItem('activeZoneGroupId', groupId);
-      context.commit('SET_ACTIVE_ZONE', groupId);
-      context.dispatch('setDocumentTitleForActiveGroup');
+    updateZoneGroup({ commit, dispatch }, data) {
+      commit('UPDATE_ZONE_GROUP', data);
+      dispatch('updateTrackTimer');
     },
-    loadActiveZoneGroup(context) {
+    setActiveZoneGroup({ commit, dispatch }, groupId) {
+      localStorage.setItem('activeZoneGroupId', groupId);
+      commit('SET_ACTIVE_ZONE', groupId);
+      dispatch('setDocumentTitleForActiveGroup');
+      dispatch('updateTrackTimer');
+    },
+    loadActiveZoneGroup({ state, dispatch }) {
       let activeZoneGroupId = localStorage.getItem('activeZoneGroupId');
-      const validGroupId = context.state.zoneGroups.some(zg => zg.id === activeZoneGroupId);
+      const validGroupId = state.zoneGroups.some(zg => zg.id === activeZoneGroupId);
       if (!activeZoneGroupId || !validGroupId) {
         // can't continue if there are no zone groups...
-        if (context.state.zoneGroups.length === 0) return;
+        if (state.zoneGroups.length === 0) return;
 
         // Try to find a zoneGroup that is playing, else pick first zoneGroup in list
-        const zoneGroup = context.state.zoneGroups.find(zg => zg.state === 'PLAYING');
+        const zoneGroup = state.zoneGroups.find(zg => zg.state === PlayState.playing);
         if (zoneGroup) {
           activeZoneGroupId = zoneGroup.id;
         } else {
-          activeZoneGroupId = context.state.zoneGroups[0].id;
+          activeZoneGroupId = state.zoneGroups[0].id;
         }
       }
-      context.dispatch('setActiveZoneGroup', activeZoneGroupId);
+      dispatch('setActiveZoneGroup', activeZoneGroupId);
     },
-    setDocumentTitleForActiveGroup(context) {
-      const zoneGroup = context.getters.getGroupById(context.state.activeZoneGroupId);
+    setDocumentTitleForActiveGroup({ commit, state, getters }) {
+      const zoneGroup = getters.getGroupById(state.activeZoneGroupId);
       let documentTitle = null;
       if (zoneGroup) {
         const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
-        const title = context.getters.trackTitleForGroup(zoneGroup.id);
-        const groupName = context.getters.groupName(zoneGroup.id);
+        const title = getters.trackTitleForGroup(zoneGroup.id);
+        const groupName = getters.groupName(zoneGroup.id);
         documentTitle = `${title}${artist} - ${groupName}`;
       }
-      context.commit('SET_DOCUMENT_TITLE_FOR_ACTIVE_GROUP', documentTitle);
+      commit('SET_DOCUMENT_TITLE_FOR_ACTIVE_GROUP', documentTitle);
     },
-    loadSettings(context) {
+    updateTrackTimer({ dispatch, getters, commit }) {
+      const group = getters.activeZoneGroup;
+      if (group) {
+        if (group.state === PlayState.playing) {
+          dispatch('startTrackTimer');
+        } else {
+          commit('CLEAR_TRACK_TIMER');
+        }
+      }
+    },
+    async startTrackTimer({ commit, dispatch, getters }) {
+      const group = getters.activeZoneGroup;
+      if (!group) return;
+      // Get an update on the position of this track before starting the time
+      const response = await groupsAPI.getTrackPosition(group.id);
+      const track = { ...group.track, position: response.data.position };
+      commit('UPDATE_ZONE_GROUP', { groupId: group.id, update: { track } });
+
+      // Start the track timer now that we have the current position
+      const timer = setInterval(() => { dispatch('updateCurrentTrackPosition'); }, 1000);
+      commit('SET_TRACK_TIMER', timer);
+    },
+    updateCurrentTrackPosition({ getters, commit }) {
+      const group = getters.activeZoneGroup;
+      if (group) {
+        const newPosition = group.track.position + 1;
+        const track = { ...group.track, position: newPosition };
+        commit('UPDATE_ZONE_GROUP', { groupId: group.id, update: { track } });
+      }
+    },
+    loadSettings({ commit }) {
       const settings = JSON.parse(localStorage.getItem('settings'));
       if (settings) {
         // Merge together
-        context.commit('MERGE_SETTINGS', settings);
+        commit('MERGE_SETTINGS', settings);
       }
     },
   },
