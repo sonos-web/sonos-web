@@ -1,31 +1,35 @@
-import axios from 'axios';
+import Axios from '../axios';
 
+const axios = new Axios('/api/groups');
 export default {
+  getTrackPosition(groupId) {
+    return axios.get(`/${groupId}/trackPosition`);
+  },
   partyMode(groupId) {
-    return axios.post(`/api/groups/${groupId}/party`);
+    return axios.post(`/${groupId}/party`);
   },
   ungroupAllZones() {
-    return axios.post('/api/groups/ungroup');
+    return axios.post('/ungroup');
   },
   join(groupId, zoneId) {
-    return axios.post(`/api/groups/${groupId}/join`, { zoneId });
+    return axios.post(`/${groupId}/join`, { zoneId });
   },
   play(groupId) {
-    return axios.put(`/api/groups/${groupId}/play`);
+    return axios.put(`/${groupId}/play`);
   },
   pause(groupId) {
-    return axios.put(`/api/groups/${groupId}/pause`);
+    return axios.put(`/${groupId}/pause`);
   },
   next(groupId) {
-    return axios.put(`/api/groups/${groupId}/next`);
+    return axios.put(`/${groupId}/next`);
   },
   previous(groupId) {
-    return axios.put(`/api/groups/${groupId}/previous`);
+    return axios.put(`/${groupId}/previous`);
   },
   volume(groupId, volume) {
-    return axios.put(`/api/groups/${groupId}/volume/${volume}`);
+    return axios.put(`/${groupId}/volume/${volume}`);
   },
   mute(groupId, mute) {
-    return axios.put(`/api/groups/${groupId}/mute`, { mute });
+    return axios.put(`/${groupId}/mute`, { mute });
   },
 };

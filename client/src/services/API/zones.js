@@ -1,7 +1,8 @@
-import axios from 'axios';
+import Axios from '../axios';
 
+const axios = new Axios('/api/zones');
 export default {
   ungroupZone(zoneId) {
-    return axios.post(`/api/zones/${zoneId}/ungroup`);
+    return axios.post(`/${zoneId}/ungroup`);
   },
 };
