@@ -43,7 +43,7 @@
             <v-list dense class="pa-0 progress-bar">
               <v-list-tile>
                 <v-slider hide-details color="#b3b3b3" step="0" track-color="dark-grey"
-                  v-model="trackPosition">
+                  v-model="trackPosition" :readonly="!canSeek">
                   <div class="caption grey--text text--lighten-1 progress-time" slot="prepend">
                     {{ trackElapsedTime }}
                   </div>
@@ -74,6 +74,7 @@
 <script>
 import groupsAPI from '@/services/API/groups';
 import PlayState from '@/enums/PlayState';
+import TransportActions from '@/enums/TransportActions';
 import secondsToTimeString from '@/helpers/secondsToTimeString';
 
 export default {
@@ -171,13 +172,13 @@ export default {
       },
     },
     trackElapsedTime() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track.duration > 0) {
         return secondsToTimeString(this.activeZoneGroup.track.position);
       }
       return '';
     },
     trackDuration() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track.duration > 0) {
         return secondsToTimeString(this.activeZoneGroup.track.duration);
       }
       return '';
@@ -196,8 +197,15 @@ export default {
           const newPosition = Math.round(this.activeZoneGroup.track.duration * positionPercentage);
           const track = { ...this.activeZoneGroup.track, position: newPosition };
           this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { track } });
+          groupsAPI.seek(this.activeZoneGroupId, newPosition);
         }
       },
+    },
+    canSeek() {
+      if (this.activeZoneGroup) {
+        return this.activeZoneGroup.actions.some(action => action === TransportActions.seek);
+      }
+      return false;
     },
     mute() {
       if (this.activeZoneGroup) {
@@ -211,7 +219,7 @@ export default {
     },
     previousEnabled() {
       if (this.activeZoneGroup) {
-        if (this.activeZoneGroup.actions.some(action => action === 'Previous')) {
+        if (this.activeZoneGroup.actions.some(action => action === TransportActions.previous)) {
           return true;
         }
         return false;
@@ -220,7 +228,7 @@ export default {
     },
     nextEnabled() {
       if (this.activeZoneGroup) {
-        if (this.activeZoneGroup.actions.some(action => action === 'Next')) {
+        if (this.activeZoneGroup.actions.some(action => action === TransportActions.next)) {
           return true;
         }
         return false;
@@ -229,7 +237,7 @@ export default {
     },
     playStateEnabled() {
       if (this.activeZoneGroup) {
-        if (this.activeZoneGroup.actions.some(action => action === 'Play')) {
+        if (this.activeZoneGroup.actions.some(action => action === TransportActions.play)) {
           return true;
         }
         return false;
@@ -278,6 +286,9 @@ export default {
   transform: translateY(-50%) scale(0.35);
   background-color:#b3b3b3!important;
   left: -8px;
+}
+.now-playing-bar .v-slider__thumb-container:before {
+  left: -12px;
 }
 .now-playing-bar .v-slider--is-active .v-slider__track-fill {
   background-color:#3898d6!important;

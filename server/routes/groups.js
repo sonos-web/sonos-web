@@ -37,6 +37,10 @@ module.exports = function Groups(sonosNetwork) {
     await this.sonosNetwork.previous(req.params.id);
     res.status(200).send();
   });
+  this.router.put('/:id/seek/:seconds', async (req, res) => {
+    await this.sonosNetwork.seek(req.params.id, req.params.seconds);
+    res.status(200).send();
+  });
   this.router.put('/:id/volume/:volume', async (req, res) => {
     await this.sonosNetwork.setGroupVolume(req.params.id, req.params.volume);
     res.status(200).send();

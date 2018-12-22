@@ -156,6 +156,15 @@ SonosNetwork.prototype.previous = async function previous(groupId) {
   if (group) await group.coordinator.device.previous();
 };
 
+/**
+ * Seek in the current track to the time given in seconds
+ * @param {String} groupId
+ * @param {Number} seconds jump to x seconds
+ */
+SonosNetwork.prototype.seek = async function seek(groupId, seconds) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  if (group) await group.coordinator.device.seek(seconds);
+};
 
 /**
  * Set the volume for a specific zone

@@ -26,6 +26,9 @@ export default {
   previous(groupId) {
     return axios.put(`/${groupId}/previous`);
   },
+  seek(groupId, seconds) {
+    return axios.put(`/${groupId}/seek/${seconds}`);
+  },
   volume(groupId, volume) {
     return axios.put(`/${groupId}/volume/${volume}`);
   },
