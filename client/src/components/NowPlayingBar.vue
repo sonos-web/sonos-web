@@ -42,7 +42,8 @@
             </v-list>
             <v-list dense class="pa-0 progress-bar">
               <v-list-tile>
-                <v-slider hide-details color="#b3b3b3" step="0" track-color="dark-grey" v-model="trackPosition">
+                <v-slider hide-details color="#b3b3b3" step="0" track-color="dark-grey"
+                  v-model="trackPosition">
                   <div class="caption grey--text text--lighten-1 progress-time" slot="prepend">
                     {{ trackElapsedTime }}
                   </div>
@@ -167,7 +168,7 @@ export default {
           this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { volume } });
           groupsAPI.volume(this.activeZoneGroupId, volume);
         }
-      },      
+      },
     },
     trackElapsedTime() {
       if (this.activeZoneGroup) {
@@ -175,7 +176,7 @@ export default {
       }
       return '';
     },
-    trackDuration() {      
+    trackDuration() {
       if (this.activeZoneGroup) {
         return secondsToTimeString(this.activeZoneGroup.track.duration);
       }
@@ -184,17 +185,19 @@ export default {
     trackPosition: {
       get() {
         if (this.activeZoneGroup) {
+          // eslint-disable-next-line max-len
           return ((this.activeZoneGroup.track.position / this.activeZoneGroup.track.duration) * 100) || 0;
         }
+        return 0;
       },
       set(position) {
         if (this.activeZoneGroup) {
-          const positionPercentage = position * 0.01
+          const positionPercentage = position * 0.01;
           const newPosition = Math.round(this.activeZoneGroup.track.duration * positionPercentage);
-          const track = {...this.activeZoneGroup.track, position: newPosition }
+          const track = { ...this.activeZoneGroup.track, position: newPosition };
           this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { track } });
         }
-      }
+      },
     },
     mute() {
       if (this.activeZoneGroup) {
