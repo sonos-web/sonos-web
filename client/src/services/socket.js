@@ -29,3 +29,9 @@ socket.on('An Unknown Error Occurred While Retrieving Devices', (error) => {
 socket.on('Sonos Event Data Received', (data) => {
   store.dispatch('updateZoneGroup', data);
 });
+
+socket.on('disconnect', (reason) => {
+  console.log(reason);
+  store.commit('SET_HAS_ERROR', true);
+  store.commit('SET_ERROR_MESSAGE', 'We got disconnected from the Sonos Network. Is the application server running?');
+});

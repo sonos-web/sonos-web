@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="subheader pt-1">{{ zoneMember.name }}</div>
-    <v-slider class="ma-0 pb-1 pt-1 volume-control" hide-details color="#b3b3b3" track-color="dark-grey"
+    <v-slider class="ma-0 pb-1 pt-1 volume-control" hide-details
+      color="#b3b3b3" track-color="dark-grey"
       :prepend-icon="volumeIcon" @click:prepend="toggleMute" v-model="volume">
     </v-slider>
   </div>

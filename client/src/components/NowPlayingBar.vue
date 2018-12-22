@@ -59,14 +59,16 @@
           <v-card flat tile>
             <v-list dense class="pa-0 volume-bar">
               <v-list-tile>
-                <v-menu offset-y top :open-on-click="hasMembers" :close-on-content-click="false" :close-delay="4000">                  
+                <v-menu offset-y top :open-on-click="hasMembers" :close-on-content-click="false">
                   <v-slider slot="activator" hide-details color="#b3b3b3" track-color="dark-grey"
-                  :prepend-icon="volumeIcon" @click:prepend="toggleMute" v-model="volume">                  
+                  :prepend-icon="volumeIcon" @click:prepend="toggleMute" v-model="volume">
                   </v-slider>
 
                   <v-card color="secondary pa-2">
-                    <member-volume-bar v-for="member in activeZoneGroupMembers" :key="member.id" :zoneMember="member"></member-volume-bar>
-                  </v-card>                  
+                    <member-volume-bar v-for="member in activeZoneGroupMembers" :key="member.id"
+                      :zoneMember="member">
+                    </member-volume-bar>
+                  </v-card>
                 </v-menu>
               </v-list-tile>
             </v-list>
@@ -156,7 +158,7 @@ export default {
     },
     hasMembers() {
       if (this.activeZoneGroup) {
-        return this.activeZoneGroup.members.length > 0
+        return this.activeZoneGroup.members.length > 0;
       }
       return false;
     },
