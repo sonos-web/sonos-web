@@ -5,27 +5,42 @@ const SonosNetwork = function SonosNetwork(socketio, timeout = 5000) {
   this.devices = [];
   this.zoneGroups = [];
   this.timeout = timeout;
-  // Discover the Sonos network on connection
+  this.initializing = true;
+
+  this.init();
+
   this.socketio.on('connection', () => {
-    if (this.devices.length === 0) {
-      this.discover(timeout).then(() => {
-        // Build the zone groups
-        this._parseZoneGroups().then(() => {
-          this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
-        }).catch((error) => {
-          console.log(error);
-          if (error.message === 'No Devices Found') {
-            this.socketio.emit('No Sonos Devices Found On Network');
-          } else {
-            this.socketio.emit('An Unknown Error Occurred While Retrieving Devices', JSON.stringify(error, Object.getOwnPropertyNames(error)));
-          }
-        });
-        // Now that we have the devices, listen for events on them
-        this._listen();
-      });
+    if (this.initializing) {
+      this.socketio.emit('Discovering Sonos Devices');
+    } else if (this.devices.length === 0) {
+      this.init();
     } else {
       this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
     }
+  });
+};
+
+/**
+ * Initialize by discovering the Sonos Network and parsing the zone groups
+ */
+SonosNetwork.prototype.init = function init() {
+  this.initializing = true;
+  this.discover(this.timeout).then(() => {
+    // Build the zone groups
+    this._parseZoneGroups().then(() => {
+      this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
+      this.initializing = false;
+    }).catch((error) => {
+      this.initializing = false;
+      console.log(error);
+      if (error.message === 'No Devices Found') {
+        this.socketio.emit('No Sonos Devices Found On Network');
+      } else {
+        this.socketio.emit('An Unknown Error Occurred While Retrieving Devices', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+      }
+    });
+    // Now that we have the devices, listen for events on them
+    this._listen();
   });
 };
 
