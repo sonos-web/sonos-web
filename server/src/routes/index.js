@@ -13,7 +13,7 @@ module.exports = function Routes(sonosNetwork) {
   this.sonosNetwork = sonosNetwork;
 
   // the directory of the client code in production
-  const clientDir = `${process.env.PWD}/dist`;
+  const clientDir = `${process.cwd()}/dist`;
   const clientIndex = `${clientDir}/index.html`;
   if (process.env.NODE_ENV === 'production') {
     // In Production, all the client code will be in the 'dist' folder
