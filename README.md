@@ -19,6 +19,7 @@ Sonos Web is a developing project and is not yet full-featured. Here are some of
 ## Coming Soon
  * Browse music library by artist, album, genre, playlist, etc.
  * Search your entire music library
+ * View and edit queue
  * Shuffle & repeat controls on the Now Playing control bar.
  * Room selection on the Now Playing control bar.
 
