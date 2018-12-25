@@ -33,6 +33,7 @@ If you are on Linux, the best way is to install node from source [here](https://
 Once npm is installed, run the following commands in your terminal to get started:
 - `npm install -g sonos-web-cli`
 - `sonos-web install` (Installs and starts Sonos Web)
+- Open a browser to `http://localhost:5050` and enjoy!
 
 Run `sonos-web --help` for more options
 
@@ -43,9 +44,17 @@ Run `sonos-web --help` for more options
 ### Adjust volume as a group or as individual rooms
 ![Grouped Rooms & Individual Volume Adjustment](https://user-images.githubusercontent.com/5977736/50412875-0f1e2c00-07c8-11e9-8e11-e5eedae66c74.png)
 
-
 ## Issues or Questions
 If you have any issues or a questions feel free to [open an issue](https://github.com/Villarrealized/sonos-web/issues/new)
+
+## Support
+Suggestions and feedback are always welcome. 
+
+If you like Sonos Web and would like to help fund further development of this project, you can do so through Beerpay.
+[![Beerpay](https://beerpay.io/Villarrealized/sonos-web/badge.svg?style=beer)](https://beerpay.io/Villarrealized/sonos-web)
+
+If there is a feature you would like to see developed you can also make a wish!
+[![Beerpay](https://beerpay.io/Villarrealized/sonos-web/make-wish.svg?style=flat)](https://beerpay.io/Villarrealized/sonos-web)
 
 ## License
 [GPL v3.0](https://github.com/Villarrealized/sonos-web-cli/blob/master/LICENSE)
