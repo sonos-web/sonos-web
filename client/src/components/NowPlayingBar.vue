@@ -24,6 +24,11 @@
             <v-list dense class="pa-0 pt-2">
               <v-list-tile>
                 <v-list-tile-action>
+                  <v-btn icon>
+                    <v-icon small>shuffle</v-icon>
+                  </v-btn>
+                </v-list-tile-action>
+                <v-list-tile-action>
                   <v-btn :disabled="!previousEnabled" icon @click="previous">
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
@@ -36,6 +41,11 @@
                 <v-list-tile-action>
                   <v-btn :disabled="!nextEnabled" icon @click="next">
                     <v-icon>skip_next</v-icon>
+                  </v-btn>                  
+                </v-list-tile-action>
+                <v-list-tile-action>
+                  <v-btn icon>
+                    <v-icon small>repeat</v-icon>
                   </v-btn>
                 </v-list-tile-action>
               </v-list-tile>
@@ -342,7 +352,7 @@ export default {
   background-color:#3898d6!important;
 }
 .v-slider--is-active .v-slider__thumb {
-  transform: translateY(-50%) scale(0.45);
+  transform: translateY(-50%) scale(0.45)!important;
 }
 .v-input--is-readonly .v-slider__thumb {
   display: none;
