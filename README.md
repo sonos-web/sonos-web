@@ -3,7 +3,7 @@ Sonos Web is a browser based controller for your [Sonos](https://www.sonos.com/s
 
 Install Sonos Web on a single computer and access and manage your system from any browser on your network.
 
-![Now Playing](https://user-images.githubusercontent.com/5977736/50413083-c5364580-07c9-11e9-9b7c-6ff598e40e3a.png)
+![Now Playing](https://user-images.githubusercontent.com/5977736/50450891-f9a32200-08ed-11e9-9c43-3416501f2536.png)
 
 Sonos Web relies upon the [node-sonos](https://github.com/bencevans/node-sonos) project for all its Sonos communication.
 
