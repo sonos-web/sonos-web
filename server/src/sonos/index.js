@@ -13,7 +13,7 @@ const SonosNetwork = function SonosNetwork(socketio, timeout = 5000) {
   this.socketio.on('connection', () => {
     if (this.initializing) {
       this.socketio.emit('Discovering Sonos Devices');
-    } else if (this.devices.length === 0) {
+    } else if (this.zoneGroups.length === 0) {
       this.init();
     } else {
       this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
