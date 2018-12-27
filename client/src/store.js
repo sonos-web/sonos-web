@@ -33,6 +33,7 @@ export default new Vuex.Store({
     defaultAlbumArtURL: emptyAlbumArtURL,
     currentTrackTimer: null,
     tvAlbumArtURL,
+    previousRoutePath: null,
   },
   getters: {
     // eslint-disable-next-line arrow-body-style
@@ -123,6 +124,9 @@ export default new Vuex.Store({
     },
     CLEAR_TRACK_TIMER(state) {
       clearInterval(state.currentTrackTimer);
+    },
+    SET_PREVIOUS_ROUTE_PATH(state, path) {
+      state.previousRoutePath = path;
     },
   },
   actions: {

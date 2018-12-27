@@ -17,6 +17,9 @@ export default {
   play(groupId) {
     return axios.put(`/${groupId}/play`);
   },
+  playTrackFromQueue(groupId, trackNumber) {
+    return axios.put(`/${groupId}/play/${trackNumber}`);
+  },
   pause(groupId) {
     return axios.put(`/${groupId}/pause`);
   },
@@ -37,5 +40,17 @@ export default {
   },
   playMode(groupId, playMode) {
     return axios.put(`/${groupId}/mode`, { playMode });
+  },
+  saveQueue(groupId, playlistTitle) {
+    return axios.post(`/${groupId}/queue/save`, { playlistTitle });
+  },
+  clearQueue(groupId) {
+    return axios.put(`/${groupId}/queue/clear`);
+  },
+  removeTracksFromQueue(groupId, trackIndexes) {
+    return axios.put(`/${groupId}/queue/remove`, { trackIndexes });
+  },
+  reorderTracksInQueue(groupId, oldIndex, newIndex) {
+    return axios.put(`/${groupId}/queue/reorder`, { oldIndex, newIndex });
   },
 };

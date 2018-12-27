@@ -1,5 +1,6 @@
 <template>
   <v-app dark>
+    <div class="app-background"></div>
     <v-content class="now-playing-bar-padding">
       <transition name="fade">
         <v-container fluid fill-height v-if="discoveringSonos">
@@ -95,13 +96,24 @@ export default {
 </script>
 
 <style>
+.theme--dark.v-list {
+  background: #282828;
+}
 .now-playing-bar-padding {
   padding-bottom: 90px!important;
 }
-.theme--dark.application {
-  background: #141e30; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to top, #141e30, #243b55);
-  background: linear-gradient(to top, #141e30, #243b55);
+.app-background {
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  will-change: transform;
+  opacity: 1;
+  transition: opacity .25s;
+  background-image: linear-gradient(to top, #141e30, #243b55);
 }
 .fade-enter-active {
   transition: opacity 0.5s;
@@ -141,5 +153,13 @@ export default {
     height: 100%;
     background-size: contain;
     background-image: url("http://localhost:5050/img/empty-album-art.b8a07499.png");
+}
+.album-art-image .v-image__image--preload {
+  -webkit-filter: none;
+  filter: none;
+}
+
+html {
+  overflow-y: auto;
 }
 </style>

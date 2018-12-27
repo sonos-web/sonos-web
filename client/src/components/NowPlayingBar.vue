@@ -71,9 +71,13 @@
           <v-card flat tile>
             <v-list dense class="pa-0 volume-bar">
               <v-list-tile>
+                <v-btn @click="handleQueueButtonClick" class="queue-button" title="Queue" flat
+                :class="$route.name === 'PlayQueue' ? 'v-btn--active': ''">
+                  <v-icon>queue_music</v-icon>
+                </v-btn>
                 <v-menu class="room-select-button" bottom offset-y top>
                   <v-btn title="Select Room" flat slot="activator">
-                    <v-icon>speaker_group</v-icon>
+                    <v-icon small>speaker_group</v-icon>
                   </v-btn>
                   <v-list class="room-select-list">
                     <v-list-tile v-for="zoneGroup in zoneGroups" :key="zoneGroup.id"
@@ -116,6 +120,14 @@ export default {
   name: 'NowPlayingBar',
   components: { MemberVolumeBar },
   methods: {
+    handleQueueButtonClick() {
+      if (this.$route.name === 'PlayQueue') {
+        const back = this.$store.state.previousRoutePath;
+        this.$router.push(back);
+      } else {
+        this.$router.push({ name: 'PlayQueue' });
+      }
+    },
     groupSelected(groupId) {
       this.$store.dispatch('setActiveZoneGroup', groupId);
     },
@@ -429,6 +441,13 @@ export default {
   -ms-flex-pack: center;
   justify-content: center;
 }
+.now-playing-bar-right .v-list__tile {
+  padding: 0px;
+  padding-right: 8px;
+}
+.now-playing-bar-right .v-input__prepend-outer {
+  margin-right: 4px;
+}
 .now-playing-bar-left {
   width: 30%;
   min-width: 180px;
@@ -472,10 +491,10 @@ export default {
   display: none;
 }
 
-.play-mode-button.active {
+.play-mode-button.active, .queue-button.v-btn--active {
   color: #3898d6;
 }
-.play-mode-button.active:after {
+.play-mode-button.active:after, .queue-button.v-btn--active:after {
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -500,11 +519,26 @@ export default {
   margin: 0px;
 }
 
+.now-playing-bar .queue-button {
+  min-width: 24px;
+  padding: 0px;
+  margin: 0px;
+  margin-right: 8px;
+}
+
+.now-playing-bar .queue-button.v-btn--active:before {
+  background-color:initial;
+}
+
 .room-select-list {
   padding: 0px;
 }
+.room-select-title {
+  color: #bababa;
+  background: rgba(0,0,0,0.2)!important;
+}
 .room-select-title.active {
-  background: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.0)!important;
   color: #3898d6;
 }
 </style>

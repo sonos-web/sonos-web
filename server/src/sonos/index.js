@@ -96,14 +96,14 @@ SonosNetwork.prototype._listen = function listen() {
     // We don't use the data returned, because it is insufficent
     // We need more than it provides
     device.on('AVTransport', () => {
-      this.getAVTransportInfo(device).then((transportInfo) => {
-        // Find the zone group this device is in
-        const zoneGroup = this.zoneGroups.find(zg => zg.coordinator.id === device.id);
-        if (zoneGroup) {
+      // Find the zone group, we only care if it is the coordinator
+      const zoneGroup = this.zoneGroups.find(zg => zg.coordinator.id === device.id);
+      if (zoneGroup) {
+        this.getAVTransportInfo(device).then((transportInfo) => {
           this.socketio.emit('Sonos Event Data Received', { groupId: zoneGroup.id, update: transportInfo });
           this._updateZoneGroupTransportInfo(device.id, transportInfo);
-        }
-      });
+        });
+      }
     });
     device.on('RenderingControl', () => {
       this.getRenderingControlInfo(device).then((renderingInfo) => {
@@ -116,6 +116,16 @@ SonosNetwork.prototype._listen = function listen() {
           }
         }
       });
+    });
+    device.on('QueueChanged', () => {
+      // Find the zone group, we only care if it is the coordinator
+      const zoneGroup = this.zoneGroups.find(zg => zg.coordinator.id === device.id);
+      if (zoneGroup) {
+        this.getQueue(device).then((queue) => {
+          this.socketio.emit('Sonos Event Data Received', { groupId: zoneGroup.id, update: { queue } });
+          this._updateZoneGroupTransportInfo(device.id, { queue });
+        });
+      }
     });
   });
 
@@ -254,6 +264,80 @@ SonosNetwork.prototype.setGroupMute = async function setGroupMute(groupId, mute)
   [group.coordinator, ...group.members].map(async (member) => {
     await member.device.setMuted(mute);
   });
+};
+
+/**
+ * Clear current queue for group
+ * @param {String} groupId
+ */
+SonosNetwork.prototype.clearQueue = async function clearQueue(groupId) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  await group.coordinator.device.flush();
+};
+
+/**
+ * Remove array of tracks from queue
+ * @param {String} groupId
+ * @param {Array} trackIndexes - Array of 0-based indexes to be removed from queue
+ */
+// eslint-disable-next-line max-len
+SonosNetwork.prototype.removeTracksFromQueue = async function removeTracksFromQueue(groupId, trackIndexes) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  const indexes = trackIndexes.sort((a, b) => b - a);
+  // eslint-disable-next-line no-restricted-syntax
+  for (const queuePosition of indexes) {
+    // must add 1 to each index, because Sonos expects it to be 1 based, not 0 based.
+    const removeIndex = queuePosition + 1;
+    // eslint-disable-next-line no-await-in-loop
+    await group.coordinator.device.removeTracksFromQueue(removeIndex);
+  }
+};
+
+/**
+ * Save current queue for group
+ * @param {String} groupId
+ * @param {String} playlistTitle
+ */
+SonosNetwork.prototype.saveQueue = async function saveQueue(groupId, playlistTitle) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  const options = { InstanceID: 0, Title: playlistTitle, ObjectID: '' };
+  try {
+    await group.coordinator.device.avTransportService().SaveQueue(options);
+  } catch (error) {
+    throw (error);
+  }
+};
+
+/**
+ * Reorder tracks in queue for group
+ * @param {String} groupId
+ * @param {Number} oldIndex - 0-based index of the track to move
+ * @param {Number} newIndex - 0-based index of where to move the track
+ */
+// eslint-disable-next-line max-len
+SonosNetwork.prototype.reorderTracksInQueue = async function reorderTracksInQueue(groupId, oldIndex, newIndex) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  // Add 1 to each index, because Sonos expects 1 based, not 0 based index
+  const from = oldIndex + 1;
+  let to = newIndex + 1;
+  // We need to add 1 because, 'to' is actually insertBefore and when we are
+  // moving a track further down the list, we need to transform
+  // the 'to' value into a proper insertBefore value
+  if (to > from) to += 1;
+  group.coordinator.device.reorderTracksInQueue(from, 1, to);
+};
+
+/**
+ * Play a track from the queue
+ * @param {String} groupId
+ * @param {Number} trackNumber - 1-based index of the track to play
+ */
+// eslint-disable-next-line max-len
+SonosNetwork.prototype.playTrackFromQueue = async function playTrackFromQueue(groupId, trackNumber) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  await group.coordinator.device.selectQueue();
+  await group.coordinator.device.selectTrack(trackNumber);
+  await group.coordinator.device.play();
 };
 
 /**
@@ -440,13 +524,30 @@ SonosNetwork.prototype.getAVTransportInfo = async function getAVTransportInfo(de
 
   const tvPlaying = positionInfo.TrackURI.match(/^x-sonos-htastream:/) !== null;
 
+  const queue = await this.getQueue(device);
+
   return {
     track: currentTrack,
     state: transportInfo.CurrentTransportState,
     playMode: transportSettings.PlayMode,
     actions: transportActions.Actions.split(', '),
     tvPlaying,
+    queue,
   };
+};
+
+/**
+ * Returns current queue for device or null
+ * @param {Sonos} device
+ * @returns {Object} AVTransportInfo
+ */
+SonosNetwork.prototype.getQueue = async function getQueue(device) {
+  const queue = await device.getQueue();
+  if (queue) {
+    queue.items.forEach((track, index) => { queue.items[index].queuePosition = index + 1; });
+    return queue.items;
+  }
+  return null;
 };
 
 /**
@@ -489,13 +590,15 @@ SonosNetwork.prototype._parseZoneGroups = async function _parseZoneGroups() {
         });
       });
 
-      // A zone group could be without a coordinator if the Sonos player was previously part of the network, but has been unplugged, etc.
+      // A zone group could be without a coordinator if the Sonos player
+      // was previously part of the network, but has been unplugged, etc.
       // For now, we simply eliminate these
       zoneGroups = zoneGroups.filter(group => group.coordinator.device !== undefined);
 
       // Fetch the transport info for all zones
       await Promise.all(zoneGroups.map(async (group, index) => {
         const transportInfo = await this.getAVTransportInfo(group.coordinator.device);
+        const queue = await this.getQueue(group.coordinator.device);
         // Get rendering info for coordinator & each device in the group
         zoneGroups[index].coordinator = {
           ...group.coordinator,
@@ -510,7 +613,12 @@ SonosNetwork.prototype._parseZoneGroups = async function _parseZoneGroups() {
 
         const renderingInfo = this.getGroupRenderingControlInfo(group);
         // merge data in with zoneGroup
-        zoneGroups[index] = { ...group, ...transportInfo, ...renderingInfo };
+        zoneGroups[index] = {
+          ...group,
+          ...transportInfo,
+          ...renderingInfo,
+          queue,
+        };
       }));
 
       // Sort all the members of each zone alphabetically

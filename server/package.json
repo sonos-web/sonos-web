@@ -1,6 +1,6 @@
 {
   "name": "sonos-web",
-  "version": "0.1.1",
+  "version": "0.4.0",
   "description": "Sonos Web Controller",
   "scripts": {
     "start": "node src/server.js",
@@ -13,7 +13,7 @@
     "express": "^4.16.2",
     "serve-static": "^1.13.2",
     "socket.io": "^2.2.0",
-    "sonos": "~1.8.0"
+    "sonos": "git+https://github.com/Villarrealized/node-sonos.git#feature/queue-events"
   },
   "devDependencies": {
     "eslint": "^5.10.0",
