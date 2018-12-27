@@ -49,4 +49,9 @@ module.exports = function Groups(sonosNetwork) {
     await this.sonosNetwork.setGroupMute(req.params.id, req.body.mute);
     res.status(200).send();
   });
+
+  this.router.put('/:id/mode', async (req, res) => {
+    await this.sonosNetwork.setPlayMode(req.params.id, req.body.playMode);
+    res.status(200).send();
+  });
 };

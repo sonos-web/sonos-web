@@ -35,4 +35,7 @@ export default {
   mute(groupId, mute) {
     return axios.put(`/${groupId}/mute`, { mute });
   },
+  playMode(groupId, playMode) {
+    return axios.put(`/${groupId}/mode`, { playMode });
+  },
 };

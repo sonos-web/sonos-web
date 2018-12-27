@@ -183,6 +183,16 @@ SonosNetwork.prototype.seek = async function seek(groupId, seconds) {
 };
 
 /**
+ * Set the play mode for a group
+ * @param {String} groupId
+ * @param {Number} volume
+ */
+SonosNetwork.prototype.setPlayMode = async function setPlayMode(groupId, playMode) {
+  const group = this.zoneGroups.find(zg => zg.id === groupId);
+  await group.coordinator.device.setPlayMode(playMode);
+};
+
+/**
  * Set the volume for a specific zone
  * @param {String} zoneId
  * @param {Number} volume
