@@ -24,7 +24,8 @@
             <v-list dense class="pa-0 pt-2">
               <v-list-tile>
                 <v-list-tile-action>
-                  <v-btn class="play-mode-button" :class="shuffleActive ? 'active' : ''" icon :disabled="!canSeek" @click="toggleShuffle">
+                  <v-btn class="play-mode-button" :class="shuffleActive ? 'active' : ''" icon
+                  :disabled="!canSeek" @click="toggleShuffle">
                     <v-icon small>shuffle</v-icon>
                   </v-btn>
                 </v-list-tile-action>
@@ -41,10 +42,11 @@
                 <v-list-tile-action>
                   <v-btn :disabled="!nextEnabled" icon @click="next">
                     <v-icon>skip_next</v-icon>
-                  </v-btn>                  
+                  </v-btn>
                 </v-list-tile-action>
                 <v-list-tile-action>
-                  <v-btn class="play-mode-button" :class="repeatActive ? 'active' : ''" :disabled="!canSeek" icon @click="toggleRepeat">
+                  <v-btn class="play-mode-button" :class="repeatActive ? 'active' : ''"
+                  :disabled="!canSeek" icon @click="toggleRepeat">
                     <v-icon small>{{ repeatIcon }}</v-icon>
                   </v-btn>
                 </v-list-tile-action>
@@ -69,6 +71,19 @@
           <v-card flat tile>
             <v-list dense class="pa-0 volume-bar">
               <v-list-tile>
+                <v-menu class="room-select-button" bottom offset-y top>
+                  <v-btn title="Select Room" flat slot="activator">
+                    <v-icon>speaker_group</v-icon>
+                  </v-btn>
+                  <v-list class="room-select-list">
+                    <v-list-tile v-for="zoneGroup in zoneGroups" :key="zoneGroup.id"
+                    @click="groupSelected(zoneGroup.id)"
+                    class="room-select-title"
+                    :class="activeZoneGroupId === zoneGroup.id ? 'active' : ''">
+                      <v-list-tile-title>{{ groupName(zoneGroup.id) }}</v-list-tile-title>
+                    </v-list-tile>
+                  </v-list>
+                </v-menu>
                 <v-menu offset-y top :open-on-click="hasMembers" :close-on-content-click="false">
                   <v-slider slot="activator" hide-details color="#b3b3b3" track-color="dark-grey"
                   :prepend-icon="volumeIcon" @click:prepend="toggleMute" v-model="volume">
@@ -143,9 +158,9 @@ export default {
         groupsAPI.mute(this.activeZoneGroupId, mute);
       }
     },
-    toggleShuffle() {          
+    toggleShuffle() {
       if (this.activeZoneGroup) {
-        let playMode = null;  
+        let playMode = null;
         const currentPlayMode = this.activeZoneGroup.playMode;
         // Shuffle is on, we want to turn it off
         if (this.shuffleActive) {
@@ -157,31 +172,29 @@ export default {
             }
           } else {
             // Repeat is NOT active & we are turning shuffle off
-            playMode = PlayMode.normal            
+            playMode = PlayMode.normal;
+          }
+          // Shuffle is off, we want to turn it on
+        } else if (this.repeatActive) {
+          if (currentPlayMode === PlayMode.repeat) {
+            playMode = PlayMode.shuffleRepeat;
+          } else {
+            playMode = PlayMode.shuffleRepeatOne;
           }
         } else {
-          // Shuffle is off, we want to turn it on
-          if (this.repeatActive) {
-            if (currentPlayMode === PlayMode.repeat) {
-              playMode = PlayMode.shuffleRepeat;
-            } else {
-              playMode = PlayMode.shuffleRepeatOne;
-            }
-          } else {
-            // Repeat is NOT active & we are turning shuffle on
-            playMode = PlayMode.shuffle
-          }
+          // Repeat is NOT active & we are turning shuffle on
+          playMode = PlayMode.shuffle;
         }
         this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { playMode } });
         groupsAPI.playMode(this.activeZoneGroupId, playMode);
-      }      
+      }
     },
-    toggleRepeat() {          
+    toggleRepeat() {
       if (this.activeZoneGroup) {
-        let playMode = null;  
+        let playMode = null;
         const currentPlayMode = this.activeZoneGroup.playMode;
         // Repeat is on, we want to turn it off or advance to repeat one
-        if(this.repeatActive) {
+        if (this.repeatActive) {
           if (this.shuffleActive) {
             // toggle to shuffle repeat one or turn off repeat to shuffle only
             if (currentPlayMode === PlayMode.shuffleRepeat) {
@@ -189,44 +202,34 @@ export default {
             } else {
               playMode = PlayMode.shuffle;
             }
-          } else {
             // toggle to repeat one or or turn off repeat
-            if (currentPlayMode === PlayMode.repeat) {
-              playMode = PlayMode.repeatOne
-            } else {
-              // Shuffle is NOT active & we are turning repeat off
-              playMode = PlayMode.normal;
-            }            
-          }
-        } else {
-          // Repeat is off, we want to turn it on
-          if (this.shuffleActive) {
-            playMode = PlayMode.shuffleRepeat;
+          } else if (currentPlayMode === PlayMode.repeat) {
+            playMode = PlayMode.repeatOne;
           } else {
-            // Shuffle is NOT active & we are turning repeat on
-            playMode = PlayMode.repeat;
+            // Shuffle is NOT active & we are turning repeat off
+            playMode = PlayMode.normal;
           }
+          // Repeat is off, we want to turn it on
+        } else if (this.shuffleActive) {
+          playMode = PlayMode.shuffleRepeat;
+        } else {
+          // Shuffle is NOT active & we are turning repeat on
+          playMode = PlayMode.repeat;
         }
         this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { playMode } });
         groupsAPI.playMode(this.activeZoneGroupId, playMode);
-      }      
-    },    
+      }
+    },
   },
   computed: {
     zoneGroups() {
       return this.$store.state.zoneGroups;
-    },
-    inactiveZoneGroups() {
-      return this.zoneGroups.filter(zoneGroup => zoneGroup.id !== this.activeZoneGroupId);
     },
     activeZoneGroupId() {
       return this.$store.state.activeZoneGroupId;
     },
     activeZoneGroup() {
       return this.$store.getters.activeZoneGroup;
-    },
-    activeZoneGroupName() {
-      return this.$store.getters.groupName(this.activeZoneGroupId);
     },
     activeZoneGroupMembers() {
       if (this.activeZoneGroup) {
@@ -364,11 +367,9 @@ export default {
           case PlayMode.shuffleRepeat:
           case PlayMode.repeat:
             return 'repeat';
-            break;
           case PlayMode.shuffleRepeatOne:
-          case PlayMode.repeatOne:          
+          case PlayMode.repeatOne:
             return 'repeat_one';
-            break;
           default:
             return 'repeat';
         }
@@ -376,8 +377,8 @@ export default {
       return 'repeat';
     },
     repeatActive() {
-       if (this.activeZoneGroup) {
-        switch(this.activeZoneGroup.playMode) {          
+      if (this.activeZoneGroup) {
+        switch (this.activeZoneGroup.playMode) {
           case PlayMode.shuffleRepeat:
           case PlayMode.repeat:
           case PlayMode.shuffleRepeatOne:
@@ -385,20 +386,20 @@ export default {
             return true;
           default:
             return false;
-        }       
+        }
       }
       return false;
     },
     shuffleActive() {
       if (this.activeZoneGroup) {
-        switch(this.activeZoneGroup.playMode) {
+        switch (this.activeZoneGroup.playMode) {
           case PlayMode.shuffle:
           case PlayMode.shuffleRepeat:
           case PlayMode.shuffleRepeatOne:
             return true;
           default:
             return false;
-        }       
+        }
       }
       return false;
     },
@@ -474,7 +475,6 @@ export default {
 .play-mode-button.active {
   color: #3898d6;
 }
-
 .play-mode-button.active:after {
   position: absolute;
   bottom: 0;
@@ -489,4 +489,22 @@ export default {
   transform: translateX(-50%);
 }
 
+.now-playing-bar .room-select-button {
+  width: 24px;
+  margin-right: 4px;
+}
+
+.now-playing-bar .room-select-button .v-btn {
+  min-width: 24px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.room-select-list {
+  padding: 0px;
+}
+.room-select-title.active {
+  background: rgba(0,0,0,0.2);
+  color: #3898d6;
+}
 </style>
