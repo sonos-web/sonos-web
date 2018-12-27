@@ -116,7 +116,7 @@ export default {
   margin: 0 auto;
 }
 .zone-group-selector {
-  font-size:24px;
+  font-size: 24px;
   text-transform: none;
 }
 </style>
