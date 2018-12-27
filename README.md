@@ -16,12 +16,12 @@ Sonos Web is a developing project and is not yet full-featured. Here are some of
  * Clean and good looking UI
  * Play, pause, skip, and seek tracks
  * Shuffle & repeat controls 
+ * Room selection from the Now Playing bar.
 
 ## Coming Soon
  * Browse music library by artist, album, genre, playlist, etc.
  * Search your entire music library
- * View and edit queue
- * Room selection on the Now Playing control bar.
+ * View and edit queue 
 
 ## Install
 The goal for this project was to make installation as simple as possible for Windows, Mac, & Linux.
