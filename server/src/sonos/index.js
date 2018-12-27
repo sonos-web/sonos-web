@@ -54,7 +54,7 @@ SonosNetwork.prototype.init = function init() {
 SonosNetwork.prototype.discover = async function discover() {
   return new Promise((resolve) => {
     this.socketio.emit('Discovering Sonos Devices');
-
+    this.devices = [];
     const sonosSearch = DeviceDiscovery({ timeout: this.timeout });
 
     sonosSearch.on('DeviceAvailable', async (sonosDevice) => {
@@ -456,30 +456,42 @@ SonosNetwork.prototype._parseZoneGroups = async function _parseZoneGroups() {
   return new Promise((resolve, reject) => {
     // If there are no devices, we cannot
     if (this.devices.length === 0) { reject(new Error('No Devices Found')); }
-
-    const zoneGroups = [];
+    let zoneGroups = [];
 
     this.devices[0].getAllGroups().then(async (rawGroups) => {
-      rawGroups.forEach((group) => {
+      rawGroups.forEach((rg) => {
+        const group = rg;
         zoneGroups.push({
           id: group.ID,
           coordinator: {},
           members: [],
         });
+
+        // For some reason group.ZoneGroupMember might not be an array,
+        // so we coerce it into one if it is not
+        if (!Array.isArray(group.ZoneGroupMember)) {
+          group.ZoneGroupMember = [group.ZoneGroupMember];
+        }
         group.ZoneGroupMember.forEach(async (member) => {
           const zone = {
             id: member.UUID,
             name: member.ZoneName,
             device: this.devices.find(device => device.id === member.UUID),
           };
-          const zoneGroup = zoneGroups.find(zg => zg.id === group.ID);
-          if (zone.id === group.Coordinator) {
-            zoneGroup.coordinator = zone;
-          } else {
-            zoneGroup.members.push(zone);
+          if (zone.device) {
+            const zoneGroup = zoneGroups.find(zg => zg.id === group.ID);
+            if (zone.id === group.Coordinator) {
+              zoneGroup.coordinator = zone;
+            } else {
+              zoneGroup.members.push(zone);
+            }
           }
         });
       });
+
+      // A zone group could be without a coordinator if the Sonos player was previously part of the network, but has been unplugged, etc.
+      // For now, we simply eliminate these
+      zoneGroups = zoneGroups.filter(group => group.coordinator.device !== undefined);
 
       // Fetch the transport info for all zones
       await Promise.all(zoneGroups.map(async (group, index) => {
