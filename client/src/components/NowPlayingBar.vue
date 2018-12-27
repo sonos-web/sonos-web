@@ -24,7 +24,7 @@
             <v-list dense class="pa-0 pt-2">
               <v-list-tile>
                 <v-list-tile-action>
-                  <v-btn icon>
+                  <v-btn class="play-mode-button" :class="shuffleActive ? 'active' : ''" icon :disabled="!canSeek" @click="toggleShuffle">
                     <v-icon small>shuffle</v-icon>
                   </v-btn>
                 </v-list-tile-action>
@@ -44,8 +44,8 @@
                   </v-btn>                  
                 </v-list-tile-action>
                 <v-list-tile-action>
-                  <v-btn icon>
-                    <v-icon small>repeat</v-icon>
+                  <v-btn class="play-mode-button" :class="repeatActive ? 'active' : ''" :disabled="!canSeek" icon @click="toggleRepeat">
+                    <v-icon small>{{ repeatIcon }}</v-icon>
                   </v-btn>
                 </v-list-tile-action>
               </v-list-tile>
@@ -93,6 +93,7 @@
 import MemberVolumeBar from '@/components/MemberVolumeBar.vue';
 import groupsAPI from '@/services/API/groups';
 import PlayState from '@/enums/PlayState';
+import PlayMode from '@/enums/PlayMode';
 import TransportActions from '@/enums/TransportActions';
 import secondsToTimeString from '@/helpers/secondsToTimeString';
 
@@ -142,6 +143,74 @@ export default {
         groupsAPI.mute(this.activeZoneGroupId, mute);
       }
     },
+    toggleShuffle() {          
+      if (this.activeZoneGroup) {
+        let playMode = null;  
+        const currentPlayMode = this.activeZoneGroup.playMode;
+        // Shuffle is on, we want to turn it off
+        if (this.shuffleActive) {
+          if (this.repeatActive) {
+            if (currentPlayMode === PlayMode.shuffleRepeat) {
+              playMode = PlayMode.repeat;
+            } else {
+              playMode = PlayMode.repeatOne;
+            }
+          } else {
+            // Repeat is NOT active & we are turning shuffle off
+            playMode = PlayMode.normal            
+          }
+        } else {
+          // Shuffle is off, we want to turn it on
+          if (this.repeatActive) {
+            if (currentPlayMode === PlayMode.repeat) {
+              playMode = PlayMode.shuffleRepeat;
+            } else {
+              playMode = PlayMode.shuffleRepeatOne;
+            }
+          } else {
+            // Repeat is NOT active & we are turning shuffle on
+            playMode = PlayMode.shuffle
+          }
+        }
+        this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { playMode } });
+        groupsAPI.playMode(this.activeZoneGroupId, playMode);
+      }      
+    },
+    toggleRepeat() {          
+      if (this.activeZoneGroup) {
+        let playMode = null;  
+        const currentPlayMode = this.activeZoneGroup.playMode;
+        // Repeat is on, we want to turn it off or advance to repeat one
+        if(this.repeatActive) {
+          if (this.shuffleActive) {
+            // toggle to shuffle repeat one or turn off repeat to shuffle only
+            if (currentPlayMode === PlayMode.shuffleRepeat) {
+              playMode = PlayMode.shuffleRepeatOne;
+            } else {
+              playMode = PlayMode.shuffle;
+            }
+          } else {
+            // toggle to repeat one or or turn off repeat
+            if (currentPlayMode === PlayMode.repeat) {
+              playMode = PlayMode.repeatOne
+            } else {
+              // Shuffle is NOT active & we are turning repeat off
+              playMode = PlayMode.normal;
+            }            
+          }
+        } else {
+          // Repeat is off, we want to turn it on
+          if (this.shuffleActive) {
+            playMode = PlayMode.shuffleRepeat;
+          } else {
+            // Shuffle is NOT active & we are turning repeat on
+            playMode = PlayMode.repeat;
+          }
+        }
+        this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { playMode } });
+        groupsAPI.playMode(this.activeZoneGroupId, playMode);
+      }      
+    },    
   },
   computed: {
     zoneGroups() {
@@ -289,6 +358,50 @@ export default {
       }
       return 'play_arrow';
     },
+    repeatIcon() {
+      if (this.activeZoneGroup) {
+        switch (this.activeZoneGroup.playMode) {
+          case PlayMode.shuffleRepeat:
+          case PlayMode.repeat:
+            return 'repeat';
+            break;
+          case PlayMode.shuffleRepeatOne:
+          case PlayMode.repeatOne:          
+            return 'repeat_one';
+            break;
+          default:
+            return 'repeat';
+        }
+      }
+      return 'repeat';
+    },
+    repeatActive() {
+       if (this.activeZoneGroup) {
+        switch(this.activeZoneGroup.playMode) {          
+          case PlayMode.shuffleRepeat:
+          case PlayMode.repeat:
+          case PlayMode.shuffleRepeatOne:
+          case PlayMode.repeatOne:
+            return true;
+          default:
+            return false;
+        }       
+      }
+      return false;
+    },
+    shuffleActive() {
+      if (this.activeZoneGroup) {
+        switch(this.activeZoneGroup.playMode) {
+          case PlayMode.shuffle:
+          case PlayMode.shuffleRepeat:
+          case PlayMode.shuffleRepeatOne:
+            return true;
+          default:
+            return false;
+        }       
+      }
+      return false;
+    },
   },
 };
 </script>
@@ -357,4 +470,23 @@ export default {
 .v-input--is-readonly .v-slider__thumb {
   display: none;
 }
+
+.play-mode-button.active {
+  color: #3898d6;
+}
+
+.play-mode-button.active:after {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  display: block;
+  width: 4px;
+  height: 4px;
+  content: "";
+  border-radius: 50%;
+  background-color: #3898d6;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+
 </style>
