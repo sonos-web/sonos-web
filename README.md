@@ -10,17 +10,17 @@ Sonos Web relies upon the [node-sonos](https://github.com/bencevans/node-sonos) 
 ## Features
 Sonos Web is a developing project and is not yet full-featured. Here are some of the currently available features:
  * Group rooms together via drag & drop
+ * Party mode (Group all speakers into one group)
+ * Quickly & easily switch between rooms/groups
+ * Adjust individual speaker volume/mute or adjust for the whole group
  * Clean and good looking UI
  * Play, pause, skip, and seek tracks
- * Party mode (Group all speakers into one group)
- * Adjust individual speaker volume/mute or adjust for the whole group
- * Quickly & easily switch between rooms/groups
+ * Shuffle & repeat controls 
 
 ## Coming Soon
  * Browse music library by artist, album, genre, playlist, etc.
  * Search your entire music library
  * View and edit queue
- * Shuffle & repeat controls on the Now Playing control bar.
  * Room selection on the Now Playing control bar.
 
 ## Install
