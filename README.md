@@ -7,6 +7,8 @@ Install Sonos Web on a single computer and access and manage your system from an
 
 Sonos Web relies upon the [node-sonos](https://github.com/bencevans/node-sonos) project for all its Sonos communication.
 
+Sonos Web has been tested on Windows 7, macOS, Linux, and Raspbian Stretch Lite (9.4).
+
 ## Features
 Sonos Web is a developing project and is not yet full-featured. Here are some of the currently available features:
  * Group rooms together via drag & drop
