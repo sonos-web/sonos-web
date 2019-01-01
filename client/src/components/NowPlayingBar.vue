@@ -1,7 +1,7 @@
 <template>
   <v-toolbar fixed clipped-left flat color="secondary" class="now-playing-bar">
     <v-container fill-height fluid pa-0>
-      <v-layout align-center>
+      <v-layout align-center justify-space-between>
         <div class="now-playing-bar-left">
           <v-card flat tile>
             <v-list two-line>

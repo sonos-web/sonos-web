@@ -5,6 +5,7 @@ const socket = io(process.env.VUE_APP_SERVER);
 
 socket.on('Discovering Sonos Devices', () => {
   store.commit('SET_DISCOVERING_SONOS', true);
+  store.commit('SET_HAS_ERROR', false);
   store.commit('SET_LOADING_MESSAGE', 'Searching for your Sonos System...');
 });
 

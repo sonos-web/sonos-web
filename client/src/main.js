@@ -8,14 +8,14 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import store from './store';
 import './services/socket';
 
-import LoadingView from './components/LoadingView.vue';
 import ErrorView from './components/ErrorView.vue';
+import LoadingView from './components/LoadingView.vue';
 
 Vue.config.productionTip = false;
 
 Vue.component('vue-headful', vueHeadful);
-Vue.component('LoadingView', LoadingView);
 Vue.component('ErrorView', ErrorView);
+Vue.component('LoadingView', LoadingView);
 
 new Vue({
   router,

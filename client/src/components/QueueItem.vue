@@ -2,7 +2,6 @@
   <v-list-tile
     avatar class="queue-item"
     :class="queueItemClasses"
-    @contextmenu.native.prevent="showContextMenu = true"
     @dblclick.native="playTrack">
     <v-list-tile-avatar tile>
       <v-img class="album-art-image" :src="albumArtURL"></v-img>

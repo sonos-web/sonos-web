@@ -22,10 +22,9 @@ export default new Vuex.Store({
         },
       },
     },
-    isLoading: false,
-    loadingMessage: null,
     hasError: false,
     errorMessage: null,
+    loadingMessage: null,
     documentTitleForActiveGroup: null,
     discoveringSonos: false,
     zoneGroups: [],
@@ -75,9 +74,6 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    SET_IS_LOADING(state, loading) {
-      state.isLoading = loading;
-    },
     SET_LOADING_MESSAGE(state, message) {
       state.loadingMessage = message;
     },

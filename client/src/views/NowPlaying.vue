@@ -1,8 +1,7 @@
 <template>
   <v-container fluid fill-height pa-0>
     <vue-headful :title="documentTitle"></vue-headful>
-    <LoadingView v-if="isLoading"></LoadingView>
-    <v-container fill-height fluid v-else>
+    <v-container fill-height fluid>
       <v-layout align-center justify-center row wrap>
         <v-flex xs12 align-center justify-center>
           <div class="text-xs-center pb-3">
@@ -50,9 +49,6 @@ export default {
     documentTitle() {
       // const title = this.$store.state.documentTitleForActiveGroup;
       return 'Now Playing - Sonos Web';
-    },
-    isLoading() {
-      return this.$store.state.isLoading;
     },
     activeZoneGroupId() {
       return this.$store.state.activeZoneGroupId;

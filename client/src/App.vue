@@ -152,7 +152,7 @@ export default {
     width: 100%;
     height: 100%;
     background-size: contain;
-    background-image: url("http://localhost:5050/img/empty-album-art.b8a07499.png");
+    background-image: url('/img/empty-album-art.b8a07499.png');
 }
 .album-art-image .v-image__image--preload {
   -webkit-filter: none;

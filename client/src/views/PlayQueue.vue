@@ -1,8 +1,7 @@
 <template>
   <v-container fluid pa-0 ma-0>
     <vue-headful :title="documentTitle"></vue-headful>
-    <LoadingView v-if="isLoading"></LoadingView>
-    <v-container fluid v-else :fill-height="isQueueEmpty">
+    <v-container fluid :fill-height="isQueueEmpty">
       <div class="text-xs-center">
         <v-snackbar
         :color="saveQueueNotificationColor"
@@ -139,9 +138,6 @@ export default {
   computed: {
     documentTitle() {
       return `Play Queue · ${this.activeZoneGroupName} - Sonos Web`;
-    },
-    isLoading() {
-      return this.$store.state.isLoading;
     },
     activeZoneGroupId() {
       return this.$store.state.activeZoneGroupId;
