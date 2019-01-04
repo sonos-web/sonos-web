@@ -2,6 +2,12 @@
   "name": "sonos-web",
   "version": "0.4.0",
   "description": "Sonos Web Controller",
+  "author": "Nicholas Villarreal",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Villarrealized/sonos-web"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"

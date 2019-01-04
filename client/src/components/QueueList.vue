@@ -64,12 +64,11 @@ export default {
     // and can slow down the browser, if we try to load them all at once
     // this way, we only load as many as we need to.
     addItem() {
-      this.itemIndex += 1;
       if (this.itemsCopy.length === this.items.length) return;
+      this.itemIndex += 1;
       // Add a short delay to allow document height check to have a chance to update
       // otherwise we will load too many or all on initial load
       setTimeout(() => {
-        this.itemsCopy.push(this.items[this.itemIndex]);
         if (this.bottomVisible()) {
           this.addItem();
         }

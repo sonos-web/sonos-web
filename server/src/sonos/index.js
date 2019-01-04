@@ -8,6 +8,8 @@ const SonosNetwork = function SonosNetwork(socketio, timeout = 5000) {
   this.initializing = true;
   this.listener = Listener;
 
+  this.noDevicesFoundError = 'No Devices Found';
+
   this.init();
 
   this.socketio.on('connection', () => {
@@ -34,7 +36,7 @@ SonosNetwork.prototype.init = function init() {
     }).catch((error) => {
       this.initializing = false;
       console.log(error);
-      if (error.message === 'No Devices Found') {
+      if (error.message === this.noDevicesFoundError) {
         this.socketio.emit('No Sonos Devices Found On Network');
       } else {
         this.socketio.emit('An Unknown Error Occurred While Retrieving Devices', JSON.stringify(error, Object.getOwnPropertyNames(error)));
@@ -136,7 +138,7 @@ SonosNetwork.prototype._listen = function listen() {
         this.socketio.emit('Sonos Device Discovery Complete', this.zoneGroups);
       }).catch((error) => {
         console.log(error);
-        if (error.message === 'No Devices Found') {
+        if (error.message === this.noDevicesFoundError) {
           this.socketio.emit('No Sonos Devices Found On Network');
         } else {
           this.socketio.emit('An Unknown Error Occurred While Retrieving Devices', JSON.stringify(error, Object.getOwnPropertyNames(error)));
@@ -556,7 +558,7 @@ SonosNetwork.prototype.getQueue = async function getQueue(device) {
 SonosNetwork.prototype._parseZoneGroups = async function _parseZoneGroups() {
   return new Promise((resolve, reject) => {
     // If there are no devices, we cannot
-    if (this.devices.length === 0) { reject(new Error('No Devices Found')); }
+    if (this.devices.length === 0) { reject(new Error(this.noDevicesFoundError)); }
     let zoneGroups = [];
 
     this.devices[0].getAllGroups().then(async (rawGroups) => {
