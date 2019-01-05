@@ -4,7 +4,7 @@ const app = require('./express')();
 const http = require('http').Server(app);
 const socketio = require('./socketio');
 const Routes = require('./routes');
-const SonosNetwork = require('./sonos');
+const SonosNetwork = require('./sonos/SonosNetwork');
 
 
 const io = socketio.listen(http);
@@ -22,10 +22,10 @@ http.listen(PORT, () => {
 
 function exitGracefully() {
   sonosNetwork.listener.stopListener().then(() => {
-    sonosNetwork.socketio.disconnect();
+    io.close();
     process.exit(0);
   }).catch(() => {
-    process.exit(0);
+    process.exit(1);
   });
 }
 

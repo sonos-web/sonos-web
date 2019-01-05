@@ -10,7 +10,7 @@
         </v-container>
       </transition>
       <transition name="fade">
-        <v-container fluid fill-height v-if="hasError">
+        <v-container fluid fill-height v-if="hasError && !discoveringSonos">
           <v-layout align-center justify-center>
             <ErrorView></ErrorView>
           </v-layout>

@@ -76,6 +76,7 @@ module.exports = function Groups(sonosNetwork) {
     res.status(200).send();
   });
   this.router.put('/:id/queue/reorder', async (req, res) => {
+    // eslint-disable-next-line max-len
     await this.sonosNetwork.reorderTracksInQueue(req.params.id, req.body.oldIndex, req.body.newIndex);
     res.status(200).send();
   });
