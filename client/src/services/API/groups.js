@@ -20,6 +20,18 @@ export default {
   playTrackFromQueue(groupId, trackNumber) {
     return axios.put(`/${groupId}/play/${trackNumber}`);
   },
+  playNow(groupId, data) {
+    return axios.put(`/${groupId}/playNow`, data);
+  },
+  playNext(groupId, data) {
+    return axios.put(`/${groupId}/queue/next`, data);
+  },
+  addToEndOfQueue(groupId, data) {
+    return axios.put(`/${groupId}/queue/end`, data);
+  },
+  replaceQueueAndPlay(groupId, data) {
+    return axios.put(`/${groupId}/flushPlay`, data);
+  },
   pause(groupId) {
     return axios.put(`/${groupId}/pause`);
   },

@@ -32,25 +32,38 @@
       <v-divider v-if="group.members.length > 0" class="mt-1"></v-divider>
       <v-layout mb-3 v-bind="albumSectionBreakpoint">
         <div class="pt-3 pl-3 pr-0">
-          <v-img
-            class="album-art-image"
-            :src="albumArtURL(group.id)"
-            height="125px"
-            width="125px"
-            contain
-          ></v-img>
+          <div class="v-responsive v-image" style="width: 125px; height: 125px;">
+            <div v-lazy:background-image="albumArtURL(group.id)"
+            class="background-image" :key="albumArtURL(group.id)"></div>
+          </div>
         </div>
         <v-flex pl-0 v-bind="albumInfoBreakpoint">
           <v-card-title primary-title class="d-block">
-            <div @mouseover="tooltipOnOverFlow" class="headline text-truncate">
+            <div @mouseover="tooltipOnOverFlow" class="headline text-truncate font-weight-medium">
               {{ trackTitle(group.id) }}
             </div>
-            <div @mouseover="tooltipOnOverFlow" class="text-truncate">
-              {{ group.track.artist }}
-            </div>
-            <div @mouseover="tooltipOnOverFlow" class="text-truncate grey--text">
-              {{ group.track.album }}
-            </div>
+            <v-layout ma-0>
+              <router-link
+                @mouseover="tooltipOnOverFlow"
+                :to="`/artist/${encodedItem(group.track.artist)}`"
+                class="item-link artist text-truncate text-xs-center pa-0">
+                {{ group.track.artist }}
+              </router-link>
+              <span v-if="group.track.artist" class="item-link-separator">•</span>
+              <router-link
+                v-if="group.track.artist"
+                @mouseover="tooltipOnOverFlow"
+                :to="`/album/${encodedItem(group.track.album)}`"
+                class="item-link album text-truncate text-xs-center pa-0">
+                {{ group.track.album }}
+              </router-link>
+              <router-link
+                v-else-if="group.track.album"
+                @mouseover="tooltipOnOverFlow"
+                class="item-link album text-truncate text-xs-center pa-0">
+                {{ group.track.album }}
+              </router-link>
+            </v-layout>
           </v-card-title>
         </v-flex>
       </v-layout>
@@ -63,10 +76,12 @@ import draggable from 'vuedraggable';
 import groupsAPI from '@/services/API/groups';
 import ZoneMembersDraggable from '@/views/rooms/ZoneMembersDraggable.vue';
 import PlayState from '@/enums/PlayState';
+import tooltipOnOverflow from '@/mixins/tooltipOnOverflow';
 
 export default {
   name: 'ZoneGroupDraggable',
   components: { draggable, ZoneMembersDraggable },
+  mixins: [tooltipOnOverflow],
   props: {
     zoneGroup: {
       type: Object,
@@ -135,13 +150,8 @@ export default {
     isPlaying(playState) {
       return playState === PlayState.playing || playState === PlayState.transitioning;
     },
-    tooltipOnOverFlow(event) {
-      const element = event.target;
-      if (element.offsetWidth < element.scrollWidth) {
-        element.title = element.textContent.trim();
-      } else {
-        element.title = '';
-      }
+    encodedItem(item) {
+      return this.$Base64.encodeURI(item);
     },
   },
   computed: {

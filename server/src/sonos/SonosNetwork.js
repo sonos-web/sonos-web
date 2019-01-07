@@ -1,5 +1,5 @@
 const { DeviceDiscovery, Listener } = require('sonos');
-const { NoDevicesFoundError } = require('./Errors');
+const { NoDevicesFound } = require('./SonosNetworkErrors');
 const {
   DiscoveringSonosDevices,
   SonosDeviceDiscoveryComplete,
@@ -7,6 +7,7 @@ const {
   UnknownErrorWhileRetrievingDevices,
   SonosEventDataReceived,
 } = require('./Messages');
+const MusicLibrary = require('./MusicLibrary');
 
 class SonosNetwork {
   constructor(socketio, timeout = 5000) {
@@ -16,6 +17,7 @@ class SonosNetwork {
     this.timeout = timeout;
     this.initializing = true;
     this.listener = Listener;
+    this.musicLibrary = null;
 
     this._init();
     this.socketio.on('connection', () => {
@@ -42,7 +44,10 @@ class SonosNetwork {
    */
   _init() {
     this.initializing = true;
-    this._discover(this.timeout).then(() => {
+    this._discover(this.timeout).then((devices) => {
+      if (!this.musicLibrary) {
+        this.musicLibrary = new MusicLibrary(devices[0]);
+      }
       // Build the zone groups
       this._parseZoneGroups().then(() => {
         this.socketio.emit(SonosDeviceDiscoveryComplete, this.zoneGroups);
@@ -50,7 +55,7 @@ class SonosNetwork {
       }).catch((error) => {
         this.initializing = false;
         console.log(error);
-        if (error === NoDevicesFoundError) {
+        if (error.message === NoDevicesFound) {
           this.socketio.emit(NoSonosDevicesFound);
         } else {
           this.socketio.emit(
@@ -172,7 +177,7 @@ class SonosNetwork {
       this.socketio.emit(SonosDeviceDiscoveryComplete, this.zoneGroups);
     }).catch((error) => {
       console.log(error);
-      if (error === NoDevicesFoundError) {
+      if (error.message === NoDevicesFound) {
         this.socketio.emit(NoSonosDevicesFound);
       } else {
         this.socketio.emit(
@@ -397,6 +402,67 @@ class SonosNetwork {
   }
 
   /**
+   * Play the uri now, after the currently queued item
+   * @param {String} groupId
+   * @param {String} data - The data to build the uri
+   */
+  async playNow(groupId, data) {
+    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const uri = await this._getURIFromData(group.coordinator.id, data);
+    if (uri) {
+      const queuePosition = group.track.queuePosition + 1;
+      await group.coordinator.device.queue(uri, queuePosition);
+      await group.coordinator.device.selectTrack(queuePosition);
+      await group.coordinator.device.play();
+    }
+  }
+
+  /**
+   * Add the uri after the currently queued item
+   * @param {String} groupId
+   * @param {String} data - The data to build the uri
+   */
+  async playNext(groupId, data) {
+    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const uri = await this._getURIFromData(group.coordinator.id, data);
+    if (uri) {
+      const queuePosition = group.track.queuePosition + 1;
+      await group.coordinator.device.queue(uri, queuePosition);
+    }
+  }
+
+  /**
+   * Add a uri to the end of the queue
+   * @param {String} groupId
+   * @param {String} data - The data to build the uri
+   */
+  async addToEndOfQueue(groupId, data) {
+    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const uri = await this._getURIFromData(group.coordinator.id, data);
+    if (uri) {
+      await group.coordinator.device.queue(uri);
+    }
+  }
+
+  /**
+   * Clear the queue and play the given uri
+   * @param {String} groupId
+   * @param {String} data - The data to build the uri
+   */
+  async replaceQueueAndPlay(groupId, data) {
+    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const uri = await this._getURIFromData(group.coordinator.id, data);
+    if (uri) {
+      const trackNumber = data.songNumber || 1;
+      await group.coordinator.device.flush();
+      await group.coordinator.device.queue(uri);
+      await group.coordinator.device.selectQueue();
+      await group.coordinator.device.selectTrack(trackNumber);
+      await group.coordinator.device.play();
+    }
+  }
+
+  /**
    * Join a zone to a group
    * @param {String} groupId
    * @param {String} zoneId
@@ -498,7 +564,7 @@ class SonosNetwork {
   async _parseZoneGroups() {
     return new Promise((resolve, reject) => {
       // If there are no devices, we cannot continue
-      if (this.devices.length === 0) { reject(NoDevicesFoundError); }
+      if (this.devices.length === 0) { reject(new Error(NoDevicesFound)); }
       let zoneGroups = [];
 
       this.devices[0].getAllGroups().then(async (rawGroups) => {
@@ -583,6 +649,24 @@ class SonosNetwork {
    *************************************************************************************************
    *************************************************************************************************
    */
+
+  /**
+   * Returns a uri that can be used in queueing, playing, etc.
+   * @param {String} coordinatorId - id of the group coordinator
+   * @param {Object} data An object with either uri, playlistName, artistPath, genrePath
+   * @returns {String|null}
+   */
+  async _getURIFromData(coordinatorId, data) {
+    let { uri } = data;
+    if (data.artistPath) {
+      uri = encodeURI(`x-rincon-playlist:${coordinatorId}#A:ALBUMARTIST/${data.artistPath}`);
+    } else if (data.genrePath) {
+      uri = encodeURI(`x-rincon-playlist:${coordinatorId}#A:GENRE/${data.genrePath}`);
+    } else if (data.playlistName) {
+      uri = await this.musicLibrary.getPlaylistURI(data.playlistName);
+    }
+    return uri || null;
+  }
 
   /**
    * Returns the zone group that a device belongs to

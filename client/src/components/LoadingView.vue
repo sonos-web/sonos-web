@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid :style="style">
     <v-layout align-center justify-center>
       <v-progress-circular indeterminate></v-progress-circular>
     </v-layout>
@@ -12,9 +12,29 @@
 <script>
 export default {
   name: 'LoadingView',
+  props: {
+    message: {
+      type: String,
+      default: null,
+    },
+    absolute: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     loadingMessage() {
-      return this.$store.state.loadingMessage;
+      return this.message || this.$store.state.loadingMessage;
+    },
+    style() {
+      if (this.absolute) {
+        return {
+          position: 'absolute',
+          top: '50%',
+          left: '0%',
+        };
+      }
+      return {};
     },
   },
 };

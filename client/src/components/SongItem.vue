@@ -1,36 +1,42 @@
 <template>
   <v-list-tile
-    avatar class="queue-item"
+    avatar class="song-item"
     :class="queueItemClasses"
     @click="hideMenu"
-    @dblclick.native="playTrack"
+    @dblclick.native="playNowAction"
     @contextmenu.prevent.native="showMenu">
     <v-list-tile-avatar tile size="40px">
-      <div class="v-responsive v-image">
+      <v-icon class="music-note" color="grey" v-if="albumMode">
+        music_note
+      </v-icon>
+      <div class="v-responsive v-image" v-else>
         <div v-lazy:background-image="albumArtURL"
         class="background-image" :key="albumArtURL"></div>
       </div>
     </v-list-tile-avatar>
+
     <v-list-tile-content>
-      <v-list-tile-title class="font-weight-bold"
+      <v-list-tile-title
+        class="font-weight-bold"
         @mouseover="tooltipOnOverFlow">
-        {{ track.title }}
+        {{ song.title }}
       </v-list-tile-title>
-      <div>
+      <div v-if="!albumMode || allAlbum">
         <v-layout>
           <router-link
+            v-if="!albumMode"
             @mouseover="tooltipOnOverFlow"
             :to="`/artist/${encodedArtist}`"
             class="item-link text-truncate text-xs-center pa-0">
-            {{ track.artist }}
+            {{ song.artist }}
           </router-link>
-          <template v-if="track.album">
-            <span class="item-link-separator">•</span>
+          <template v-if="song.album">
+            <span v-if="!allAlbum" class="item-link-separator">•</span>
             <router-link
               @mouseover="tooltipOnOverFlow"
               :to="`/album/${encodedAlbum}`"
               class="item-link text-truncate text-xs-center pa-0">
-              {{ track.album }}
+              {{ song.album }}
             </router-link>
           </template>
         </v-layout>
@@ -41,36 +47,50 @@
         <v-icon color="grey lighten-1">more_horiz</v-icon>
       </v-btn>
     </v-list-tile-action>
-    <!--
-    <v-list-tile-action>
-      <v-checkbox class="queue-item-checkbox"
-        v-model="checked" color="white" hide-details>
-      </v-checkbox>
-    </v-list-tile-action>
-    -->
   </v-list-tile>
 </template>
 
 
 <script>
-import groupsAPI from '@/services/API/groups';
 import tooltipOnOverflow from '@/mixins/tooltipOnOverflow';
+import playQueueActions from '@/mixins/playQueueActions';
 
 export default {
   name: 'QueueItem',
-  mixins: [tooltipOnOverflow],
+  mixins: [tooltipOnOverflow, playQueueActions],
   props: {
-    track: {
+    song: {
       type: Object,
       required: true,
     },
+    songNumber: {
+      type: Number,
+      required: true,
+    },
+    albumMode: {
+      type: Boolean,
+      default: false,
+    },
+    allAlbum: {
+      type: Boolean,
+      default: false,
+    },
+    doubleClickURIData: {
+      type: Object,
+      default: null,
+    },
   },
   methods: {
-    playTrack() {
-      groupsAPI.playTrackFromQueue(this.activeZoneGroup.id, this.track.queuePosition);
+    playNowAction() {
+      if (this.doubleClickURIData) {
+        this.doubleClickURIData.songNumber = this.songNumber;
+        this.replaceQueueAndPlay(this.doubleClickURIData);
+      } else {
+        this.playNow(this.song.uri);
+      }
     },
     showMenu(event) {
-      this.$emit('show-menu', event, this.track.queuePosition);
+      this.$emit('show-menu', event, this.song.uri);
     },
     hideMenu() {
       this.$emit('hide-menu');
@@ -81,11 +101,11 @@ export default {
       return this.$store.getters.activeZoneGroup;
     },
     albumArtURL() {
-      return this.track.albumArtURI || this.$store.state.defaultAlbumArtURL;
+      return this.song.albumArtURI || this.$store.state.defaultAlbumArtURL;
     },
     active() {
       if (this.activeZoneGroup) {
-        return this.activeZoneGroup.track.queuePosition === this.track.queuePosition;
+        return this.activeZoneGroup.track.uri === this.song.uri;
       }
       return false;
     },
@@ -97,17 +117,17 @@ export default {
       return classes;
     },
     encodedArtist() {
-      return this.$Base64.encodeURI(this.track.artist);
+      return this.$Base64.encodeURI(this.song.artist);
     },
     encodedAlbum() {
-      return this.$Base64.encodeURI(this.track.album);
+      return this.$Base64.encodeURI(this.song.album);
     },
   },
 };
 </script>
 
 <style>
-.queue-item {
+.song-item {
   width: 100%;
   -webkit-transition-property: background-color!important;
   transition-property: background-color!important;
@@ -116,29 +136,29 @@ export default {
   -webkit-transition-timing-function: linear!important;
   transition-timing-function: linear!important;
 }
-.queue-item .v-list__tile--link:hover {
+.song-item:hover .music-note {
+  color: white!important;
+}
+.song-item .v-list__tile--link:hover {
   background: unset!important;
 }
-.queue-item.checked {
-  background-color: rgba(0,0,0,0.15);
-}
-.queue-item:hover {
+.song-item:hover {
   background-color: rgba(0,0,0,0.25);
 }
-.queue-item.active {
+.song-item.active {
   background-color: rgba(0,0,0,0.35);
 }
-.queue-item-checkbox {
-  flex: none;
+.song-item.active .music-note {
+  color:#3898d6!important;
 }
-.queue-item .v-list__tile__action {
+.song-item .v-list__tile__action {
   display: none;
 }
-.queue-item:hover .v-list__tile__action,
-.queue-item.checked .v-list__tile__action {
+.song-item:hover .v-list__tile__action,
+.song-item.checked .v-list__tile__action {
   display: flex;
 }
-.queue-item .item-link {
+.song-item .item-link {
   font-size: 14px;
 }
 </style>

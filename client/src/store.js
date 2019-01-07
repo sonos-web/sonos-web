@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
 import Vue from 'vue';
 import Vuex from 'vuex';
-import './helpers/extensions/Object';
+import deepmerge from 'deepmerge';
 import PlayState from './enums/PlayState';
 import groupsAPI from './services/API/groups';
+import './helpers/extensions/Object';
 
 Vue.use(Vuex);
 
@@ -19,6 +20,11 @@ export default new Vuex.Store({
           show: true,
           timeout: 8000,
           text: 'Tip: Drag rooms to group together.',
+        },
+        dragAndDropTracksInQueue: {
+          show: true,
+          timeout: 8000,
+          text: 'Tip: Drag songs to reorder queue.',
         },
       },
     },
@@ -108,7 +114,7 @@ export default new Vuex.Store({
       state.documentTitleForActiveGroup = title;
     },
     MERGE_SETTINGS(state, settings) {
-      state.settings = { ...state.settings, ...settings };
+      state.settings = deepmerge(state.settings, settings);
     },
     UPDATE_SETTINGS(state, payload) {
       Object.prop(state.settings, payload.property, payload.value);

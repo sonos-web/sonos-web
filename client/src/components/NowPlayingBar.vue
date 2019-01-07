@@ -7,13 +7,31 @@
             <v-list two-line>
               <v-list-tile avatar>
                 <v-list-tile-avatar tile size="60px">
-                  <v-img class="album-art-image" :src="albumArtURL"></v-img>
+                  <div class="v-responsive v-image">
+                    <div v-lazy:background-image="albumArtURL"
+                    class="background-image" :key="albumArtURL"></div>
+                  </div>
                 </v-list-tile-avatar>
                 <v-list-tile-content class="pl-3">
-                  <v-list-tile-title @mouseover="tooltipOnOverFlow">{{ track }}</v-list-tile-title>
-                  <v-list-tile-sub-title @mouseover="tooltipOnOverFlow">
-                    {{ artist || album }}
-                  </v-list-tile-sub-title>
+                  <router-link
+                    @mouseover="tooltipOnOverFlow"
+                    :to="`/album/${encodedAlbum}`"
+                    class="item-link title text-truncate text-xs-center pa-0">
+                    {{ track }}
+                  </router-link>
+                  <router-link
+                    v-if="artist"
+                    @mouseover="tooltipOnOverFlow"
+                    :to="`/artist/${encodedArtist}`"
+                    class="item-link subheading text-truncate text-xs-center pa-0">
+                    {{ artist }}
+                  </router-link>
+                  <router-link
+                    v-else-if="album"
+                    @mouseover="tooltipOnOverFlow"
+                    class="item-link subheading text-truncate text-xs-center pa-0">
+                    {{ album }}
+                  </router-link>
                 </v-list-tile-content>
               </v-list-tile>
              </v-list>
@@ -76,7 +94,7 @@
                   <v-icon>queue_music</v-icon>
                 </v-btn>
                 <v-menu class="room-select-button" bottom offset-y top>
-                  <v-btn title="Select Room" flat slot="activator">
+                  <v-btn :title="groupName(activeZoneGroupId)" flat slot="activator">
                     <v-icon small>speaker_group</v-icon>
                   </v-btn>
                   <v-list class="room-select-list">
@@ -109,16 +127,20 @@
 </template>
 
 <script>
+
+
 import MemberVolumeBar from '@/components/MemberVolumeBar.vue';
 import groupsAPI from '@/services/API/groups';
 import PlayState from '@/enums/PlayState';
 import PlayMode from '@/enums/PlayMode';
 import TransportActions from '@/enums/TransportActions';
 import secondsToTimeString from '@/helpers/secondsToTimeString';
+import tooltipOnOverflow from '@/mixins/tooltipOnOverflow';
 
 export default {
   name: 'NowPlayingBar',
   components: { MemberVolumeBar },
+  mixins: [tooltipOnOverflow],
   methods: {
     handleQueueButtonClick() {
       if (this.$route.name === 'PlayQueue') {
@@ -133,14 +155,6 @@ export default {
     },
     groupName(groupId) {
       return this.$store.getters.groupName(groupId);
-    },
-    tooltipOnOverFlow(event) {
-      const element = event.target;
-      if (element.offsetWidth < element.scrollWidth) {
-        element.title = element.textContent.trim();
-      } else {
-        element.title = '';
-      }
     },
     playOrPause() {
       if (this.playStateIcon === 'pause') {
@@ -270,6 +284,12 @@ export default {
         return this.activeZoneGroup.track.album;
       }
       return '';
+    },
+    encodedArtist() {
+      return this.$Base64.encodeURI(this.artist);
+    },
+    encodedAlbum() {
+      return this.$Base64.encodeURI(this.album);
     },
     albumArtURL() {
       return this.$store.getters.albumArtURLForGroup(this.activeZoneGroupId);
@@ -490,7 +510,9 @@ export default {
 .v-input--is-readonly .v-slider__thumb {
   display: none;
 }
-
+.v-input > *{
+  user-select: none;
+}
 .play-mode-button.active, .queue-button.v-btn--active {
   color: #3898d6;
 }
@@ -540,5 +562,15 @@ export default {
 .room-select-title.active {
   background: rgba(0,0,0,0.0)!important;
   color: #3898d6;
+}
+
+.now-playing-bar-left .item-link.title {
+  font-size: 16px!important;
+  margin-bottom: 2px;
+  opacity:1.0;
+}
+.now-playing-bar-left .item-link.subheading {
+  font-size: 13px!important;
+  font-weight: 500!important;
 }
 </style>

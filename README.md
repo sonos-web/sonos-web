@@ -7,22 +7,29 @@ Install Sonos Web on a single computer and access and manage your system from an
 
 Sonos Web relies upon the [node-sonos](https://github.com/bencevans/node-sonos) project for all its Sonos communication.
 
-Sonos Web has been tested on Windows 7, macOS, Linux, and Raspbian Stretch Lite (9.4).
+Sonos Web has been tested on Windows 7, macOS, Linux, and Raspbian Stretch Lite (9.6).
 
 ## Features
 Sonos Web is a developing project and is not yet full-featured. Here are some of the currently available features:
+ * Music Library
+    * Browse, Queue, & Play your entire music library by category
+    * View Artists, Genres & Playlists with Album Art! (Not available on official Sonos App)
+    * All artist & album names are links that take you to that item (very useful!)
  * Group rooms together via drag & drop
+ * Queue management via icon on Now Playing bar
  * Party mode (Group all speakers into one group)
  * Quickly & easily switch between rooms/groups
- * Queue management via icon on Now Playing bar
  * Adjust individual speaker volume/mute or adjust for the whole group 
  * Play, pause, skip, and seek tracks
  * Shuffle & repeat controls 
  * Room selection from the Now Playing bar.
 
-## Coming Soon
- * Browse music library by artist, album, genre, playlist, etc.
- * Search your entire music library  
+## Goals (Coming Soon)
+ * Search your entire music library
+ * Browse Music Library
+    * Sonos Playlists & Favorites
+    * Other Music Services (ex. Pandora, Spotify, etc.) ...maybe? 
+ * Play History
 
 ## Install
 The goal for this project is to make installation as simple as possible for Windows, Mac, & Linux.

@@ -29,6 +29,22 @@ module.exports = function Groups(sonosNetwork) {
     await this.sonosNetwork.playTrackFromQueue(req.params.id, req.params.trackNumber);
     res.status(200).send();
   });
+  this.router.put('/:id/playNow', async (req, res) => {
+    await this.sonosNetwork.playNow(req.params.id, req.body);
+    res.status(200).send();
+  });
+  this.router.put('/:id/queue/next', async (req, res) => {
+    await this.sonosNetwork.playNext(req.params.id, req.body);
+    res.status(200).send();
+  });
+  this.router.put('/:id/queue/end', async (req, res) => {
+    await this.sonosNetwork.addToEndOfQueue(req.params.id, req.body);
+    res.status(200).send();
+  });
+  this.router.put('/:id/flushPlay', async (req, res) => {
+    await this.sonosNetwork.replaceQueueAndPlay(req.params.id, req.body);
+    res.status(200).send();
+  });
   this.router.put('/:id/pause', async (req, res) => {
     await this.sonosNetwork.pause(req.params.id);
     res.status(200).send();
@@ -64,7 +80,7 @@ module.exports = function Groups(sonosNetwork) {
       await this.sonosNetwork.saveQueue(req.params.id, req.body.playlistTitle);
       res.status(200).send();
     } catch (error) {
-      res.status(500).send(error);
+      res.status(500).send(error.message);
     }
   });
   this.router.put('/:id/queue/clear', async (req, res) => {

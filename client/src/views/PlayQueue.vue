@@ -1,14 +1,24 @@
 <template>
   <v-container fluid pa-0 ma-0>
     <vue-headful :title="documentTitle"></vue-headful>
-    <v-container fluid :fill-height="isQueueEmpty">
+    <v-container fluid :fill-height="isQueueEmpty" px-0 mx-0>
       <div class="text-xs-center">
         <v-snackbar
-        :color="saveQueueNotificationColor"
-        top
-        absolute
-        v-model="showSaveQueueNotification">
+          :color="saveQueueNotificationColor"
+          top
+          absolute
+          v-model="showSaveQueueNotification">
           {{ saveQueueResultText }}
+        </v-snackbar>
+        <v-snackbar
+          top
+          absolute
+          :timeout="settings.notifications.dragAndDropTracksInQueue.timeout"
+          v-model="showDragAndDropInfo">
+            {{ settings.notifications.dragAndDropTracksInQueue.text }}
+          <v-btn color="primary" flat @click="disableDragAndDropNotification">
+            Got It
+          </v-btn>
         </v-snackbar>
       </div>
       <v-layout row wrap>
@@ -71,7 +81,7 @@
           </v-dialog>
         </v-flex>
         <v-flex xs12 class="queue-items-section">
-          <v-layout align-center justify-center v-if="isQueueEmpty">
+          <v-layout fill-height align-center justify-center v-if="isQueueEmpty">
             <div class="subheading grey--text font-weight-medium">
               Songs you choose to play will appear here
             </div>
@@ -90,26 +100,28 @@ import TransportActions from '@/enums/TransportActions';
 import groupsAPI from '@/services/API/groups';
 import RoomDropdownMenu from '@/components/RoomDropdownMenu.vue';
 import QueueList from '@/components/QueueList.vue';
+import tooltipOnOverflow from '@/mixins/tooltipOnOverflow';
 
 export default {
   name: 'PlayQueue',
   components: { RoomDropdownMenu, QueueList },
+  mixins: [tooltipOnOverflow],
   data: () => ({
     queueDialog: false,
     showSaveQueueNotification: false,
     saveQueueNotificationColor: 'success darken-1',
     saveQueueResultText: null,
     playlistName: null,
+    showDragAndDropInfo: false,
   }),
+  created() {
+    if (this.settings.notifications.dragAndDropTracksInQueue.show) {
+      setTimeout(() => {
+        this.showDragAndDropInfo = true;
+      }, 2000);
+    }
+  },
   methods: {
-    tooltipOnOverFlow(event) {
-      const element = event.target;
-      if (element.offsetWidth < element.scrollWidth) {
-        element.title = element.textContent.trim();
-      } else {
-        element.title = '';
-      }
-    },
     clearQueue() {
       groupsAPI.clearQueue(this.activeZoneGroupId);
     },
@@ -133,6 +145,10 @@ export default {
       this.playlistName = null;
       this.queueDialog = false;
       this.$refs.queueForm.reset();
+    },
+    disableDragAndDropNotification() {
+      this.showDragAndDropInfo = false;
+      this.$store.commit('UPDATE_SETTINGS', { property: 'notifications.dragAndDropTracksInQueue.show', value: false });
     },
   },
   computed: {
@@ -159,6 +175,9 @@ export default {
         return this.activeZoneGroup.queue || [];
       }
       return [];
+    },
+    settings() {
+      return this.$store.state.settings;
     },
     isQueueEmpty() {
       return this.currentQueue.length === 0;
@@ -195,8 +214,8 @@ export default {
 .sticky {
   position: fixed;
   top: 0;
-  left: 300px;
-  width: calc(100% - 300px);
+  left: 230px;
+  width: calc(100% - 230px);
   z-index: 1;
   padding: 48px 48px 8px 48px;
   background-image: linear-gradient(to top, #21344c, #243b55);

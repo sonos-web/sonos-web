@@ -1,6 +1,6 @@
 {
   "name": "sonos-web",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Sonos Web Controller",
   "author": "Nicholas Villarreal",
   "license": "GPL-3.0",
@@ -10,16 +10,18 @@
   },
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon --inspect src/server.js"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
     "connect-history-api-fallback": "^1.5.0",
+    "deepmerge": "^3.0.0",
     "dotenv": "^6.2.0",
     "express": "^4.16.2",
+    "js-base64": "^2.5.0",
     "serve-static": "^1.13.2",
     "socket.io": "^2.2.0",
-    "sonos": "git+https://github.com/Villarrealized/node-sonos.git#feature/queue-events"
+    "sonos": "git+https://github.com/Villarrealized/node-sonos.git#master"
   },
   "devDependencies": {
     "eslint": "^5.10.0",

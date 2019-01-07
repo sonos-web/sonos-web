@@ -19,7 +19,7 @@
       <transition name="fade">
         <div v-if="!discoveringSonos && !hasError" class="fill-height">
           <!-- eslint-disable-next-line -->
-          <v-navigation-drawer fixed app clipped floating :permanent="true" :mini-variant.sync="miniNav">
+          <v-navigation-drawer width="230" fixed app clipped floating :permanent="true" :mini-variant.sync="$vuetify.breakpoint.mdAndDown">
             <v-list class="nav-link-list">
               <template v-for="item in items">
                 <v-list-tile :key="item.text" :to="{path: item.path}">
@@ -35,7 +35,7 @@
               </template>
             </v-list>
           </v-navigation-drawer>
-          <v-container fluid fill-height>
+          <v-container fill-height>
             <v-layout>
               <router-view/>
             </v-layout>
@@ -54,8 +54,6 @@ export default {
   components: { NowPlayingBar },
   name: 'App',
   data: () => ({
-    miniNav: false,
-    windowWidth: 0,
     items: [
       { icon: 'search', text: 'Search', path: '/search' },
       { icon: 'music_note', text: 'Now Playing', path: '/' },
@@ -63,19 +61,6 @@ export default {
       { icon: 'library_music', text: 'Music Library', path: '/library' },
     ],
   }),
-  mounted() {
-    // Update on initial load
-    this.windowSizeChanged();
-
-    this.$nextTick(() => {
-      window.addEventListener('resize', this.windowSizeChanged);
-    });
-  },
-  methods: {
-    windowSizeChanged() {
-      this.windowWidth = window.innerWidth;
-    },
-  },
   computed: {
     discoveringSonos() {
       return this.$store.state.discoveringSonos;
@@ -83,14 +68,6 @@ export default {
     hasError() {
       return this.$store.state.hasError;
     },
-  },
-  watch: {
-    windowWidth(newWidth) {
-      this.miniNav = newWidth < 1264;
-    },
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.windowSizeChanged);
   },
 };
 </script>
@@ -143,7 +120,7 @@ export default {
 .album-art-image .v-image__image {
   z-index: unset;
 }
-.album-art-image .v-image__image:before {
+.album-art-image .v-image__image:before, .v-image .background-image:before {
     content: ' ';
     z-index: -1;
     position: absolute;
@@ -159,7 +136,87 @@ export default {
   filter: none;
 }
 
+.album-collage .column {
+  float: left;
+  width: 50%;
+  padding: 0px;
+}
+.album-collage {
+  max-width: 380px;
+  margin: 0 auto;
+  -webkit-box-shadow: 0 0 10px rgba(0,0,0,.3);
+  box-shadow: 0 0 10px rgba(0,0,0,.3);
+  user-select: none;
+}
+.album-collage:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.item-link, .item-link-separator {
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+  color: white;
+  opacity: 0.6;
+}
+.item-link-separator {
+  padding: 0px 8px;
+}
+.item-link:hover {
+  text-decoration: underline;
+  opacity: 1.0;
+}
+.item-link.album, .item-link.artist {
+  font-weight: 500;
+}
+.play-button {
+  letter-spacing: 0.1em;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.play-button .v-btn {
+  width: 100%;
+  margin: 0px;
+  letter-spacing: 0.1em;
+}
+.play-button .v-btn .v-icon--right {
+  margin: 0px;
+}
+.no-select {
+  user-select: none;
+}
+.background-image {
+  -webkit-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+  background-size: contain;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 960px) {
+  .container {
+    max-width: 950px;
+  }
+}
+@media (min-width: 1264px) {
+  .container {
+    max-width: 1255px;
+  }
+}
+@media (min-width: 1904px) {
+  .container {
+    max-width: 1855px;
+  }
+}
+
 html {
   overflow-y: auto;
 }
+
 </style>

@@ -6,6 +6,8 @@ const router = require('express').Router();
 
 const Zones = require('./zones');
 const Groups = require('./groups');
+const MusicLibrary = require('./musicLibrary');
+const LibraryDetail = require('./libraryDetail');
 
 
 module.exports = function Routes(sonosNetwork) {
@@ -25,9 +27,13 @@ module.exports = function Routes(sonosNetwork) {
   // All router
   const zones = new Zones(this.sonosNetwork);
   const groups = new Groups(this.sonosNetwork);
+  const musicLibrary = new MusicLibrary(this.sonosNetwork);
+  const libraryDetail = new LibraryDetail(this.sonosNetwork);
 
   this.router.use('/api/zones', zones.router);
   this.router.use('/api/groups', groups.router);
+  this.router.use('/api/library', musicLibrary.router);
+  this.router.use('/api/detail', libraryDetail.router);
   // End All router
 
   // This MUST come last - all router that we do not have endpoints for
