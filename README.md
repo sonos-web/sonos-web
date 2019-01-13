@@ -3,7 +3,7 @@ Sonos Web is a browser based controller for your [Sonos](https://www.sonos.com/s
 
 Install Sonos Web on a single computer and access and manage your system from any browser on your network.
 
-![Now Playing](https://user-images.githubusercontent.com/5977736/50566780-999be980-0cfa-11e9-8085-d11eec234315.png)
+![Genre Detail View](https://user-images.githubusercontent.com/5977736/51081846-09c14c80-16b7-11e9-8fd8-a158d1a1b8f6.png)
 
 Sonos Web relies upon the [node-sonos](https://github.com/bencevans/node-sonos) project for all its Sonos communication.
 
@@ -47,14 +47,30 @@ Once npm is installed, run the following commands in your terminal to get starte
 Run `sonos-web --help` for more options
 
 ## Screenshots
+
+### Now Playing
+![Now Playing](https://user-images.githubusercontent.com/5977736/50566780-999be980-0cfa-11e9-8085-d11eec234315.png)
+
+### Queue Management
+![Queue Management](https://user-images.githubusercontent.com/5977736/50566855-89d0d500-0cfb-11e9-8c7c-181a624b5eb7.png)
+
+### Album Detail View
+![Album View](https://user-images.githubusercontent.com/5977736/51081850-4b51f780-16b7-11e9-88a4-4466a9af640d.png)
+
+### Playlists View
+![Playlists View](https://user-images.githubusercontent.com/5977736/51081853-602e8b00-16b7-11e9-9944-91384dd74f17.png)
+
+### Songs View
+![Songs View](https://user-images.githubusercontent.com/5977736/51081854-60c72180-16b7-11e9-8197-8f2080ad253a.png)
+
+### Artists View
+![Artists View](https://user-images.githubusercontent.com/5977736/51081850-4b51f780-16b7-11e9-88a4-4466a9af640d.png)
+
 ### View all rooms and what they're playing
 ![Rooms](https://user-images.githubusercontent.com/5977736/50566842-5c842700-0cfb-11e9-8e7b-56a981769d26.png)
 
 ### Adjust volume as a group or as individual rooms
 ![Grouped Rooms & Individual Volume Adjustment](https://user-images.githubusercontent.com/5977736/50566804-fdbead80-0cfa-11e9-86c9-21290ff33288.png)
-
-### Queue Management
-![Queue Management](https://user-images.githubusercontent.com/5977736/50566855-89d0d500-0cfb-11e9-8c7c-181a624b5eb7.png)
 
 
 ## Issues or Questions
