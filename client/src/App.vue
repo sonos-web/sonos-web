@@ -140,6 +140,7 @@ export default {
   float: left;
   width: 50%;
   padding: 0px;
+  position: relative;
 }
 .album-collage {
   max-width: 380px;
@@ -152,6 +153,10 @@ export default {
   content: "";
   display: table;
   clear: both;
+}
+.v-responsive.v-image {
+  position: relative;
+  z-index: 0
 }
 
 .item-link, .item-link-separator {
@@ -192,6 +197,7 @@ export default {
   -webkit-transition: all .3s ease-in-out;
   transition: all .3s ease-in-out;
   background-size: contain;
+  background-position: center center;
   position: absolute;
   top: 0;
   left: 0;
