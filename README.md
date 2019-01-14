@@ -46,6 +46,24 @@ Once npm is installed, run the following commands in your terminal to get starte
 
 Run `sonos-web --help` for more options
 
+## Docker Support
+### Raspberry Pi
+Peter Toft (@pwt) is maintaining a [Docker image](https://hub.docker.com/r/psychlist/docker-sonos-web-arm) of sonos-web for later Raspberry Pi (ARMv7) systems.
+[Click here](https://github.com/pwt/docker-sonos-web-arm) to get started.
+
+### Windows & Mac
+Unfortunately, Linux is the only supported OS for using Docker with sonos-web because of the need to use `network_mode: 'host'` for discovering the Sonos network. It seems that, at least for now, [only Linux machines](https://docs.docker.com/network/network-tutorial-host/#prerequisites) have proper support at this point for that feature.
+
+> The host networking driver only works on Linux hosts, and is not supported on Docker for Mac, Docker for Windows, or Docker EE for Windows Server.
+
+
+Check out these issues for more information:
+
+https://github.com/docker/for-mac/issues/1031
+
+https://github.com/docker/for-win/issues/937
+
+
 ## Screenshots
 
 ### Now Playing
