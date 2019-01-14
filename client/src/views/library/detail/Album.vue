@@ -8,8 +8,8 @@
       :libraryItem="items"
       :detailPath="path">
     </load-library-on-scroll>
-    <LoadingView v-if="loading" absolute message="Loading..."></LoadingView>
-    <ErrorView v-else-if="error" absolute :message="errorMessage"></ErrorView>
+    <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
+    <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
     <v-layout row wrap class="album-wrapper" v-else>
       <v-flex xs12 lg5 px-2>
         <div class="album-header">

@@ -7,9 +7,9 @@
       :asyncLoadMethod="getItems"
       :libraryItem="items"
       :detailPath="path">
-    </load-library-on-scroll>
-    <LoadingView v-if="loading" absolute message="Loading..."></LoadingView>
-    <ErrorView v-else-if="error" absolute :message="errorMessage"></ErrorView>
+    </load-library-on-scroll>    
+    <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
+    <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
     <v-layout row wrap v-else>
       <div class="artist-title display-3 pb-3">
         {{ name }}
@@ -81,9 +81,8 @@ export default {
       return this.items.items || [];
     },
     allURI() {
-      if (this.items.items) {
-        const allItem = this.items.items.find(item => item.title === 'All');
-        return allItem.uri;
+      if (this.folders.length) {
+        return this.folders[0].uri;
       }
       return '';
     },
