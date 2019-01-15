@@ -9,6 +9,8 @@ Sonos Web relies upon the [node-sonos](https://github.com/bencevans/node-sonos) 
 
 Sonos Web has been tested on Windows 7, macOS, Linux, and Raspbian Stretch Lite (9.6).
 
+[Check out the following Youtube video](https://youtu.be/0q8Z-XV81Z4) to see a brief demo of the system in use. (v0.5.2)
+
 ## Features
 Sonos Web is a developing project and is not yet full-featured. Here are some of the currently available features:
  * Music Library
