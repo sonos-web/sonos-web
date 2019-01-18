@@ -3,15 +3,17 @@
     <load-library-on-scroll
       @loading-error="loadingError"
       @loaded-items="loadedItems"
-      :asyncLoadMethod="getShares"
-      :libraryItem="shares">
+      :asyncLoadMethod="loadMethod"
+      :libraryItem="shares"
+      :searchTerm="searchTerm">
     </load-library-on-scroll>
-    <v-layout row wrap v-if="!loading">
+    <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
+    <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
+    <v-layout row wrap v-else>
       <library-item-count :total="shares.total" label="Shares"></library-item-count>
       <library-item v-for="item in items"
       :key="item.uri" :item="item" toPrefix="/share"></library-item>
     </v-layout>
-    <LoadingView v-if="loading" absolute message="Loading..."></LoadingView>
   </v-layout>
 </template>
 
@@ -25,24 +27,41 @@ import LoadLibraryOnScroll from '@/components/LoadLibraryOnScroll.vue';
 export default {
   name: 'Shares',
   components: { LibraryItem, LibraryItemCount, LoadLibraryOnScroll },
+  props: {
+    search: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     shares: {},
     loading: true,
+    error: false,
+    errorMessage: null,
   }),
   methods: {
-    getShares: MusicLibraryAPI.getShares,
     loadedItems(data) {
       this.loading = false;
       this.shares = deepmerge(this.shares, data);
     },
     loadingError(error) {
-      this.loading = false;
-      console.log(error);
+      this.loading = false
+      this.error = true;
+      this.errorMessage = `${error.response.status}: ${error.response.data}`;
     },
   },
   computed: {
     items() {
       return this.shares.items || [];
+    },
+    searchTerm() {
+      if (this.search) {
+        return this.$route.params.pathMatch;
+      }
+      return null;
+    },
+    loadMethod() {
+      return this.search ? MusicLibraryAPI.searchShares : MusicLibraryAPI.getShares;
     },
   },
 };

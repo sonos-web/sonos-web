@@ -15,11 +15,9 @@ class MusicLibrary {
     if (!this.sonos) { throw new Error(NotASonosDevice); }
 
     this._cache = {
-      artists: null,
       albumArtists: null,
       albums: null,
       genres: null,
-      composers: null,
       tracks: null,
       playlists: null,
       sonos_playlists: null,
@@ -37,107 +35,113 @@ class MusicLibrary {
 
   /**
    * Returns an object with music library data
-   * @param {Object} requestOptions default { startIndex: 0, requestedCount: 100, albumArt: true }
-   * startIndex: Number The 0-based index to start grabbing data
+   * @param {Object} browseOptions
+   * searchCategory: String (Required) The name of the library item to search
    *
-   * requestedCount: Number The desired number of items (be sure to check actual returned)
+   * searchTerm: String (Optional)
    *
-   * albumArt: Boolean Return the image URI to the artists' first album
+   * searchOptions: Object (Optional) { start: Number, total: Number }
    *
-   * libraryItem: String (Required) The name of the library item to return
+   * search: Boolean (Optional) Is this a search, or a normal browse? Default is false (browse)
+   *
+   * getAlbumArt: Boolean (Optional) Return album art for items that don't normally return album art
+   *
+   * uri: String (Optional) Used for playlists mainly -- See _getSearchOptions for more details
+   *
    * @returns {Object} {returned: Number, total: Number, items: Array}
    */
-
-  async getLibraryItem(requestOptions) {
-    const defaultOptions = {
-      startIndex: 0,
-      requestedCount: 100,
-      albumArt: true,
-      libraryItem: null,
-    };
-    const options = { ...defaultOptions, ...requestOptions };
-    return new Promise((resolve, reject) => {
-      if (!options.libraryItem) reject(new Error(EmptyOrInvalidLibraryItem));
-
-      const libraryItem = this._cache[options.libraryItem];
-      if (libraryItem === undefined) reject(new Error(EmptyOrInvalidLibraryItem));
-
-      // Return cache if possible
-      const cache = MusicLibrary._getCache(libraryItem, options);
-      if (cache) {
-        resolve(cache);
-      } else {
-        const { start, total } = MusicLibrary._getRequestOptions(libraryItem, options);
-        this.sonos.getMusicLibrary(options.libraryItem, { start, total }).then((async (data) => {
-          const newItems = data;
-          if (options.albumArt) {
-            switch (options.libraryItem) {
-              case 'albumArtists':
-              case 'genres':
-              case 'playlists':
-                await Promise.all(newItems.items.map(async (item, index) => {
-                  try {
-                    // Get the album art
-                    // eslint-disable-next-line max-len
-                    newItems.items[index].albumArtURI = await this._getAlbumArt(options.libraryItem, item.title, item.uri);
-                  } catch (error) {
-                    reject(error);
-                  }
-                }));
-                break;
-              default:
-                break;
-            }
-          }
-          // Cache the results
-          this._cache[options.libraryItem] = MusicLibrary._merge(libraryItem, newItems);
-          resolve(MusicLibrary._getReturnResult(this._cache[options.libraryItem], options));
-        })).catch((error) => {
-          reject(error);
-        });
-      }
-    });
-  }
-
   async browse(browseOptions) {
     const defaultOptions = {
       searchCategory: null,
       searchTerm: null,
-      uri: '',
       searchOptions: {},
-      browseDepth: 0,
+      search: false,
+      getAlbumArt: true,
+      uri: '',
     };
     const options = deepmerge(defaultOptions, browseOptions);
-    // eslint-disable-next-line max-len
-    if (this._cache[options.searchCategory] === undefined) throw new Error(EmptyOrInvalidLibraryItem);
+    const libraryItem = this._cache[options.searchCategory];
+    if (libraryItem === undefined) throw new Error(EmptyOrInvalidLibraryItem);
 
-    // eslint-disable-next-line max-len
-    const { category, terms, separator } = MusicLibrary._getSearchOptions(options.searchCategory, options.searchTerm, options.uri);
+    // // Not caching searches yet
+    // if (!options.search && options.searchCategory !== 'playlists' && options.searchCategory !== 'share') {
+    //   // Return cache if possible
+    //   const cache = MusicLibrary._getCache(libraryItem, options.searchOptions);
+    //   if (cache) return cache;
+    // }
+
     try {
       // eslint-disable-next-line max-len
-      const result = await this.sonos.searchMusicLibrary(category, terms, options.searchOptions, separator, options.browseDepth);
-      if (!result) throw new Error(NoResultsFound);
-      // Get album art for artists when browsing genres
-      if (category === 'genres' && options.browseDepth === 0) {
-        await Promise.all(result.items.map(async (item, index) => {
-          try {
-            // Get the album art
-            if (item.title !== 'All') {
-              const search = 'artists';
-              // eslint-disable-next-line max-len
-              result.items[index].albumArtURI = await this._getAlbumArt(search, item.title, item.uri);
-            }
-          } catch (error) {
-            throw error;
-          }
-        }));
+      const { category, term, separator } = MusicLibrary._getSearchOptions(options.searchCategory, options.searchTerm, options.uri, options.search);
+      // for some reason _getSearchOptions is returning an encodedVersion
+      // of the term that affects share searchTerms
+      const searchTerm = category === 'share' && term ? decodeURI(term) : term;
+      // eslint-disable-next-line max-len
+      const result = await this.sonos.searchMusicLibrary(category, searchTerm, options.searchOptions, separator);
+      if (!result) return MusicLibrary._getEmptyReturnResult();
+      if (options.getAlbumArt) {
+        switch (options.searchCategory) {
+          case 'albumArtists':
+          case 'genres':
+          case 'playlists':
+            await Promise.all(result.items.map(async (item, index) => {
+              try {
+                // Get the album art
+                if (item.title !== 'All') {
+                  if (result.items[index].albumArtURI === null) {
+                    // eslint-disable-next-line max-len
+                    result.items[index].albumArtURI = await this._getAlbumArt(options.searchCategory, item.title, item.uri);
+                  }
+                }
+              } catch (error) {
+                if (error.message !== NoResultsFound) {
+                  throw error;
+                }
+              }
+            }));
+            break;
+          default:
+            break;
+        }
       }
+
       return result;
+      // // Not caching searches yet
+      // if (options.search || options.searchCategory === 'playlists' || options.searchCategory === 'share') return result;
+
+      // // Cache the results
+      // this._cache[options.searchCategory] = MusicLibrary._merge(libraryItem, result);
+      // // eslint-disable-next-line max-len
+      // return MusicLibrary._getReturnResult(this._cache[options.searchCategory], options.searchOptions);
     } catch (error) {
       throw error;
     }
   }
 
+  async getTopResults(options) {
+    const items = ['albumArtists', 'albums', 'tracks', 'playlists', 'genres'];
+    const topResults = { searchTerm: options.searchTerm };
+
+    await Promise.all(items.map(async (item) => {
+      const total = item === 'tracks' ? 5 : 12;
+      const result = await this.browse({
+        searchCategory: item,
+        searchTerm: options.searchTerm,
+        searchOptions: { start: 0, total },
+        search: true,
+      });
+      if (result.items.length) {
+        topResults[item] = result;
+      }
+    }));
+    return topResults;
+  }
+
+  /**
+   * Converts a playlistName into its uri for searching on Sonos
+   * @param {String} playlistName
+   * @returns {String|null} playlistURI
+   */
   async getPlaylistURI(playlistName) {
     if (this._cache.playlists) {
       const playlist = this._cache.playlists.items.find(p => p.title === playlistName);
@@ -145,7 +149,9 @@ class MusicLibrary {
       return null;
     }
     try {
-      const playlists = await this.getLibraryItem({ libraryItem: 'playlists' });
+      // eslint-disable-next-line max-len
+      const playlists = await this.sonos.getMusicLibrary('playlists');
+      if (!playlists) throw new Error(NoResultsFound);
       this._cache.playlists = playlists;
       const playlist = playlists.items.find(p => p.title === playlistName);
       if (playlist) return playlist.uri;
@@ -165,12 +171,22 @@ class MusicLibrary {
 
   /**
    * Returns album art URI for the first album found
-   * @param {String} artistName
-   * @returns {String|null}
+   *
    */
   async _getAlbumArt(searchCategory, searchTerm, uri) {
+    if (searchCategory === 'playlists') {
+      // eslint-disable-next-line no-param-reassign
+      searchTerm = await this.getPlaylistURI(searchTerm);
+    }
+
     try {
-      let search = await this.browse({ searchCategory, searchTerm, uri });
+      // eslint-disable-next-line max-len
+      const { category, term, separator } = MusicLibrary._getSearchOptions(searchCategory, searchTerm, uri);
+      // eslint-disable-next-line max-len
+      let search = await this.sonos.searchMusicLibrary(category, decodeURI(term), {}, separator);
+      if (!search) throw new Error(NoResultsFound);
+
+      // Build a collage of album art
       if (searchCategory === 'playlists') {
         const songs = search.items.filter(item => item.albumArtURI !== null);
         // Get a list of 4 unique albums
@@ -183,20 +199,43 @@ class MusicLibrary {
           });
         }
       }
+
       let album = search.items.find(item => item.albumArtURI !== null);
       if (album) {
         return album.albumArtURI;
       }
-      // No album art found, let's dig deeper on the 'All' item.
-      search = await this.browse({
-        searchCategory,
-        searchTerm,
-        requestOptions: { start: 0, total: 1 },
-        browseDepth: 2,
-      });
-      [album] = search.items;
-      if (album && album.albumArtURI !== null) {
-        return album.albumArtURI;
+
+      try {
+        // No album art found, let's dig deeper on the 'All' item.
+        // Useful for returning album art for Genres
+        search = await this.browse({
+          searchCategory,
+          searchTerm: `${searchTerm}//`,
+          searchOptions: { start: 0, total: 1 },
+          getAlbumArt: false,
+        });
+        [album] = search.items;
+        if (album && album.albumArtURI !== null) {
+          return album.albumArtURI;
+        }
+      } catch (error) {
+        if (error.message === NoResultsFound) {
+          // For returning album art of artists when browsing genres
+          if (searchCategory === 'genres') {
+            search = await this.browse({
+              searchCategory: 'albumArtists',
+              searchTerm,
+              searchOptions: { start: 0, total: 2 },
+              getAlbumArt: false,
+            });
+            album = search.items.find(item => item.albumArtURI !== null);
+            if (album) {
+              return album.albumArtURI;
+            }
+          }
+        } else {
+          throw error;
+        }
       }
       return null;
     } catch (error) {
@@ -212,27 +251,34 @@ class MusicLibrary {
    *************************************************************************************************
    */
 
-  static _getSearchOptions(searchCategory, searchTerms, uri = '') {
-    let separator = '/';
+  static _getSearchOptions(searchCategory, searchTerm, uri = '', search) {
+    // ':' is used for when searching on a category or getting all of that category
+    // Ex. A:ALBUM: | A:ALBUM:Aw
+    let separator = ':';
+    // When browsing we need a / ex. A:ALBUM/One
+    if (searchTerm && (searchTerm.indexOf('/') !== -1 || !search)) {
+      separator = '/';
+    }
+
     let category = searchCategory;
-    let terms = searchTerms;
+    let term = searchTerm;
     const playlistPrefix = 'x-file-cifs:';
     if (category === 'share'
     || uri.indexOf(playlistPrefix) !== -1
-    || terms.indexOf(playlistPrefix) !== -1) {
+    || (term && term.indexOf(playlistPrefix) !== -1)) {
       category = 'share';
-      if (uri) {
-        terms = uri.replace(playlistPrefix, '');
-      } else {
-        terms = terms.replace(playlistPrefix, '');
-      }
       separator = ':';
+      if (uri && term) {
+        term = uri.replace(playlistPrefix, '');
+      } else if (term) {
+        term = term.replace(playlistPrefix, '');
+      }
     }
-    return { category, terms, separator };
+    return { category, term, separator };
   }
 
   static _getCache(libraryItem, options) {
-    const lengthNeeded = options.startIndex + options.requestedCount;
+    const lengthNeeded = options.start + options.total;
     if (libraryItem
         && libraryItem.items
         && libraryItem.items.length !== 0
@@ -243,12 +289,12 @@ class MusicLibrary {
   }
 
   static _getRequestOptions(libraryItem, options) {
-    const lengthNeeded = options.startIndex + options.requestedCount;
+    let start = { options };
+    let total = { options };
+    const lengthNeeded = start + total;
     const cachedItems = libraryItem ? libraryItem.items : [];
     // Only fetch items that we do not have a cache for
-    let start = options.startIndex;
-    let total = options.requestedCount;
-    if (cachedItems.length > options.startIndex) {
+    if (cachedItems.length > start) {
       start = cachedItems.length;
       total = lengthNeeded - cachedItems.length;
     }
@@ -256,12 +302,20 @@ class MusicLibrary {
   }
 
   static _getReturnResult(libraryItem, options) {
-    const lengthNeeded = options.startIndex + options.requestedCount;
-    const items = libraryItem.items.slice(options.startIndex, lengthNeeded);
+    const lengthNeeded = options.start + options.total;
+    const items = libraryItem.items.slice(options.start, lengthNeeded);
     return {
       items,
       total: libraryItem.total,
       returned: items.length,
+    };
+  }
+
+  static _getEmptyReturnResult() {
+    return {
+      items: [],
+      total: '0',
+      returned: '0',
     };
   }
 

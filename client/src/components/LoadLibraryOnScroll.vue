@@ -10,7 +10,7 @@ export default {
       type: Function,
       required: true,
     },
-    requestedCount: {
+    total: {
       type: Number,
       default: 100,
     },
@@ -22,9 +22,13 @@ export default {
       type: String,
       default: null,
     },
+    searchTerm: {
+      type: String,
+      default: null,
+    }
   },
   data: () => ({
-    startIndex: 0,
+    start: 0,
     loadMoreItems: true,
     loading: false,
   }),
@@ -59,18 +63,18 @@ export default {
       try {
         this.loading = true;
         let result;
-        const options = { startIndex: this.startIndex, requestedCount: this.requestedCount };
+        const options = { start: this.start, total: this.total, searchTerm: this.searchTerm };
         if (this.detailPath) {
           result = await this.asyncLoadMethod(this.detailPath, options);
         } else {
           result = await this.asyncLoadMethod(options);
         }
-        // Update the startIndex for the next load
+        // Update the start for the next load
         const returnedCount = parseInt(result.data.returned, 10);
-        if (returnedCount === this.requestedCount) {
-          this.startIndex += this.requestedCount;
+        if (returnedCount === this.total) {
+          this.start += this.total;
         } else {
-          this.startIndex = returnedCount;
+          this.start = returnedCount;
         }
 
         const totalItems = parseInt(result.data.total, 10);
@@ -89,7 +93,7 @@ export default {
   },
   computed: {
     duplicateRequest() {
-      const totalLength = this.startIndex + this.requestedCount;
+      const totalLength = this.start + this.total;
       if (this.libraryItem.items && this.libraryItem.items.length >= totalLength) {
         return true;
       }

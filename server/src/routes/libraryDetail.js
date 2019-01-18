@@ -13,7 +13,7 @@ module.exports = function LibraryDetail(sonosNetwork) {
       const albums = await this.sonosNetwork.musicLibrary.browse({
         searchCategory: 'albumArtists',
         searchTerm: Base64.decode(req.params.name),
-        searchOptions: { start: req.body.startIndex, total: req.body.requestedCount },
+        searchOptions: { start: req.body.start, total: req.body.total },
       });
       res.status(200).send(albums);
     } catch (error) {
@@ -24,9 +24,8 @@ module.exports = function LibraryDetail(sonosNetwork) {
     try {
       const songs = await this.sonosNetwork.musicLibrary.browse({
         searchCategory: 'albumArtists',
-        searchTerm: Base64.decode(req.params.name),
-        searchOptions: { start: req.body.startIndex, total: req.body.requestedCount },
-        browseDepth: 1,
+        searchTerm: `${Base64.decode(req.params.name)}/`,
+        searchOptions: { start: req.body.start, total: req.body.total },
       });
       res.status(200).send(songs);
     } catch (error) {
@@ -38,7 +37,7 @@ module.exports = function LibraryDetail(sonosNetwork) {
       const songs = await this.sonosNetwork.musicLibrary.browse({
         searchCategory: 'albums',
         searchTerm: Base64.decode(req.params.name),
-        searchOptions: { start: req.body.startIndex, total: req.body.requestedCount },
+        searchOptions: { start: req.body.start, total: req.body.total },
       });
       res.status(200).send(songs);
     } catch (error) {
@@ -50,7 +49,7 @@ module.exports = function LibraryDetail(sonosNetwork) {
       const artists = await this.sonosNetwork.musicLibrary.browse({
         searchCategory: 'genres',
         searchTerm: Base64.decode(req.params.name),
-        searchOptions: { start: req.body.startIndex, total: req.body.requestedCount },
+        searchOptions: { start: req.body.start, total: req.body.total },
       });
       res.status(200).send(artists);
     } catch (error) {
@@ -61,9 +60,8 @@ module.exports = function LibraryDetail(sonosNetwork) {
     try {
       const albums = await this.sonosNetwork.musicLibrary.browse({
         searchCategory: 'genres',
-        searchTerm: Base64.decode(req.params.name),
-        searchOptions: { start: req.body.startIndex, total: req.body.requestedCount },
-        browseDepth: 1,
+        searchTerm: `${Base64.decode(req.params.name)}/`,
+        searchOptions: { start: req.body.start, total: req.body.total },
       });
       res.status(200).send(albums);
     } catch (error) {
@@ -74,9 +72,8 @@ module.exports = function LibraryDetail(sonosNetwork) {
     try {
       const songs = await this.sonosNetwork.musicLibrary.browse({
         searchCategory: 'genres',
-        searchTerm: Base64.decode(req.params.name),
-        searchOptions: { start: req.body.startIndex, total: req.body.requestedCount },
-        browseDepth: 2,
+        searchTerm: `${Base64.decode(req.params.name)}//`,
+        searchOptions: { start: req.body.start, total: req.body.total },
       });
       res.status(200).send(songs);
     } catch (error) {
@@ -90,7 +87,7 @@ module.exports = function LibraryDetail(sonosNetwork) {
       const songs = await this.sonosNetwork.musicLibrary.browse({
         searchCategory: 'playlists',
         searchTerm: playlistURI,
-        searchOptions: { start: req.body.startIndex, total: req.body.requestedCount },
+        searchOptions: { start: req.body.start, total: req.body.total },
       });
       res.status(200).send(songs);
     } catch (error) {
@@ -102,7 +99,7 @@ module.exports = function LibraryDetail(sonosNetwork) {
       const songs = await this.sonosNetwork.musicLibrary.browse({
         searchCategory: 'share',
         searchTerm: Base64.decode(req.params.name),
-        searchOptions: { start: req.body.startIndex, total: req.body.requestedCount },
+        searchOptions: { start: req.body.start, total: req.body.total },
       });
       res.status(200).send(songs);
     } catch (error) {

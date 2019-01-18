@@ -6,6 +6,8 @@ import store from './store';
 // which is lazy-loaded when the route is visited.
 
 const Search = () => import(/* webpackChunkName: "Search" */ './views/Search.vue');
+const SearchTopResults = () => import(/* webpackChunkName: "SearchTopResults" */ './views/SearchTopResults.vue');
+
 const NowPlaying = () => import(/* webpackChunkName: "Now Playing" */ './views/NowPlaying.vue');
 const Rooms = () => import(/* webpackChunkName: "Rooms" */ './views/rooms/Rooms.vue');
 
@@ -38,6 +40,43 @@ const router = new Router({
       path: '/search',
       name: 'Search',
       component: Search,
+      children: [
+        {
+          path: '/search/results/*',
+          name: 'SearchResults',
+          component: SearchTopResults,
+        },
+        {
+          path: '/search/artists/*',
+          name: 'SearchArtists',
+          component: Artists,
+          props: { search: true },
+        },
+        {
+          path: '/search/albums/*',
+          name: 'SearchAlbums',
+          component: Albums,
+          props: { search: true },
+        },
+        {
+          path: '/search/songs/*',
+          name: 'SearchSongs',
+          component: Songs,
+          props: { search: true },
+        },
+        {
+          path: '/search/genres/*',
+          name: 'SearchGenres',
+          component: Genres,
+          props: { search: true },
+        },
+        {
+          path: '/search/playlists/*',
+          name: 'SearchPlaylists',
+          component: Playlists,
+          props: { search: true },
+        },
+      ],
     },
     {
       path: '/rooms',
@@ -79,7 +118,7 @@ const router = new Router({
           component: Playlists,
         },
         {
-          path: '/library/shares',
+          path: '/library/share',
           name: 'Shares',
           component: Shares,
         },

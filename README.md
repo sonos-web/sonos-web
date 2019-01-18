@@ -3,7 +3,8 @@ Sonos Web is a browser based controller for your [Sonos](https://www.sonos.com/s
 
 Install Sonos Web on a single computer and access and manage your system from any browser on your network.
 
-![Genre Detail View](https://user-images.githubusercontent.com/5977736/51081846-09c14c80-16b7-11e9-8fd8-a158d1a1b8f6.png)
+![Search View](https://user-images.githubusercontent.com/5977736/51435364-fec86800-1c32-11e9-8ca0-a162b1dc1e91.png)
+
 
 Sonos Web relies upon the [node-sonos](https://github.com/bencevans/node-sonos) project for all its Sonos communication.
 
@@ -14,6 +15,7 @@ Sonos Web has been tested on Windows 7, macOS, Linux, and Raspbian Stretch Lite 
 ## Features
 Sonos Web is a developing project and is not yet full-featured. Here are some of the currently available features:
  * Music Library
+    * Search your entire music library with Top Results (Not available on official Sonos App)
     * Browse, Queue, & Play your entire music library by category
     * View Artists, Genres & Playlists with Album Art! (Not available on official Sonos App)
     * All artist & album names are links that take you to that item (very useful!)
@@ -27,11 +29,11 @@ Sonos Web is a developing project and is not yet full-featured. Here are some of
  * Room selection from the Now Playing bar.
 
 ## Goals (Coming Soon)
- * Search your entire music library
- * Browse Music Library
+ * Music Library
     * Sonos Playlists & Favorites
     * Other Music Services (ex. Pandora, Spotify, etc.) ...maybe? 
- * Play History
+ * Recent Play History
+ * Caching of searches and browsing for quicker load times
 
 ## Install
 The goal for this project is to make installation as simple as possible for Windows, Mac, & Linux.
@@ -74,6 +76,9 @@ https://github.com/docker/for-win/issues/937
 ### Queue Management
 ![Queue Management](https://user-images.githubusercontent.com/5977736/50566855-89d0d500-0cfb-11e9-8c7c-181a624b5eb7.png)
 
+### Search View
+![Search View 2](https://user-images.githubusercontent.com/5977736/51435372-4ea72f00-1c33-11e9-9cdc-b7adf47e9d86.png)
+
 ### Album Detail View
 ![Album View](https://user-images.githubusercontent.com/5977736/51081850-4b51f780-16b7-11e9-88a4-4466a9af640d.png)
 
@@ -83,8 +88,8 @@ https://github.com/docker/for-win/issues/937
 ### Songs View
 ![Songs View](https://user-images.githubusercontent.com/5977736/51081854-60c72180-16b7-11e9-8197-8f2080ad253a.png)
 
-### Artists View
-![Artists View](https://user-images.githubusercontent.com/5977736/51081850-4b51f780-16b7-11e9-88a4-4466a9af640d.png)
+### Genre Detail View
+![Genre Detail View](https://user-images.githubusercontent.com/5977736/51081846-09c14c80-16b7-11e9-8fd8-a158d1a1b8f6.png)
 
 ### View all rooms and what they're playing
 ![Rooms](https://user-images.githubusercontent.com/5977736/50566842-5c842700-0cfb-11e9-8e7b-56a981769d26.png)

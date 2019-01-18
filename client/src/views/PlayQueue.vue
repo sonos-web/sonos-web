@@ -22,7 +22,7 @@
         </v-snackbar>
       </div>
       <v-layout row wrap>
-        <v-flex xs12 ref="queueHeader" class="sticky" :class="queueHeaderClass">
+        <v-flex xs12 ref="queueHeader" class="sticky" :class="stickyClass">
           <room-dropdown-menu hideIcon
             buttonClasses="display-1 font-weight-bold text-capitalize ma-0 px-2">
           </room-dropdown-menu>
@@ -189,7 +189,7 @@ export default {
       const numSongs = `${this.activeZoneGroup.queue.length} songs`;
       return this.canSeek ? numSongs : `(Not in Use) ${numSongs}`;
     },
-    queueHeaderClass() {
+    stickyClass() {
       switch (this.$vuetify.breakpoint.name) {
         case 'md':
           return 'md';

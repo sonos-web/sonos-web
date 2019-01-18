@@ -205,6 +205,31 @@ export default {
   height: 100%;
 }
 
+.library-tabs {
+  width: 100%;
+}
+.library-tabs .v-tabs__bar.theme--dark {
+  background-color: unset;
+}
+.library-tabs .v-tabs__item {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+}
+.library-tabs .v-tabs__div {
+  position: relative;
+  padding: 0px 8px;
+}
+.library-tabs .v-tabs__item.v-tabs__item--active:before {
+  content: "";
+  height: 2px;
+  background-color: #3898d6;
+  width: 30px;
+  position: absolute;
+  display: block;
+  bottom: 8px;
+}
+
 @media (min-width: 960px) {
   .container {
     max-width: 950px;

@@ -3,16 +3,18 @@
     <load-library-on-scroll
       @loading-error="loadingError"
       @loaded-items="loadedItems"
-      :asyncLoadMethod="getSongs"
-      :libraryItem="songs">
+      :asyncLoadMethod="loadMethod"
+      :libraryItem="songs"
+      :searchTerm="searchTerm">
     </load-library-on-scroll>
-    <v-layout row wrap v-if="!loading">
+    <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
+    <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
+    <v-layout row wrap v-else>
       <library-item-count :total="songs.total" label="Songs"></library-item-count>
       <v-flex xs12>
         <song-list :songs="items"></song-list>
       </v-flex>
     </v-layout>
-    <LoadingView v-if="loading" absolute message="Loading..."></LoadingView>
   </v-layout>
 </template>
 
@@ -26,24 +28,41 @@ import LoadLibraryOnScroll from '@/components/LoadLibraryOnScroll.vue';
 export default {
   name: 'Songs',
   components: { LibraryItemCount, LoadLibraryOnScroll, SongList },
+  props: {
+    search: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     songs: {},
     loading: true,
+    error: false,
+    errorMessage: null,
   }),
   methods: {
-    getSongs: MusicLibraryAPI.getSongs,
     loadedItems(data) {
       this.loading = false;
       this.songs = deepmerge(this.songs, data);
     },
     loadingError(error) {
-      this.loading = false;
-      console.log(error);
+      this.loading = false
+      this.error = true;
+      this.errorMessage = `${error.response.status}: ${error.response.data}`;
     },
   },
   computed: {
     items() {
       return this.songs.items || [];
+    },
+    searchTerm() {
+      if (this.search) {
+        return this.$route.params.pathMatch;
+      }
+      return null;
+    },
+    loadMethod() {
+      return this.search ? MusicLibraryAPI.searchSongs : MusicLibraryAPI.getSongs;
     },
   },
 };

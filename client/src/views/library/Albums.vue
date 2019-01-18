@@ -3,15 +3,17 @@
     <load-library-on-scroll
       @loading-error="loadingError"
       @loaded-items="loadedItems"
-      :asyncLoadMethod="getAlbums"
-      :libraryItem="albums">
+      :asyncLoadMethod="loadMethod"
+      :libraryItem="albums"
+      :searchTerm="searchTerm">
     </load-library-on-scroll>
-    <v-layout row wrap v-if="!loading">
+    <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
+    <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
+    <v-layout row wrap v-else>
       <library-item-count :total="albums.total" label="Albums"></library-item-count>
       <library-item v-for="item in items" :key="item.uri"
         :item="item" toPrefix="/album"></library-item>
     </v-layout>
-    <LoadingView v-if="loading" absolute message="Loading..."></LoadingView>
   </v-layout>
 </template>
 
@@ -28,21 +30,38 @@ export default {
   data: () => ({
     albums: {},
     loading: true,
+    error: false,
+    errorMessage: null,
   }),
+  props: {
+    search: {
+      type: Boolean,
+      default: false,
+    },
+  },
   methods: {
-    getAlbums: MusicLibraryAPI.getAlbums,
     loadedItems(data) {
       this.loading = false;
       this.albums = deepmerge(this.albums, data);
     },
     loadingError(error) {
-      this.loading = false;
-      console.log(error);
+      this.loading = false
+      this.error = true;
+      this.errorMessage = `${error.response.status}: ${error.response.data}`;
     },
   },
   computed: {
     items() {
       return this.albums.items || [];
+    },
+    searchTerm() {
+      if (this.search) {
+        return this.$route.params.pathMatch;
+      }
+      return null;
+    },
+    loadMethod() {
+      return this.search ? MusicLibraryAPI.searchAlbums : MusicLibraryAPI.getAlbums;
     },
   },
 };

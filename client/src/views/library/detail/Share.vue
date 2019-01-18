@@ -63,7 +63,7 @@ export default {
       this.items = deepmerge(this.items, data);
       this.name = this.$Base64.decode(this.pathMatch);
       if (!this.isShare) {
-        this.$router.push(`/album/${this.$Base64.encodeURI(this.folders[0].album)}`);
+        this.$router.replace(`/album/${this.$Base64.encodeURI(this.folders[0].album)}`);
       }
     },
     loadingError(error) {
