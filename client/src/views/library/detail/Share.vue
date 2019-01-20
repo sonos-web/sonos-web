@@ -7,7 +7,7 @@
       :asyncLoadMethod="getItems"
       :libraryItem="items"
       :detailPath="path">
-    </load-library-on-scroll>    
+    </load-library-on-scroll>
     <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
     <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
     <v-layout row wrap v-else>

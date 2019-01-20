@@ -1,23 +1,23 @@
 <template>
-  <v-layout>    
+  <v-layout>
     <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
     <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
     <v-layout row wrap v-else>
       <v-flex xs12 v-if="songs" pb-4>
         <v-layout justify-center>
-          <router-link                    
+          <router-link
             :to="`/search/songs/${searchTerm}`"
             class="top-result-heading">
             Songs
           </router-link>
         </v-layout>
-        <v-flex xs12>        
+        <v-flex xs12>
           <song-list :songs="songs"></song-list>
         </v-flex>
       </v-flex>
       <v-flex xs12 v-if="artists" pb-4>
         <v-layout justify-center>
-          <router-link                    
+          <router-link
             :to="`/search/artists/${searchTerm}`"
             class="top-result-heading">
             Artists
@@ -30,20 +30,20 @@
       </v-flex>
       <v-flex xs12 v-if="albums" pb-4>
         <v-layout justify-center>
-          <router-link                    
+          <router-link
             :to="`/search/albums/${searchTerm}`"
             class="top-result-heading">
             Albums
           </router-link>
         </v-layout>
-        <v-layout row wrap pt-2>        
+        <v-layout row wrap pt-2>
           <library-item v-for="item in albums" :key="item.uri"
             :item="item" toPrefix="/album"></library-item>
         </v-layout>
       </v-flex>
       <v-flex xs12 v-if="playlists" pb-4>
         <v-layout justify-center>
-          <router-link                    
+          <router-link
             :to="`/search/playlists/${searchTerm}`"
             class="top-result-heading">
             Playlists
@@ -67,7 +67,7 @@
             :item="item" toPrefix="/genre"></library-item>
         </v-layout>
       </v-flex>
-    </v-layout>   
+    </v-layout>
   </v-layout>
 </template>
 
@@ -93,23 +93,22 @@ export default {
   methods: {
     async getTopSearchResults() {
       try {
-      this.loading = true;
-      this.error = false;
+        this.loading = true;
+        this.error = false;
 
-      const result = await MusicLibraryAPI.searchTopResults({ searchTerm: this.searchTerm });
-      // Because the user may trigger quite a few different searches by typing
-      // make sure we settle on the data that matches the current searchTerm input
-      if (result.data.searchTerm === this.searchTerm) {
-        this.topResults = result.data;
+        const result = await MusicLibraryAPI.searchTopResults({ searchTerm: this.searchTerm });
+        // Because the user may trigger quite a few different searches by typing
+        // make sure we settle on the data that matches the current searchTerm input
+        if (result.data.searchTerm === this.searchTerm) {
+          this.topResults = result.data;
+        }
+        this.loading = false;
+      } catch (error) {
+        this.loading = false;
+        this.error = true;
+        this.errorMessage = `${error.response.status}: ${error.response.data}`;
       }
-      this.loading = false;
-    }
-    catch (error) {
-      this.loading = false  
-      this.error = true;
-      this.errorMessage = `${error.response.status}: ${error.response.data}`;
-    }
-    }
+    },
   },
   computed: {
     songs() {
@@ -132,8 +131,8 @@ export default {
     async $route(to) {
       this.searchTerm = to.params.pathMatch;
       this.getTopSearchResults();
-    }
-  }
+    },
+  },
 };
 </script>
 

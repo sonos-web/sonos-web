@@ -25,7 +25,7 @@ export default {
     searchTerm: {
       type: String,
       default: null,
-    }
+    },
   },
   data: () => ({
     start: 0,

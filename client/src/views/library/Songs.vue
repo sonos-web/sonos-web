@@ -46,7 +46,7 @@ export default {
       this.songs = deepmerge(this.songs, data);
     },
     loadingError(error) {
-      this.loading = false
+      this.loading = false;
       this.error = true;
       this.errorMessage = `${error.response.status}: ${error.response.data}`;
     },

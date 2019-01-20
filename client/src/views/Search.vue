@@ -3,7 +3,8 @@
     <vue-headful title="Search - Sonos Web"></vue-headful>
     <v-layout row wrap>
         <v-flex xs12 class="search-container" :class="stickyClass">
-          <input v-focus v-model="searchInput" type="text" class="search-container__input" placeholder="Start typing...">
+          <input v-focus v-model="searchInput"
+          type="text" class="search-container__input" placeholder="Start typing...">
         </v-flex>
         <v-flex xs12 mt-5>
           <template v-if="searchInput">
@@ -48,7 +49,7 @@ export default {
   created() {
     this.searchInput = this.$route.params.pathMatch || null;
   },
-  beforeRouteUpdate(to, from, next) {    
+  beforeRouteUpdate(to, from, next) {
     if (to.name === 'Search') {
       this.searchInput = null;
     }
@@ -74,16 +75,16 @@ export default {
         { title: 'Songs', link: `/search/songs/${this.encodedSearchInput}` },
         { title: 'Genres', link: `/search/genres/${this.encodedSearchInput}` },
         { title: 'Playlists', link: `/search/playlists/${this.encodedSearchInput}` },
-      ]
+      ];
     },
     encodedSearchInput() {
       return encodeURIComponent(this.searchInput);
-    }
+    },
   },
   watch: {
     searchInput(value) {
-      if (this.firstLoad){
-        this.firstLoad = false;        
+      if (this.firstLoad) {
+        this.firstLoad = false;
       } else if (value) {
         this.$router.push(`/search/results/${encodeURIComponent(value)}`);
       } else {
@@ -93,7 +94,7 @@ export default {
   },
   directives: {
     focus: {
-      inserted: function (el) {
+      inserted(el) {
         el.focus();
       },
     },
@@ -123,7 +124,7 @@ export default {
 }
 .search-container__input {
   font-size: 36px;
-  line-height: 44px;    
+  line-height: 44px;
   font-weight: 900;
   color: #fff;
   text-transform: none;

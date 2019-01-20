@@ -45,7 +45,7 @@ export default {
       this.genres = deepmerge(this.genres, data);
     },
     loadingError(error) {
-      this.loading = false
+      this.loading = false;
       this.error = true;
       this.errorMessage = `${error.response.status}: ${error.response.data}`;
     },

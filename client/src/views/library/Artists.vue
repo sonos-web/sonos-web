@@ -13,7 +13,7 @@
       <library-item-count :total="albumArtists.total" label="Artists"></library-item-count>
       <library-item v-for="item in items" :key="item.uri"
         :item="item" toPrefix="/artist"></library-item>
-    </v-layout>   
+    </v-layout>
   </v-layout>
 </template>
 
@@ -45,7 +45,7 @@ export default {
       this.albumArtists = deepmerge(this.albumArtists, data);
     },
     loadingError(error) {
-      this.loading = false
+      this.loading = false;
       this.error = true;
       this.errorMessage = `${error.response.status}: ${error.response.data}`;
     },
