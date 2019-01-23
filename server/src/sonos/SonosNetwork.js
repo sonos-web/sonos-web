@@ -149,6 +149,9 @@ class SonosNetwork {
       if (zoneGroup) {
         // eslint-disable-next-line max-len
         const updatedZone = this._updateZoneGroupRenderingInfo(zoneGroup.id, device.id, renderingInfo);
+        // We don't want to send this field, because it can cause a
+        // jumpy track position when adjust volume
+        delete updatedZone.track;
         if (updatedZone) {
           this.socketio.emit(
             SonosEventDataReceived,
