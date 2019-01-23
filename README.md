@@ -15,12 +15,12 @@ Sonos Web has been tested on Windows 7, macOS, Linux, and Raspbian Stretch Lite 
 ## Features
 Sonos Web is a developing project and is not yet full-featured. Here are some of the currently available features:
  * Music Library
-    * Search your entire music library with Top Results (Not available on official Sonos App)
+    * Search your entire music library with Top Results *
     * Browse, Queue, & Play your entire music library by category
-    * View Artists, Genres & Playlists with Album Art! (Not available on official Sonos App)
-    * All artist & album names are links that take you to that item (very useful!)
+    * View Artists, Genres & Playlists with Album Art! *
+    * All artist & album names are links that take you to that item *
     * Browsing & searching is cached for quicker load times
- * Group rooms together via drag & drop
+ * Group rooms together via drag & drop *
  * Queue management via icon on Now Playing bar
  * Party mode (Group all speakers into one group)
  * Quickly & easily switch between rooms/groups
@@ -28,6 +28,9 @@ Sonos Web is a developing project and is not yet full-featured. Here are some of
  * Play, pause, skip, and seek tracks
  * Shuffle & repeat controls 
  * Room selection from the Now Playing bar.
+
+ \* *Feature exclusive to Sonos Web (not available on official Sonos App)*
+ 
 
 ## Goals (Coming Soon)
  * Music Library
