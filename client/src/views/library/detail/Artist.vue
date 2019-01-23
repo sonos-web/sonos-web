@@ -70,6 +70,7 @@ export default {
       }
     },
     loadingError(error) {
+      console.log(error)
       this.loading = false;
       this.error = true;
       this.errorMessage = `${error.response.status}: ${error.response.data}`;
@@ -89,7 +90,8 @@ export default {
     allURI() {
       if (this.items.items) {
         const allItem = this.items.items.find(item => item.title === 'All');
-        return allItem.uri;
+        if (allItem) return allItem.uri;
+        return '';
       }
       return '';
     },

@@ -69,6 +69,16 @@ export default {
         } else {
           result = await this.asyncLoadMethod(options);
         }
+
+        if (result.data.total === '0') {
+          const error = new Error('404: Not Found')
+          error.response = {
+            status: 404,
+            data: 'Item Not Found',
+          };
+          throw error;
+        }
+
         // Update the start for the next load
         const returnedCount = parseInt(result.data.returned, 10);
         if (returnedCount === this.total) {
