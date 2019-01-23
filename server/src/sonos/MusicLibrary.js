@@ -1,7 +1,6 @@
 const deepmerge = require('deepmerge');
 const {
   NotASonosDevice,
-  EmptyOrInvalidLibraryItem,
   NoResultsFound,
 } = require('./MusicLibraryErrors');
 
@@ -14,18 +13,11 @@ class MusicLibrary {
     this.sonos = Sonos;
     if (!this.sonos) { throw new Error(NotASonosDevice); }
 
-    this._cache = {
-      albumArtists: null,
-      albums: null,
-      genres: null,
-      tracks: null,
-      playlists: null,
-      sonos_playlists: null,
-      share: null,
-    };
+    this._playlistCache = null;
+    this._browseCache = [];
   }
 
-  /**
+  /*
    *************************************************************************************************
    *************************************************************************************************
    * PUBLIC LIBRARY QUERY METHODS
@@ -60,15 +52,8 @@ class MusicLibrary {
       uri: '',
     };
     const options = deepmerge(defaultOptions, browseOptions);
-    const libraryItem = this._cache[options.searchCategory];
-    if (libraryItem === undefined) throw new Error(EmptyOrInvalidLibraryItem);
-
-    // // Not caching searches yet
-    // if (!options.search && options.searchCategory !== 'playlists' && options.searchCategory !== 'share') {
-    //   // Return cache if possible
-    //   const cache = MusicLibrary._getCache(libraryItem, options.searchOptions);
-    //   if (cache) return cache;
-    // }
+    const cache = this._getCache(options);
+    if (cache) return cache;
 
     try {
       // eslint-disable-next-line max-len
@@ -105,14 +90,15 @@ class MusicLibrary {
         }
       }
 
-      return result;
-      // // Not caching searches yet
-      // if (options.search || options.searchCategory === 'playlists' || options.searchCategory === 'share') return result;
+      // Add this query to the cache
+      this._browseCache.push({
+        searchCategory: options.searchCategory,
+        searchTerm: options.searchTerm,
+        searchOptions: options.searchOptions,
+        data: result,
+      });
 
-      // // Cache the results
-      // this._cache[options.searchCategory] = MusicLibrary._merge(libraryItem, result);
-      // // eslint-disable-next-line max-len
-      // return MusicLibrary._getReturnResult(this._cache[options.searchCategory], options.searchOptions);
+      return result;
     } catch (error) {
       throw error;
     }
@@ -143,8 +129,8 @@ class MusicLibrary {
    * @returns {String|null} playlistURI
    */
   async getPlaylistURI(playlistName) {
-    if (this._cache.playlists) {
-      const playlist = this._cache.playlists.items.find(p => p.title === playlistName);
+    if (this._playlistCache) {
+      const playlist = this._playlistCache.items.find(p => p.title === playlistName);
       if (playlist) return playlist.uri;
       return null;
     }
@@ -152,7 +138,7 @@ class MusicLibrary {
       // eslint-disable-next-line max-len
       const playlists = await this.sonos.getMusicLibrary('playlists');
       if (!playlists) throw new Error(NoResultsFound);
-      this._cache.playlists = playlists;
+      this._playlistCache = playlists;
       const playlist = playlists.items.find(p => p.title === playlistName);
       if (playlist) return playlist.uri;
       return null;
@@ -161,13 +147,32 @@ class MusicLibrary {
     }
   }
 
-  /**
+  /*
    *************************************************************************************************
    *************************************************************************************************
    * HELPERS
    *************************************************************************************************
    *************************************************************************************************
    */
+
+
+  /**
+  * Returns a cached query or null
+  * @param {Object} options
+  * @returns {Object|null} cache data or null
+  */
+  _getCache(options) {
+    const match = this._browseCache.find((cache) => {
+      if (options.searchCategory === cache.searchCategory
+      && options.searchTerm === cache.searchTerm
+      && options.searchOptions.start === cache.searchOptions.start
+      && options.searchOptions.total === cache.searchOptions.total) {
+        return cache;
+      }
+      return null;
+    });
+    return match ? match.data : null;
+  }
 
   /**
    * Returns album art URI for the first album found
@@ -241,7 +246,7 @@ class MusicLibrary {
     }
   }
 
-  /**
+  /*
    *************************************************************************************************
    *************************************************************************************************
    * STATIC HELPERS
@@ -273,40 +278,6 @@ class MusicLibrary {
       }
     }
     return { category, term, separator };
-  }
-
-  static _getCache(libraryItem, options) {
-    const lengthNeeded = options.start + options.total;
-    if (libraryItem
-        && libraryItem.items
-        && libraryItem.items.length !== 0
-        && libraryItem.items.length >= Math.min(lengthNeeded, parseInt(libraryItem.total, 10))) {
-      return MusicLibrary._getReturnResult(libraryItem, options);
-    }
-    return null;
-  }
-
-  static _getRequestOptions(libraryItem, options) {
-    let start = { options };
-    let total = { options };
-    const lengthNeeded = start + total;
-    const cachedItems = libraryItem ? libraryItem.items : [];
-    // Only fetch items that we do not have a cache for
-    if (cachedItems.length > start) {
-      start = cachedItems.length;
-      total = lengthNeeded - cachedItems.length;
-    }
-    return { start, total };
-  }
-
-  static _getReturnResult(libraryItem, options) {
-    const lengthNeeded = options.start + options.total;
-    const items = libraryItem.items.slice(options.start, lengthNeeded);
-    return {
-      items,
-      total: libraryItem.total,
-      returned: items.length,
-    };
   }
 
   static _getEmptyReturnResult() {
