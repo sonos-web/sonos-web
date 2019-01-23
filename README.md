@@ -19,6 +19,7 @@ Sonos Web is a developing project and is not yet full-featured. Here are some of
     * Browse, Queue, & Play your entire music library by category
     * View Artists, Genres & Playlists with Album Art! (Not available on official Sonos App)
     * All artist & album names are links that take you to that item (very useful!)
+    * Browsing & searching is cached for quicker load times
  * Group rooms together via drag & drop
  * Queue management via icon on Now Playing bar
  * Party mode (Group all speakers into one group)
@@ -33,7 +34,6 @@ Sonos Web is a developing project and is not yet full-featured. Here are some of
     * Sonos Playlists & Favorites
     * Other Music Services (ex. Pandora, Spotify, etc.) ...maybe? 
  * Recent Play History
- * Caching of searches and browsing for quicker load times
 
 ## Install
 The goal for this project is to make installation as simple as possible for Windows, Mac, & Linux.
