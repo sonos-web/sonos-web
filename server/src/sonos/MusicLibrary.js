@@ -218,24 +218,22 @@ class MusicLibrary {
         if (album && album.albumArtURI !== null) {
           return album.albumArtURI;
         }
-      } catch (error) {
-        if (error.message === NoResultsFound) {
-          // For returning album art of artists when browsing genres
-          if (searchCategory === 'genres') {
-            search = await this.browse({
-              searchCategory: 'albumArtists',
-              searchTerm,
-              searchOptions: { start: 0, total: 2 },
-              getAlbumArt: false,
-            });
-            album = search.items.find(item => item.albumArtURI !== null);
-            if (album) {
-              return album.albumArtURI;
-            }
+
+        // For returning album art of artists when browsing genres
+        if (searchCategory === 'genres') {
+          search = await this.browse({
+            searchCategory: 'albumArtists',
+            searchTerm,
+            searchOptions: { start: 0, total: 2 },
+            getAlbumArt: false,
+          });
+          album = search.items.find(item => item.albumArtURI !== null);
+          if (album) {
+            return album.albumArtURI;
           }
-        } else {
-          throw error;
         }
+      } catch (error) {
+        throw error;
       }
       return null;
     } catch (error) {
