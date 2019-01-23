@@ -71,7 +71,7 @@ export default {
         }
 
         if (result.data.total === '0') {
-          const error = new Error('404: Not Found')
+          const error = new Error('404: Not Found');
           error.response = {
             status: 404,
             data: 'Item Not Found',

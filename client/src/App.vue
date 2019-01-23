@@ -59,6 +59,7 @@ export default {
       { icon: 'music_note', text: 'Now Playing', path: '/' },
       { icon: 'speaker_group', text: 'Rooms', path: '/rooms' },
       { icon: 'library_music', text: 'Music Library', path: '/library' },
+      { icon: 'star', text: 'My Sonos', path: '/sonos' },
     ],
   }),
   computed: {

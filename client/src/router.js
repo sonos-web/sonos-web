@@ -24,6 +24,9 @@ const Album = () => import(/* webpackChunkName: "Album" */ './views/library/deta
 const Genre = () => import(/* webpackChunkName: "Genre" */ './views/library/detail/Genre.vue');
 const Share = () => import(/* webpackChunkName: "Share" */ './views/library/detail/Share.vue');
 
+const MySonos = () => import(/* webpackChunkName: "My Sonos" */ './views/MySonos.vue');
+const SonosPlaylists = () => import(/* webpackChunkName: "Sonos Playlists" */ './views/sonos/SonosPlaylists.vue');
+
 const PlayQueue = () => import(/* webpackChunkName: "Play Queue" */ './views/PlayQueue.vue');
 
 
@@ -165,6 +168,27 @@ const router = new Router({
       path: '/queue',
       name: 'PlayQueue',
       component: PlayQueue,
+    },
+    {
+      path: '/sonos',
+      component: MySonos,
+      children: [
+        {
+          path: '',
+          name: 'sonos',
+          redirect: { name: 'SonosPlaylists' },
+        },
+        {
+          path: '/sonos/playlists',
+          name: 'SonosPlaylists',
+          component: SonosPlaylists,
+        },
+        {
+          path: '/sonos/favorites',
+          name: 'SonosFavorites',
+          component: Playlists,
+        },
+      ],
     },
   ],
 });

@@ -70,7 +70,6 @@ export default {
       }
     },
     loadingError(error) {
-      console.log(error)
       this.loading = false;
       this.error = true;
       this.errorMessage = `${error.response.status}: ${error.response.data}`;

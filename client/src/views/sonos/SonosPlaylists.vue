@@ -11,9 +11,9 @@
     <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
     <v-layout row wrap v-else>
       <library-item-count :total="sonosPlaylists.total"
-        label="Sonos Playlists"></library-item-count>
+        label="Playlists"></library-item-count>
       <library-item v-for="item in items" :key="item.uri"
-        :item="item" toPrefix="/sonos-playlist"></library-item>
+        :item="item" toPrefix="/sp"></library-item>
     </v-layout>
   </v-layout>
 </template>
@@ -44,6 +44,7 @@ export default {
     loadedItems(data) {
       this.loading = false;
       this.sonosPlaylists = deepmerge(this.sonosPlaylists, data);
+      console.log(this.sonosPlaylists);
     },
     loadingError(error) {
       this.loading = false;
