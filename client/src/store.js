@@ -132,11 +132,9 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    updateZoneGroup({ commit, getters, dispatch }, data) {
-      const group = getters.activeZoneGroup;
-      const previousPlayState = group.state;
+    updateZoneGroup({ commit, dispatch }, data) {
       commit('UPDATE_ZONE_GROUP', data);
-      dispatch('updateTrackTimer', { previousPlayState });
+      dispatch('updateTrackTimer');
     },
     setActiveZoneGroup({ commit, dispatch }, groupId) {
       localStorage.setItem('activeZoneGroupId', groupId);
@@ -172,12 +170,12 @@ export default new Vuex.Store({
       }
       commit('SET_DOCUMENT_TITLE_FOR_ACTIVE_GROUP', documentTitle);
     },
-    updateTrackTimer({ dispatch, getters, commit }, data) {
+    updateTrackTimer({ dispatch, getters, commit }) {
       const group = getters.activeZoneGroup;
       if (group) {
-        if (group.state === PlayState.playing && data.previousPlayState !== PlayState.playing) {
+        if (group.state === PlayState.playing) {
           dispatch('startTrackTimer');
-        } else if (group.state !== PlayState.playing) {
+        } else {
           commit('CLEAR_TRACK_TIMER');
         }
       }
