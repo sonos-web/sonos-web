@@ -20,13 +20,13 @@
         <v-list-tile @click="playNow(selectedSongURI)">
           <v-list-tile-title>Play Now</v-list-tile-title>
         </v-list-tile>
-        <v-list-tile @click="playNext(selectedSongURI)">
+        <v-list-tile @click="playNext(selectedSongURI)" v-if="!isRadio">
           <v-list-tile-title>Play Next</v-list-tile-title>
         </v-list-tile>
-        <v-list-tile @click="addToEndOfQueue(selectedSongURI)">
+        <v-list-tile @click="addToEndOfQueue(selectedSongURI)" v-if="!isRadio">
           <v-list-tile-title>Add to End of Queue</v-list-tile-title>
         </v-list-tile>
-        <v-list-tile @click="replaceQueueAndPlay(selectedSongURI)">
+        <v-list-tile @click="replaceQueueAndPlay(selectedSongURI)" v-if="!isRadio">
           <v-list-tile-title>Replace Queue</v-list-tile-title>
         </v-list-tile>
       </v-list>
@@ -83,6 +83,15 @@ export default {
   computed: {
     activeZoneGroupId() {
       return this.$store.state.activeZoneGroupId;
+    },
+    isRadio() {
+      if (this.selectedSongURI) {
+        if (this.selectedSongURI.startsWith('x-sonosapi-radio:')) {
+          return true;
+        }
+        return false;
+      }
+      return false;
     },
   },
 };

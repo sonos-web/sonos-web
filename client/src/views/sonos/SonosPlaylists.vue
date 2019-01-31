@@ -44,7 +44,6 @@ export default {
     loadedItems(data) {
       this.loading = false;
       this.sonosPlaylists = deepmerge(this.sonosPlaylists, data);
-      console.log(this.sonosPlaylists);
     },
     loadingError(error) {
       this.loading = false;

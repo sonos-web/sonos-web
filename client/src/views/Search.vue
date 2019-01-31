@@ -75,6 +75,7 @@ export default {
         { title: 'Songs', link: `/search/songs/${this.encodedSearchInput}` },
         { title: 'Genres', link: `/search/genres/${this.encodedSearchInput}` },
         { title: 'Playlists', link: `/search/playlists/${this.encodedSearchInput}` },
+        { title: 'Sonos Playlists', link: `/search/sp/${this.encodedSearchInput}` },
       ];
     },
     encodedSearchInput() {

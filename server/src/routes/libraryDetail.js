@@ -106,6 +106,21 @@ module.exports = function LibraryDetail(sonosNetwork) {
       this.handleError(error, res);
     }
   });
+  this.router.post('/sp/:name', async (req, res) => {
+    try {
+      const playlistName = Base64.decode(req.params.name);
+      const playlistURI = await this.sonosNetwork.musicLibrary.getSonosPlaylistId(playlistName);
+      const songs = await this.sonosNetwork.musicLibrary.browse({
+        searchCategory: 'sonos_playlists',
+        searchTerm: playlistURI,
+        searchOptions: { start: req.body.start, total: req.body.total },
+        search: true,
+      });
+      res.status(200).send(songs);
+    } catch (error) {
+      this.handleError(error, res);
+    }
+  });
 
   this.handleError = function handleError(error, res) {
     const { message } = error;

@@ -14,6 +14,7 @@ class MusicLibrary {
     if (!this.sonos) { throw new Error(NotASonosDevice); }
 
     this._playlistCache = null;
+    this._sonosPlaylistCache = null;
     this._browseCache = [];
   }
 
@@ -120,7 +121,21 @@ class MusicLibrary {
         topResults[item] = result;
       }
     }));
+
+    topResults.sonos_playlists = await this.searchSonosPlaylists({
+      searchTerm: options.searchTerm,
+      searchOptions: { start: 0, total: 12 },
+    });
     return topResults;
+  }
+
+  async getFavorites() {
+    try {
+      const result = await this.sonos.getFavorites();
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**
@@ -135,13 +150,93 @@ class MusicLibrary {
       return null;
     }
     try {
-      // eslint-disable-next-line max-len
       const playlists = await this.sonos.getMusicLibrary('playlists');
       if (!playlists) throw new Error(NoResultsFound);
       this._playlistCache = playlists;
       const playlist = playlists.items.find(p => p.title === playlistName);
       if (playlist) return playlist.uri;
       return null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+  /**
+   * Get Sonos Playlists
+   * @returns {Array} sonos playlists
+   */
+  async getSonosPlaylists(searchOptions) {
+    const defaultOptions = {
+      searchOptions: { start: 0, total: 100 },
+    };
+    const options = { ...defaultOptions, ...searchOptions };
+    if (this._sonosPlaylistCache) {
+      const items = this._sonosPlaylistCache.items.slice(options.start, options.total);
+      return {
+        total: String(this._sonosPlaylistCache.length),
+        returned: String(items.length),
+        items,
+      };
+    }
+    try {
+      const playlists = await this.sonos.getMusicLibrary('sonos_playlists');
+      if (!playlists) throw new Error(NoResultsFound);
+      this._sonosPlaylistCache = playlists;
+      const items = playlists.items.slice(options.start, options.total);
+      return {
+        total: String(playlists.length),
+        returned: String(items.length),
+        items,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Converts a playlistName into its id for searching on Sonos
+   * @param {String} playlistName
+   * @returns {String|null} playlistId
+   */
+  async getSonosPlaylistId(playlistName) {
+    try {
+      const playlists = await this.getSonosPlaylists();
+      const playlist = playlists.items.find(p => p.title === playlistName);
+      if (playlist) return playlist.uri.split('#')[1];
+      return null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Get a playlist uri from the name
+   * @param {String} playlistName
+   * @returns {String|null} uri
+   */
+  async getSonosPlaylistURI(playlistName) {
+    try {
+      const playlists = await this.getSonosPlaylists();
+      const playlist = playlists.items.find(p => p.title === playlistName);
+      if (playlist) return playlist.uri;
+      return null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Get Sonos Playlists
+   * @param {Object} options - { searchTerm: String, searchOptions: { start: Number, total: Number } }
+   * @returns {Array} sonos playlists
+   */
+  async searchSonosPlaylists(options) {
+    try {
+      const playlists = await this.getSonosPlaylists(options);
+      // eslint-disable-next-line max-len
+      const results = playlists.items.filter(p => p.title.toLowerCase().indexOf(options.searchTerm.toLowerCase()) !== -1);
+      return { returned: String(results.length), total: String(results.length), items: results };
     } catch (error) {
       throw error;
     }

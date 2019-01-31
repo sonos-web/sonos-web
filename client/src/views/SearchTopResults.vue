@@ -54,6 +54,19 @@
             :item="item" toPrefix="/playlist"></library-item>
         </v-layout>
       </v-flex>
+      <v-flex xs12 v-if="playlists" pb-4>
+        <v-layout justify-center>
+          <router-link
+            :to="`/search/sp/${searchTerm}`"
+            class="top-result-heading">
+            Sonos Playlists
+          </router-link>
+        </v-layout>
+        <v-layout row wrap pt-2>
+          <library-item v-for="item in sonosPlaylists" :key="item.uri"
+            :item="item" toPrefix="/sp"></library-item>
+        </v-layout>
+      </v-flex>
       <v-flex xs12 v-if="genres" pb-4>
         <v-layout justify-center>
           <router-link
@@ -122,6 +135,9 @@ export default {
     },
     playlists() {
       return this.topResults.playlists ? this.topResults.playlists.items : null;
+    },
+    sonosPlaylists() {
+      return this.topResults.sonos_playlists ? this.topResults.sonos_playlists.items : null;
     },
     genres() {
       return this.topResults.genres ? this.topResults.genres.items : null;

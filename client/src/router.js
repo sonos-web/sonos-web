@@ -26,6 +26,7 @@ const Share = () => import(/* webpackChunkName: "Share" */ './views/library/deta
 
 const MySonos = () => import(/* webpackChunkName: "My Sonos" */ './views/MySonos.vue');
 const SonosPlaylists = () => import(/* webpackChunkName: "Sonos Playlists" */ './views/sonos/SonosPlaylists.vue');
+const SonosFavorites = () => import(/* webpackChunkName: "Sonos Favorites" */ './views/sonos/SonosFavorites.vue');
 
 const PlayQueue = () => import(/* webpackChunkName: "Play Queue" */ './views/PlayQueue.vue');
 
@@ -77,6 +78,12 @@ const router = new Router({
           path: '/search/playlists/*',
           name: 'SearchPlaylists',
           component: Playlists,
+          props: { search: true },
+        },
+        {
+          path: '/search/sp/*',
+          name: 'SearchSonosPlaylists',
+          component: SonosPlaylists,
           props: { search: true },
         },
       ],
@@ -165,6 +172,12 @@ const router = new Router({
       component: Share,
     },
     {
+      path: '/sp/*',
+      name: 'Sonos Playlist',
+      component: Album,
+      props: { isSonosPlaylist: true },
+    },
+    {
       path: '/queue',
       name: 'PlayQueue',
       component: PlayQueue,
@@ -186,7 +199,7 @@ const router = new Router({
         {
           path: '/sonos/favorites',
           name: 'SonosFavorites',
-          component: Playlists,
+          component: SonosFavorites,
         },
       ],
     },

@@ -413,10 +413,14 @@ class SonosNetwork {
     const group = this.zoneGroups.find(zg => zg.id === groupId);
     const uri = await this._getURIFromData(group.coordinator.id, data);
     if (uri) {
-      const queuePosition = group.track.queuePosition + 1;
-      await group.coordinator.device.queue(uri, queuePosition);
-      await group.coordinator.device.selectTrack(queuePosition);
-      await group.coordinator.device.play();
+      if (uri.indexOf('x-sonosapi-radio:') !== -1) {
+        await group.coordinator.device.setAVTransportURI({ uri });
+      } else {
+        const queuePosition = group.track.queuePosition + 1;
+        await group.coordinator.device.queue(uri, queuePosition);
+        await group.coordinator.device.selectTrack(queuePosition);
+        await group.coordinator.device.play();
+      }
     }
   }
 
@@ -667,6 +671,8 @@ class SonosNetwork {
       uri = encodeURI(`x-rincon-playlist:${coordinatorId}#A:GENRE/${data.genrePath}`);
     } else if (data.playlistName) {
       uri = await this.musicLibrary.getPlaylistURI(data.playlistName);
+    } else if (data.sonosPlaylistName) {
+      uri = await this.musicLibrary.getSonosPlaylistURI(data.sonosPlaylistName);
     }
     return uri || null;
   }
