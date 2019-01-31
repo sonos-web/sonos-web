@@ -13,13 +13,16 @@ Sonos Web has been tested on Windows 7, macOS, Linux, and Raspbian Stretch Lite 
 [Check out the following Youtube video](https://youtu.be/0q8Z-XV81Z4) to see a brief demo of the system in use. (v0.5.2)
 
 ## Features
-Sonos Web is a developing project and is not yet full-featured. Here are some of the currently available features:
+Sonos Web is a developing project and is not yet feature complete. If you would like to see a feature developed, please [open an issue](https://github.com/Villarrealized/sonos-web/issues/new).
+
  * Music Library
     * Search your entire music library with Top Results *
+      * Including Sonos Playlists! *
     * Browse, Queue, & Play your entire music library by category
     * View Artists, Genres & Playlists with Album Art! *
     * All artist & album names are links that take you to that item *
     * Browsing & searching is cached for quicker load times
+ * Sonos Playlists & Favorites
  * Group rooms together via drag & drop *
  * Queue management via icon on Now Playing bar
  * Party mode (Group all speakers into one group)
@@ -34,8 +37,8 @@ Sonos Web is a developing project and is not yet full-featured. Here are some of
 
 ## Goals (Coming Soon)
  * Music Library
-    * Sonos Playlists & Favorites
-    * Other Music Services (ex. Pandora, Spotify, etc.) ...maybe? 
+    * Other Music Services (ex. Pandora, Spotify, etc.) ...maybe?
+    * Create & Manage Sonos Playlists & Favorites
  * Recent Play History
 
 ## Install
@@ -93,6 +96,9 @@ https://github.com/docker/for-win/issues/937
 
 ### Genre Detail View
 ![Genre Detail View](https://user-images.githubusercontent.com/5977736/51081846-09c14c80-16b7-11e9-8fd8-a158d1a1b8f6.png)
+
+### Sonos Favorites & Playlists
+![Sonos Favorites & Playlists](https://user-images.githubusercontent.com/5977736/52084269-e889a880-255e-11e9-96db-d73861e6b178.png)
 
 ### View all rooms and what they're playing
 ![Rooms](https://user-images.githubusercontent.com/5977736/50566842-5c842700-0cfb-11e9-8e7b-56a981769d26.png)
