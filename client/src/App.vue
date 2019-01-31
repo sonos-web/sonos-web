@@ -34,6 +34,7 @@
                 </v-list-tile>
               </template>
             </v-list>
+            <div class="version-text subtitle pa-3 grey--text text--darken-2"> {{ APP_VERSION }}</div>
           </v-navigation-drawer>
           <v-container fill-height>
             <v-layout>
@@ -49,6 +50,7 @@
 
 <script>
 import NowPlayingBar from '@/components/NowPlayingBar.vue';
+import { version } from '../package.json';
 
 export default {
   components: { NowPlayingBar },
@@ -61,6 +63,7 @@ export default {
       { icon: 'library_music', text: 'Music Library', path: '/library' },
       { icon: 'star', text: 'My Sonos', path: '/sonos' },
     ],
+    APP_VERSION: `v${version}`,
   }),
   computed: {
     discoveringSonos() {
@@ -74,6 +77,11 @@ export default {
 </script>
 
 <style>
+.version-text {
+  position: absolute;
+  bottom: 90px;
+  left: 0px;
+}
 .theme--dark.v-list {
   background: #282828;
 }

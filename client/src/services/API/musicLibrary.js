@@ -20,6 +20,9 @@ export default {
   getSonosPlaylists(options) {
     return axios.post('/sonos_playlists', options);
   },
+  getSonosFavorites(options) {
+    return axios.post('/favorites', options);
+  },
   getShares(options) {
     return axios.post('/share', options);
   },

@@ -75,6 +75,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isSonosPlaylist: {
+      type: Boolean,
+      default: false,
+    },
     isGenrePlaylist: {
       type: Boolean,
       default: false,
@@ -175,9 +179,14 @@ export default {
     uriData() {
       if (this.allAlbum) {
         return { artistPath: `${this.albumName}/` };
-      } if (this.isNormalPlaylist) {
+      }
+      if (this.isNormalPlaylist) {
         return { playlistName: this.albumName };
-      } if (this.isGenrePlaylist) {
+      }
+      if (this.isSonosPlaylist) {
+        return { sonosPlaylistName: this.albumName };
+      }
+      if (this.isGenrePlaylist) {
         return { genrePath: `${this.albumName}//` };
       }
       return { artistPath: `${this.artistName}/${this.albumName}` };

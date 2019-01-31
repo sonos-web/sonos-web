@@ -1,6 +1,6 @@
 {
   "name": "sonos-web",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Sonos Web Controller",
   "author": "Nicholas Villarreal",
   "license": "GPL-3.0",
@@ -21,7 +21,7 @@
     "js-base64": "^2.5.0",
     "serve-static": "^1.13.2",
     "socket.io": "^2.2.0",
-    "sonos": "git+https://github.com/Villarrealized/node-sonos.git#master"
+    "sonos": "git+https://github.com/Villarrealized/node-sonos.git#feature/add-soundcloud-support"
   },
   "devDependencies": {
     "eslint": "^5.10.0",
