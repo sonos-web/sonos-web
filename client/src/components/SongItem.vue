@@ -26,7 +26,7 @@
           <router-link
             v-if="!albumMode"
             @mouseover="tooltipOnOverFlow"
-            :to="`/artist/${encodedArtist}`"
+            :to="artistLink"
             class="item-link text-truncate text-xs-center pa-0">
             {{ song.artist }}
           </router-link>
@@ -34,7 +34,7 @@
             <span v-if="!allAlbum" class="item-link-separator">•</span>
             <router-link
               @mouseover="tooltipOnOverFlow"
-              :to="`/album/${encodedAlbum}`"
+              :to="albumLink"
               class="item-link text-truncate text-xs-center pa-0">
               {{ song.album }}
             </router-link>
@@ -79,6 +79,10 @@ export default {
       type: Object,
       default: null,
     },
+    isSpotify: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     playNowAction() {
@@ -122,6 +126,18 @@ export default {
     encodedAlbum() {
       return this.$Base64.encodeURI(this.song.album);
     },
+    artistLink() {
+      if (this.isSpotify) {
+        return `/spotify/artist/${this.song.artistURI}`;
+      }
+      return `/artist/${encodedArtist}`;
+    },
+    albumLink() {
+      if (this.isSpotify) {
+        return `/spotify/album/${this.song.albumURI}`;
+      }
+      return `/album/${encodedAlbum}`
+    }
   },
 };
 </script>

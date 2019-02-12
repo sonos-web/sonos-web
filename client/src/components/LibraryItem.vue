@@ -14,7 +14,7 @@
     <router-link
       v-if="item.artist && showSubtitle"
       @mouseover="tooltipOnOverFlow"
-      :to="`/artist/${encodedArtist}`"
+      :to="artistLink"
       class="item-link text-truncate text-xs-center pa-0">
       {{ item.artist }}
     </router-link>
@@ -54,6 +54,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isSpotify: {
+      type: Boolean,
+      default: false,
+    }
   },
   computed: {
     albumArtURL() {
@@ -65,13 +69,23 @@ export default {
           return `/genre/all/${this.$Base64.encodeURI(this.name)}/songs`;
         }
         return `${this.allPrefix}/all/${this.$Base64.encodeURI(this.name)}`;
-      } if (this.isShare) {
+      } 
+      if (this.isShare) {
         return `${this.toPrefix}/${this.$Base64.encodeURI(`${this.name}/${this.item.title}`)}`;
+      }
+      if (this.isSpotify) {
+        return `${this.toPrefix}/${this.item.uri.split(':').slice(-1)[0]}`;
       }
       return `${this.toPrefix}/${this.$Base64.encodeURI(this.item.title)}`;
     },
     encodedArtist() {
       return this.$Base64.encodeURI(this.item.artist);
+    },
+    artistLink() {
+      if (this.isSpotify) {
+        return `/spotify/artist/${this.item.artistURI}`;
+      }
+      return `/artist/${encodedArtist}`;
     },
     albumCollageImages() {
       if (Array.isArray(this.item.albumArtURI)) {

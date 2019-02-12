@@ -4,28 +4,29 @@
       @loading-error="loadingError"
       @loaded-items="loadedItems"
       :asyncLoadMethod="loadMethod"
-      :libraryItem="playlists"
+      :libraryItem="spotifyPlaylists"
       :searchTerm="searchTerm">
     </load-library-on-scroll>
     <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
     <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
     <v-layout row wrap v-else>
-      <library-item-count :total="playlists.total" label="Playlists"></library-item-count>
-      <library-item v-for="item in items"
-      :key="item.uri" :item="item" toPrefix="/playlist"></library-item>
+      <library-item-count :total="spotifyPlaylists.total"
+        label="Playlists"></library-item-count>
+      <library-item v-for="item in items" :key="item.uri"
+        :item="item" toPrefix="/spotify/playlist" :isSpotify="true"></library-item>
     </v-layout>
   </v-layout>
 </template>
 
 <script>
 import deepmerge from 'deepmerge';
-import MusicLibraryAPI from '@/services/API/musicLibrary';
+import SpotifyAPI from '@/services/API/services/spotify';
 import LibraryItem from '@/components/LibraryItem.vue';
 import LibraryItemCount from '@/components/LibraryItemCount.vue';
 import LoadLibraryOnScroll from '@/components/LoadLibraryOnScroll.vue';
 
 export default {
-  name: 'Playlists',
+  name: 'SpotifyPlaylists',
   components: { LibraryItem, LibraryItemCount, LoadLibraryOnScroll },
   props: {
     search: {
@@ -34,7 +35,7 @@ export default {
     },
   },
   data: () => ({
-    playlists: {},
+    spotifyPlaylists: {},
     loading: true,
     error: false,
     errorMessage: null,
@@ -42,8 +43,7 @@ export default {
   methods: {
     loadedItems(data) {
       this.loading = false;
-      this.playlists = deepmerge(this.playlists, data);
-      console.log(this.playlists);
+      this.spotifyPlaylists = deepmerge(this.spotifyPlaylists, data);
     },
     loadingError(error) {
       this.loading = false;
@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     items() {
-      return this.playlists.items || [];
+      return this.spotifyPlaylists.items || [];
     },
     searchTerm() {
       if (this.search) {
@@ -62,7 +62,7 @@ export default {
       return null;
     },
     loadMethod() {
-      return this.search ? MusicLibraryAPI.searchPlaylists : MusicLibraryAPI.getPlaylists;
+      return SpotifyAPI.getUserPlaylists;
     },
   },
 };

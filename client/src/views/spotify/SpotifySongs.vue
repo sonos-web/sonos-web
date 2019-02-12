@@ -4,29 +4,30 @@
       @loading-error="loadingError"
       @loaded-items="loadedItems"
       :asyncLoadMethod="loadMethod"
-      :libraryItem="playlists"
+      :libraryItem="songs"
       :searchTerm="searchTerm">
     </load-library-on-scroll>
     <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
     <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
     <v-layout row wrap v-else>
-      <library-item-count :total="playlists.total" label="Playlists"></library-item-count>
-      <library-item v-for="item in items"
-      :key="item.uri" :item="item" toPrefix="/playlist"></library-item>
+      <library-item-count :total="songs.total" label="Songs"></library-item-count>
+      <v-flex xs12>
+        <song-list :songs="items" :isSpotify="true"></song-list>
+      </v-flex>
     </v-layout>
   </v-layout>
 </template>
 
 <script>
 import deepmerge from 'deepmerge';
-import MusicLibraryAPI from '@/services/API/musicLibrary';
-import LibraryItem from '@/components/LibraryItem.vue';
+import SpotifyAPI from '@/services/API/services/spotify';
+import SongList from '@/components/SongList.vue';
 import LibraryItemCount from '@/components/LibraryItemCount.vue';
 import LoadLibraryOnScroll from '@/components/LoadLibraryOnScroll.vue';
 
 export default {
-  name: 'Playlists',
-  components: { LibraryItem, LibraryItemCount, LoadLibraryOnScroll },
+  name: 'SpotifySongs',
+  components: { LibraryItemCount, LoadLibraryOnScroll, SongList },
   props: {
     search: {
       type: Boolean,
@@ -34,7 +35,7 @@ export default {
     },
   },
   data: () => ({
-    playlists: {},
+    songs: {},
     loading: true,
     error: false,
     errorMessage: null,
@@ -42,8 +43,7 @@ export default {
   methods: {
     loadedItems(data) {
       this.loading = false;
-      this.playlists = deepmerge(this.playlists, data);
-      console.log(this.playlists);
+      this.songs = deepmerge(this.songs, data);
     },
     loadingError(error) {
       this.loading = false;
@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     items() {
-      return this.playlists.items || [];
+      return this.songs.items || [];
     },
     searchTerm() {
       if (this.search) {
@@ -62,7 +62,7 @@ export default {
       return null;
     },
     loadMethod() {
-      return this.search ? MusicLibraryAPI.searchPlaylists : MusicLibraryAPI.getPlaylists;
+      return SpotifyAPI.getUserSongs;
     },
   },
 };

@@ -22,7 +22,36 @@
           <v-navigation-drawer width="230" fixed app clipped floating :permanent="true" :mini-variant.sync="$vuetify.breakpoint.mdAndDown">
             <v-list class="nav-link-list">
               <template v-for="item in items">
-                <v-list-tile :key="item.text" :to="{path: item.path}">
+                <v-list-group
+                  v-if="item.children"
+                  :key="item.text"
+                  v-model="item.model"
+                  :prepend-icon="item.model ? item.icon : item['icon-alt']"
+                  append-icon=""
+                >
+                  <v-list-tile slot="activator">
+                    <v-list-tile-content>
+                      <v-list-tile-title>
+                        {{ item.text }}
+                      </v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                  <v-list-tile
+                    v-for="child in item.children"
+                    :key="child.text"
+                    :to="{path: child.path}"
+                  >
+                    <v-list-tile-action v-if="child.icon">
+                      <v-icon>{{ child.icon }}</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                      <v-list-tile-title>
+                        {{ child.text }}
+                      </v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </v-list-group>
+                <v-list-tile v-else :key="item.text" :to="{path: item.path}">
                   <v-list-tile-action>
                     <v-icon>{{ item.icon }}</v-icon>
                   </v-list-tile-action>
@@ -64,9 +93,11 @@ export default {
       { icon: 'speaker_group', text: 'Rooms', path: '/rooms' },
       { icon: 'library_music', text: 'Music Library', path: '/library' },
       { icon: 'star', text: 'My Sonos', path: '/sonos' },
+      { icon: 'album', text: 'Spotify', path: '/spotify'},
     ],
     APP_VERSION: `v${version}`,
-  }),
+    
+  }),  
   computed: {
     discoveringSonos() {
       return this.$store.state.discoveringSonos;

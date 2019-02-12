@@ -5,7 +5,7 @@
       @loading-error="loadingError"
       @loaded-items="loadedItems"
       :asyncLoadMethod="getItems"
-      :libraryItem="items"
+      :libraryItem="album"
       :detailPath="path">
     </load-library-on-scroll>
     <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
@@ -13,24 +13,24 @@
     <v-layout row wrap class="album-wrapper" v-else>
       <v-flex xs12 lg5 px-2>
         <div class="album-header">
-          <div class="v-responsive v-image album-image-container" v-if="!albumCollageImages.length">
+          <div class="v-responsive v-image album-image-container">
             <div class="v-responsive__sizer" style="padding-bottom: 100%;"></div>
             <div v-lazy:background-image="albumArtURL" class="background-image"></div>
           </div>
-          <album-collage v-else :images="albumCollageImages"></album-collage>
+          
           <div class="album-header__body">
             <div class="album-title display-1 pt-3">
               {{ albumName }}
             </div>
             <router-link
             @mouseover="tooltipOnOverFlow"
-            :to="`/artist/${encodedArtist}`"
+            :to="`/spotify/artist/${artistLink}`"
             class="item-link text-truncate text-xs-center pt-1">
             {{ artistName }}
             </router-link>
             <div class="total-top mt-2 text-xs-center
               subheading font-weight-bold d-block no-select">
-              {{ items.total }}
+              {{ album.total }}
               <span class="grey--text text-uppercase caption font-weight-bold">
                 {{ songLabel }}
               </span>
@@ -38,7 +38,7 @@
             <play-button-menu buttonClass="mt-3 mb-0" :uriData="uriData"></play-button-menu>
             <div class="total-bottom text-xs-center
               subheading font-weight-bold d-block no-select">
-              {{ items.total }}
+              {{ album.total }}
               <span class="grey--text text-uppercase caption font-weight-bold">
                 {{ songLabel }}
               </span>
@@ -48,7 +48,7 @@
       </v-flex>
       <v-flex xs12 lg7 px-2>
         <song-list :songs="songs" :doubleClickURIData="uriData"
-          :albumMode="!isPlaylist" :allAlbum="allAlbum"></song-list>
+          :albumMode="!isPlaylist" :isSpotify="true"></song-list>
       </v-flex>
     </v-layout>
   </v-container>
@@ -58,7 +58,8 @@
 import deepmerge from 'deepmerge';
 import '@/assets/css/album.css';
 
-import libraryDetailAPI from '@/services/API/libraryDetail';
+import spotifyAuth from '@/mixins/spotifyAuth';
+import spotifyAPI from '@/services/API/services/spotify';
 import tooltipOnOverflow from '@/mixins/tooltipOnOverflow';
 import SongList from '@/components/SongList.vue';
 import LoadLibraryOnScroll from '@/components/LoadLibraryOnScroll.vue';
@@ -66,33 +67,24 @@ import PlayButtonMenu from '@/components/PlayButtonMenu.vue';
 import AlbumCollage from '@/components/AlbumCollage.vue';
 
 export default {
-  name: 'Album',
+  name: 'SpotifyPlaylist',
   components: {
     SongList, LoadLibraryOnScroll, PlayButtonMenu, AlbumCollage,
   },
-  mixins: [tooltipOnOverflow],
+  mixins: [tooltipOnOverflow, spotifyAuth],
   props: {
-    isNormalPlaylist: {
-      type: Boolean,
-      default: false,
-    },
-    isSonosPlaylist: {
-      type: Boolean,
-      default: false,
-    },
-    isGenrePlaylist: {
+    isPlaylist: {
       type: Boolean,
       default: false,
     },
   },
   data: () => ({
-    items: {},
+    album: {},
     loading: true,
     error: false,
     errorMessage: '',
     albumName: null,
     label: 'Songs',
-    allAlbum: false,
     path: null,
     pathMatch: null,
   }),
@@ -103,18 +95,17 @@ export default {
   async beforeRouteUpdate(to, from, next) {
     this.path = to.path;
     this.pathMatch = to.params.pathMatch;
-    this.items = {};
+    this.album = {};
     next();
   },
   methods: {
     updateAlbumDetails() {
-      this.allAlbum = this.path.indexOf('artist/all/') !== -1;
-      this.albumName = this.$Base64.decode(this.pathMatch);
+      this.albumName = this.album.name;
     },
-    getItems: libraryDetailAPI.get,
+    getItems: spotifyAPI.get,
     loadedItems(data) {
       this.loading = false;
-      this.items = deepmerge(this.items, data);
+      this.album = deepmerge(this.album, data);
       this.updateAlbumDetails();
     },
     loadingError(error) {
@@ -125,25 +116,16 @@ export default {
   },
   computed: {
     songs() {
-      return this.items.items || [];
+      return this.album.items || [];
     },
     albumArtURL() {
-      if (this.songs.length) {
-        return this.songs[0].albumArtURI || '';
-      }
-      return '';
+      return this.album.albumArtURI || '';    
     },
     artistName() {
-      if (this.songs.length && !this.allAlbum && !this.isPlaylist) {
-        return this.songs[0].artist;
-      }
-      return null;
+      return this.album.artist;
     },
-    encodedArtist() {
-      if (this.artistName) {
-        return this.$Base64.encodeURI(this.artistName);
-      }
-      return '';
+    artistLink() {
+      return this.album.artistURI;
     },
     documentTitle() {
       if (this.albumName && this.artistName) {
@@ -159,45 +141,15 @@ export default {
       }
       return this.label;
     },
-    isPlaylist() {
-      return this.isNormalPlaylist || this.isGenrePlaylist;
-    },
-    albumCollageImages() {
-      if (this.allAlbum || this.isPlaylist) {
-        // Get a list of 4 unique albums
-        const uniqueAlbums = [...new Set(this.songs.map(song => song.album))].slice(0, 4);
-        if (uniqueAlbums.length === 4) {
-          // return 4 unique album art image links
-          return uniqueAlbums.map((album) => {
-            const song = this.songs.find(item => item.album === album);
-            return song.albumArtURI;
-          });
-        }
-        return [];
-      }
-      return [];
-    },
     uriData() {
-      if (this.allAlbum) {
-        return { artistPath: `${this.albumName}/` };
-      }
-      if (this.isNormalPlaylist) {
-        return { playlistName: this.albumName };
-      }
-      if (this.isSonosPlaylist) {
-        return { sonosPlaylistName: this.albumName };
-      }
-      if (this.isGenrePlaylist) {
-        return { genrePath: `${this.albumName}//` };
-      }
-      return { artistPath: `${this.artistName}/${this.albumName}` };
+      return { uri: this.album.uri };
     },
   },
   watch: {
     $route(to) {
       this.path = to.path;
       this.pathMatch = to.params.pathMatch;
-      this.items = {};
+      this.album = {};
       this.updateAlbumDetails();
     },
   },

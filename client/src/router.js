@@ -30,6 +30,14 @@ const SonosFavorites = () => import(/* webpackChunkName: "Sonos Favorites" */ '.
 
 const PlayQueue = () => import(/* webpackChunkName: "Play Queue" */ './views/PlayQueue.vue');
 
+const Spotify = () => import(/* webpackChunkName: "Spotify" */ './views/services/Spotify.vue');
+const SpotifyPlaylists = () => import(/* webpackChunkName: "Spotify Playlists" */ './views/spotify/SpotifyPlaylists.vue');
+const SpotifyAlbums = () => import(/* webpackChunkName: "Spotify Albums" */ './views/spotify/SpotifyAlbums.vue');
+const SpotifySongs = () => import(/* webpackChunkName: "Spotify Songs" */ './views/spotify/SpotifySongs.vue');
+
+const SpotifyAlbum = () => import(/* webpackChunkName: "Spotify Album" */ './views/spotify/SpotifyAlbum.vue');
+const SpotifyArtist = () => import(/* webpackChunkName: "Spotify Artist" */ './views/spotify/SpotifyArtist.vue');
+
 
 Vue.use(Router);
 const router = new Router({
@@ -202,6 +210,48 @@ const router = new Router({
           component: SonosFavorites,
         },
       ],
+    },
+    {
+      path: '/spotify',
+      component: Spotify,
+      children: [
+        {
+          path: '',
+          name: 'spotify',
+          redirect: { name: 'SpotifyPlaylists' },
+        },
+        {
+          path: '/spotify/playlists',
+          name: 'SpotifyPlaylists',
+          component: SpotifyPlaylists,
+        },
+        {
+          path: '/spotify/albums',
+          name: 'SpotifyAlbums',
+          component: SpotifyAlbums,
+        },
+        {
+          path: '/spotify/songs',
+          name: 'SpotifySongs',
+          component: SpotifySongs,
+        },
+      ],
+    },
+    {
+      path: '/spotify/playlist/*',
+      name: 'SpotifyPlaylist',
+      component: SpotifyAlbum,
+      props: { isPlaylist: true },
+    },
+    {
+      path: '/spotify/album/*',
+      name: 'SpotifyAlbum',
+      component: SpotifyAlbum,
+    },
+    {
+      path: '/spotify/artist/*',
+      name: 'SpotifyArtist',
+      component: SpotifyArtist,
     },
   ],
 });

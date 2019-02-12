@@ -27,6 +27,9 @@ export default new Vuex.Store({
           text: 'Tip: Drag songs to reorder queue.',
         },
       },
+      spotify: {
+        refreshToken: null,
+      },
     },
     hasError: false,
     errorMessage: null,

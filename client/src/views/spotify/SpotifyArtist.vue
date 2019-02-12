@@ -1,25 +1,25 @@
 <template>
   <v-container fluid pt-1 ma-0 :key="$route.params.pathMatch">
-    <vue-headful :title="`${name} - Sonos Web`"></vue-headful>
+    <vue-headful :title="`${artist.name || ''} - Sonos Web`"></vue-headful>
     <load-library-on-scroll
       @loading-error="loadingError"
       @loaded-items="loadedItems"
       :asyncLoadMethod="getItems"
-      :libraryItem="items"
+      :libraryItem="artist"
       :detailPath="path">
     </load-library-on-scroll>
     <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
     <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
     <v-layout row wrap v-else>
       <div class="artist-title display-3 pb-3">
-        {{ name }}
+        {{ artist.name }}
       </div>
       <v-flex xs12>
-        <play-button-menu :uri="allURI"></play-button-menu>
+        <play-button-menu :uri="artist.uri"></play-button-menu>
       </v-flex>
       <v-layout row wrap v-if="!loading">
-        <library-item v-for="item in albums" :showSubtitle="allArtist" :key="item.uri"
-        :item="item" :name="name" allPrefix="/artist" toPrefix="/album"></library-item>
+        <library-item v-for="item in artist.items" :key="item.uri"
+        :item="item" :name="artist.name" toPrefix="/spotify/album" :isSpotify="true" ></library-item>
       </v-layout>
     </v-layout>
   </v-container>
@@ -29,23 +29,23 @@
 import deepmerge from 'deepmerge';
 import '@/assets/css/artist.css';
 
-import libraryDetailAPI from '@/services/API/libraryDetail';
+import spotifyAuth from '@/mixins/spotifyAuth';
+import spotifyAPI from '@/services/API/services/spotify';
 import LibraryItem from '@/components/LibraryItem.vue';
 import LoadLibraryOnScroll from '@/components/LoadLibraryOnScroll.vue';
 import PlayButtonMenu from '@/components/PlayButtonMenu.vue';
 
 export default {
   name: 'Artist',
+  mixins: [spotifyAuth],
   components: { LibraryItem, LoadLibraryOnScroll, PlayButtonMenu },
   data: () => ({
-    items: {},
+    artist: {},
     loading: true,
     error: false,
     errorMessage: '',
-    name: '',
     path: null,
     pathMatch: null,
-    allArtist: false,
   }),
   async created() {
     this.path = this.$route.path;
@@ -54,46 +54,20 @@ export default {
   async beforeRouteUpdate(to, from, next) {
     this.path = to.path;
     this.pathMatch = to.params.pathMatch;
-    this.items = {};
+    this.artist = {};
     next();
   },
   methods: {
-    getItems: libraryDetailAPI.get,
+    getItems: spotifyAPI.get,
     loadedItems(data) {
       this.loading = false;
-      this.items = deepmerge(this.items, data);
-      if (this.pathMatch.indexOf('all/') !== -1) {
-        this.name = this.$Base64.decode(this.pathMatch.replace('all/', ''));
-        this.allArtist = true;
-      } else {
-        this.name = this.$Base64.decode(this.pathMatch);
-        this.allArtist = false;
-      }
+      this.artist = deepmerge(this.artist, data);
+      console.log(this.artist);
     },
     loadingError(error) {
       this.loading = false;
       this.error = true;
       this.errorMessage = `${error.response.status}: ${error.response.data}`;
-    },
-  },
-  computed: {
-    albums() {
-      // Filter out the all Album if there is only one other album
-      let albums;
-      if (this.items.items && this.items.items.length === 2) {
-        albums = this.items.items.filter(album => album.title !== 'All' && album.uri.slice(-1) !== '/');
-      } else {
-        albums = this.items.items;
-      }
-      return albums || [];
-    },
-    allURI() {
-      if (this.items.items) {
-        const allItem = this.items.items.find(item => item.title === 'All');
-        if (allItem) return allItem.uri;
-        return '';
-      }
-      return '';
     },
   },
 };

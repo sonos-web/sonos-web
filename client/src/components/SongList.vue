@@ -6,7 +6,7 @@
       @show-menu="showSongMenu"
       :doubleClickURIData="doubleClickURIData"
       :song="song" :songNumber="index + 1" :key="`${song.uri}#${index}`"
-      :albumMode="albumMode" :allAlbum="allAlbum"></song-item>
+      :albumMode="albumMode" :allAlbum="allAlbum" :isSpotify="isSpotify"></song-item>
     </template>
     <v-menu
       max-width="180px"
@@ -59,6 +59,10 @@ export default {
     doubleClickURIData: {
       type: Object,
       default: null,
+    },
+    isSpotify: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
