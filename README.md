@@ -23,6 +23,9 @@ Sonos Web is a developing project and is not yet feature complete. If you would 
     * All artist & album names are links that take you to that item *
     * Browsing & searching is cached for quicker load times
  * Sonos Playlists & Favorites
+ * Spotify
+    * Browse & play your saved spotify playlists, albums, & songs
+    * Requires Spotify Premium to play songs
  * Group rooms together via drag & drop *
  * Queue management via icon on Now Playing bar
  * Party mode (Group all speakers into one group)
@@ -35,10 +38,10 @@ Sonos Web is a developing project and is not yet feature complete. If you would 
  \* *Feature exclusive to Sonos Web (not available on official Sonos App)*
  
 
-## Goals (Coming Soon)
- * Music Library
-    * Other Music Services (ex. Pandora, Spotify, etc.) ...maybe?
+## Planned Features
+ * Music Library    
     * Create & Manage Sonos Playlists & Favorites
+ * Integration with other Music Services
  * Recent Play History
 
 ## Install
@@ -77,7 +80,7 @@ https://github.com/docker/for-win/issues/937
 ## Screenshots
 
 ### Now Playing
-![Now Playing](https://user-images.githubusercontent.com/5977736/50566780-999be980-0cfa-11e9-8085-d11eec234315.png)
+![Now Playing](https://user-images.githubusercontent.com/5977736/52979809-91743800-3394-11e9-9566-f8d72a951fa8.png)
 
 ### Queue Management
 ![Queue Management](https://user-images.githubusercontent.com/5977736/50566855-89d0d500-0cfb-11e9-8c7c-181a624b5eb7.png)
@@ -99,6 +102,12 @@ https://github.com/docker/for-win/issues/937
 
 ### Sonos Favorites & Playlists
 ![Sonos Favorites & Playlists](https://user-images.githubusercontent.com/5977736/52084269-e889a880-255e-11e9-96db-d73861e6b178.png)
+
+### Spotify Playlists
+![Spotify Playlists](https://user-images.githubusercontent.com/5977736/52979583-7228db00-3393-11e9-9555-395bcf2b8df1.png)
+
+### Spotify Playlist Detail
+![Spotify Playlist Detail](https://user-images.githubusercontent.com/5977736/52979580-6fc68100-3393-11e9-8f9b-206d401c12b4.png)
 
 ### View all rooms and what they're playing
 ![Rooms](https://user-images.githubusercontent.com/5977736/50566842-5c842700-0cfb-11e9-8e7b-56a981769d26.png)
