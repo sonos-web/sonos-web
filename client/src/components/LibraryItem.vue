@@ -57,7 +57,7 @@ export default {
     isSpotify: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   computed: {
     albumArtURL() {
@@ -69,7 +69,7 @@ export default {
           return `/genre/all/${this.$Base64.encodeURI(this.name)}/songs`;
         }
         return `${this.allPrefix}/all/${this.$Base64.encodeURI(this.name)}`;
-      } 
+      }
       if (this.isShare) {
         return `${this.toPrefix}/${this.$Base64.encodeURI(`${this.name}/${this.item.title}`)}`;
       }
@@ -85,7 +85,7 @@ export default {
       if (this.isSpotify) {
         return `/spotify/artist/${this.item.artistURI}`;
       }
-      return `/artist/${encodedArtist}`;
+      return `/artist/${this.encodedArtist}`;
     },
     albumCollageImages() {
       if (Array.isArray(this.item.albumArtURI)) {

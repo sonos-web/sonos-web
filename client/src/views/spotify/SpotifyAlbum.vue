@@ -17,7 +17,7 @@
             <div class="v-responsive__sizer" style="padding-bottom: 100%;"></div>
             <div v-lazy:background-image="albumArtURL" class="background-image"></div>
           </div>
-          
+
           <div class="album-header__body">
             <div class="album-title display-1 pt-3">
               {{ albumName }}
@@ -64,12 +64,11 @@ import tooltipOnOverflow from '@/mixins/tooltipOnOverflow';
 import SongList from '@/components/SongList.vue';
 import LoadLibraryOnScroll from '@/components/LoadLibraryOnScroll.vue';
 import PlayButtonMenu from '@/components/PlayButtonMenu.vue';
-import AlbumCollage from '@/components/AlbumCollage.vue';
 
 export default {
   name: 'SpotifyPlaylist',
   components: {
-    SongList, LoadLibraryOnScroll, PlayButtonMenu, AlbumCollage,
+    SongList, LoadLibraryOnScroll, PlayButtonMenu,
   },
   mixins: [tooltipOnOverflow, spotifyAuth],
   props: {
@@ -119,7 +118,7 @@ export default {
       return this.album.items || [];
     },
     albumArtURL() {
-      return this.album.albumArtURI || '';    
+      return this.album.albumArtURI || '';
     },
     artistName() {
       return this.album.artist;

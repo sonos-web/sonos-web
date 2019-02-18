@@ -130,14 +130,14 @@ export default {
       if (this.isSpotify) {
         return `/spotify/artist/${this.song.artistURI}`;
       }
-      return `/artist/${encodedArtist}`;
+      return `/artist/${this.encodedArtist}`;
     },
     albumLink() {
       if (this.isSpotify) {
         return `/spotify/album/${this.song.albumURI}`;
       }
-      return `/album/${encodedAlbum}`
-    }
+      return `/album/${this.encodedAlbum}`;
+    },
   },
 };
 </script>

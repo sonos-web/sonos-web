@@ -93,11 +93,11 @@ export default {
       { icon: 'speaker_group', text: 'Rooms', path: '/rooms' },
       { icon: 'library_music', text: 'Music Library', path: '/library' },
       { icon: 'star', text: 'My Sonos', path: '/sonos' },
-      { icon: 'album', text: 'Spotify', path: '/spotify'},
+      { icon: 'album', text: 'Spotify', path: '/spotify' },
     ],
     APP_VERSION: `v${version}`,
-    
-  }),  
+
+  }),
   computed: {
     discoveringSonos() {
       return this.$store.state.discoveringSonos;

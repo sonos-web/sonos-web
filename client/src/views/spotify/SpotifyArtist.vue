@@ -19,7 +19,8 @@
       </v-flex>
       <v-layout row wrap v-if="!loading">
         <library-item v-for="item in artist.items" :key="item.uri"
-        :item="item" :name="artist.name" toPrefix="/spotify/album" :isSpotify="true" ></library-item>
+        :item="item" :name="artist.name" toPrefix="/spotify/album"
+        :isSpotify="true" ></library-item>
       </v-layout>
     </v-layout>
   </v-container>
