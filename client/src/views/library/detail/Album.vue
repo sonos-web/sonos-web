@@ -56,7 +56,6 @@
 
 <script>
 import deepmerge from 'deepmerge';
-import '@/assets/css/album.css';
 
 import libraryDetailAPI from '@/services/API/libraryDetail';
 import tooltipOnOverflow from '@/mixins/tooltipOnOverflow';

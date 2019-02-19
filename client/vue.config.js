@@ -1,7 +1,4 @@
 module.exports = {
-  css: {
-    modules: true,
-  },
   devServer: {
     port: process.env.PORT,
     host: process.env.HOST,

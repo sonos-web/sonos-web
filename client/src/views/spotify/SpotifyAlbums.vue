@@ -11,7 +11,7 @@
     <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
     <v-layout row wrap v-else>
       <library-item-count :total="albums.total" label="Albums"></library-item-count>
-      <library-item v-for="item in items" :key="item.uri"
+      <library-item v-for="(item, index) in items" :key="`${item.uri}#${index}`"
         :item="item" toPrefix="/spotify/album" :isSpotify="true"></library-item>
     </v-layout>
   </v-layout>

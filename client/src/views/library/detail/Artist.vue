@@ -27,7 +27,6 @@
 
 <script>
 import deepmerge from 'deepmerge';
-import '@/assets/css/artist.css';
 
 import libraryDetailAPI from '@/services/API/libraryDetail';
 import LibraryItem from '@/components/LibraryItem.vue';

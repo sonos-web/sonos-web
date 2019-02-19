@@ -18,7 +18,7 @@
         <play-button-menu :uri="artist.uri"></play-button-menu>
       </v-flex>
       <v-layout row wrap v-if="!loading">
-        <library-item v-for="item in artist.items" :key="item.uri"
+        <library-item v-for="(item, index) in artist.items" :key="`${item.uri}#${index}`"
         :item="item" :name="artist.name" toPrefix="/spotify/album"
         :isSpotify="true" ></library-item>
       </v-layout>
@@ -28,7 +28,6 @@
 
 <script>
 import deepmerge from 'deepmerge';
-import '@/assets/css/artist.css';
 
 import spotifyAuth from '@/mixins/spotifyAuth';
 import spotifyAPI from '@/services/API/services/spotify';
@@ -63,7 +62,6 @@ export default {
     loadedItems(data) {
       this.loading = false;
       this.artist = deepmerge(this.artist, data);
-      console.log(this.artist);
     },
     loadingError(error) {
       this.loading = false;

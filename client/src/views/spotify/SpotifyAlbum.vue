@@ -56,7 +56,6 @@
 
 <script>
 import deepmerge from 'deepmerge';
-import '@/assets/css/album.css';
 
 import spotifyAuth from '@/mixins/spotifyAuth';
 import spotifyAPI from '@/services/API/services/spotify';

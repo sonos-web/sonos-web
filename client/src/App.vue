@@ -272,6 +272,86 @@ export default {
   bottom: 8px;
 }
 
+/**** Artist *****/
+.artist-title {
+  font-weight: 900;
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/***** Album *****/
+.album-wrapper .background-image {
+  display: block;
+  width: 100%;
+  -webkit-box-shadow: 0 0 10px rgba(0,0,0,.3);
+  box-shadow: 0 0 10px rgba(0,0,0,.3);
+  user-select: none;
+}
+.album-wrapper .album-image-container {
+  max-width: 380px;
+  margin: 0 auto;
+}
+.album-wrapper .album-title {
+  font-weight: 900;
+  text-align: center;
+  word-break: break-word;
+  font-size: 28px!important;
+  line-height: 36px!important;
+}
+.album-wrapper .album-artist-title {
+  text-align: center;
+  font-weight: bold;
+  opacity: 0.6;
+}
+.album-wrapper .album-header__body .total-top {
+    display: none!important;
+  }
+
+@media (max-width: 1264px) {
+  .album-header {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    margin: 0 0 20px;
+    max-width: 100%;
+    padding-bottom: 20px;
+    border-bottom: 1px solid hsla(0,0%,100%,.1);
+  }
+  .album-header__body {
+    width: 75%;
+    margin: 0 40px;
+  }
+  .album-wrapper .album-header__body > * {
+    text-align: left!important;
+    padding: 0px!important;
+  }
+  .album-wrapper .album-header__body > .play-button {
+    margin: 50px 0px 0px 0px;
+  }
+  .album-wrapper .album-title {
+    word-break:normal;
+  }
+  .album-wrapper .album-image-container {
+    min-width: 210px;
+    width: 25%;
+  }
+  .album-wrapper .album-header__body .total-top {
+    display: block!important;
+  }
+  .album-wrapper .album-header__body .total-bottom {
+    display: none!important;
+  }
+}
+/*********/
+
 @media (min-width: 960px) {
   .container {
     max-width: 950px;
