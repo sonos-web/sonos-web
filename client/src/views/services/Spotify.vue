@@ -6,17 +6,15 @@
           <div class="display-1 font-weight-bold text-xs-center pb-1">
             Authorize Spotify
           </div>
-          <div class="subheading grey--text font-weight-medium text-xs-center pb-3">
+          <div class="subheading grey--text font-weight-medium text-xs-center pb-2">
             Play your saved tracks, albums, playlists, etc. from Spotify
           </div>
-          <div class="caption grey--text font-weight-medium text-xs-center pb-3">
+          <div class="caption grey--text font-weight-medium text-xs-center pb-4">
             * Spotify Premium is required for playback
           </div>
           <div class="text-xs-center">
-            <a class="v-btn v-btn--large v-btn--round theme--dark primary"
-              href="/api/spotify/authorize">
-              Connect Spotify Account
-            </a>
+            <v-btn color="primary" round large @click="authorize">Connect Spotify Account
+            </v-btn>
           </div>
         </v-flex>
       </v-layout>
@@ -35,6 +33,7 @@
 
 <script>
 import spotifyAuth from '@/mixins/spotifyAuth';
+import SpotifyAPI from '@/services/API/services/spotify';
 
 export default {
   name: 'Spotify',
@@ -46,5 +45,11 @@ export default {
       { title: 'Songs', link: '/spotify/songs' },
     ],
   }),
+  methods: {
+    async authorize() {
+      let response = await SpotifyAPI.getAuthURL();
+      window.location = response.data.authURL;
+    },
+  },
 };
 </script>

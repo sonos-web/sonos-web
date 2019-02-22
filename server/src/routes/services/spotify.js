@@ -5,7 +5,7 @@ module.exports = function SpotifyRoutes(spotify) {
   this.spotify = spotify;
 
   this.router.get('/authorize', async (req, res) => {
-    res.redirect(this.spotify.authorizeURL);
+    res.send({ authURL: this.spotify.authorizeURL });
   });
   this.router.post('/checkAuthorization', async (req, res) => {
     try {

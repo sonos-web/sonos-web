@@ -4,12 +4,14 @@ class Spotify {
   constructor(sonosNetwork) {
     this.sonosNetwork = sonosNetwork;
     this.authScopes = ['user-read-private', 'user-library-read', 'playlist-read-private', 'streaming'];
+    const port = process.env.NODE_ENV === 'production' ? process.env.PORT : process.env.CLIENT_PORT;
     this.credentials = {
       clientId: 'd8058916213248f4b40bc0cc6d69ae46',
       clientSecret: '2836db0cbfcc44e58de8c67265730a35',
-      redirectUri: process.env.SPOTIFY_REDIRECT,
+      redirectUri: `http://localhost:${port}/spotify`,
     };
     this.spotifyApi = new SpotifyWebApi(this.credentials);
+    console.log(this.credentials);
   }
 
   get authorizeURL() {
