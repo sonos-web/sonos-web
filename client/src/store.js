@@ -61,8 +61,7 @@ export default new Vuex.Store({
     },
     albumArtURLForGroup: (state, getters) => (groupId) => {
       const group = getters.getGroupById(groupId);
-      // eslint-disable-next-line max-len
-      if (group) {
+      if (group && group.track) {
         return group.track.albumArtURL
         || (group.tvPlaying ? state.tvAlbumArtURL : state.defaultAlbumArtURL);
       }
@@ -70,7 +69,7 @@ export default new Vuex.Store({
     },
     trackTitleForGroup: (state, getters) => (groupId) => {
       const group = getters.getGroupById(groupId);
-      if (group) {
+      if (group && group.track) {
         let title = '[No music selected]';
         if (group.tvPlaying) {
           title = 'TV';
