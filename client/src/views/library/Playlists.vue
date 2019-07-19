@@ -43,7 +43,6 @@ export default {
     loadedItems(data) {
       this.loading = false;
       this.playlists = deepmerge(this.playlists, data);
-      console.log(this.playlists);
     },
     loadingError(error) {
       this.loading = false;

@@ -47,7 +47,7 @@ export default {
   }),
   methods: {
     async authorize() {
-      let response = await SpotifyAPI.getAuthURL();
+      const response = await SpotifyAPI.getAuthURL();
       window.location = response.data.authURL;
     },
   },
