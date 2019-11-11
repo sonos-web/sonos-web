@@ -127,8 +127,6 @@ Suggestions and feedback are always welcome.
 If you like Sonos Web and would like to help fund further development of this project, you can do so through Beerpay.
 [![Beerpay](https://beerpay.io/Villarrealized/sonos-web/badge.svg?style=beer)](https://beerpay.io/Villarrealized/sonos-web)
 
-If there is a feature you would like to see developed you can also make a wish!
-[![Beerpay](https://beerpay.io/Villarrealized/sonos-web/make-wish.svg?style=flat)](https://beerpay.io/Villarrealized/sonos-web)
 
 ## License
 [GPL v3.0](https://github.com/Villarrealized/sonos-web-cli/blob/master/LICENSE)

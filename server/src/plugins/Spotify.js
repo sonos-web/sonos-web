@@ -11,7 +11,6 @@ class Spotify {
       redirectUri: `http://localhost:${port}/spotify`,
     };
     this.spotifyApi = new SpotifyWebApi(this.credentials);
-    console.log(this.credentials);
   }
 
   get authorizeURL() {
