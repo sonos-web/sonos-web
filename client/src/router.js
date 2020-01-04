@@ -8,10 +8,10 @@ import store from './store';
 const Search = () => import(/* webpackChunkName: "Search" */ './views/Search.vue');
 const SearchTopResults = () => import(/* webpackChunkName: "SearchTopResults" */ './views/SearchTopResults.vue');
 
-const NowPlaying = () => import(/* webpackChunkName: "Now Playing" */ './views/NowPlaying.vue');
+const NowPlaying = () => import(/* webpackChunkName: "NowPlaying" */ './views/NowPlaying.vue');
 const Rooms = () => import(/* webpackChunkName: "Rooms" */ './views/rooms/Rooms.vue');
 
-const MusicLibrary = () => import(/* webpackChunkName: "Music Library" */ './views/MusicLibrary.vue');
+const MusicLibrary = () => import(/* webpackChunkName: "MusicLibrary" */ './views/MusicLibrary.vue');
 const Artists = () => import(/* webpackChunkName: "Artists" */ './views/library/Artists.vue');
 const Albums = () => import(/* webpackChunkName: "Albums" */ './views/library/Albums.vue');
 const Songs = () => import(/* webpackChunkName: "Songs" */ './views/library/Songs.vue');
@@ -24,19 +24,19 @@ const Album = () => import(/* webpackChunkName: "Album" */ './views/library/deta
 const Genre = () => import(/* webpackChunkName: "Genre" */ './views/library/detail/Genre.vue');
 const Share = () => import(/* webpackChunkName: "Share" */ './views/library/detail/Share.vue');
 
-const MySonos = () => import(/* webpackChunkName: "My Sonos" */ './views/MySonos.vue');
-const SonosPlaylists = () => import(/* webpackChunkName: "Sonos Playlists" */ './views/sonos/SonosPlaylists.vue');
-const SonosFavorites = () => import(/* webpackChunkName: "Sonos Favorites" */ './views/sonos/SonosFavorites.vue');
+const MySonos = () => import(/* webpackChunkName: "MySonos" */ './views/MySonos.vue');
+const SonosPlaylists = () => import(/* webpackChunkName: "SonosPlaylists" */ './views/sonos/SonosPlaylists.vue');
+const SonosFavorites = () => import(/* webpackChunkName: "SonosFavorites" */ './views/sonos/SonosFavorites.vue');
 
-const PlayQueue = () => import(/* webpackChunkName: "Play Queue" */ './views/PlayQueue.vue');
+const PlayQueue = () => import(/* webpackChunkName: "PlayQueue" */ './views/PlayQueue.vue');
 
 const Spotify = () => import(/* webpackChunkName: "Spotify" */ './views/services/Spotify.vue');
-const SpotifyPlaylists = () => import(/* webpackChunkName: "Spotify Playlists" */ './views/spotify/SpotifyPlaylists.vue');
-const SpotifyAlbums = () => import(/* webpackChunkName: "Spotify Albums" */ './views/spotify/SpotifyAlbums.vue');
-const SpotifySongs = () => import(/* webpackChunkName: "Spotify Songs" */ './views/spotify/SpotifySongs.vue');
+const SpotifyPlaylists = () => import(/* webpackChunkName: "SpotifyPlaylists" */ './views/spotify/SpotifyPlaylists.vue');
+const SpotifyAlbums = () => import(/* webpackChunkName: "SpotifyAlbums" */ './views/spotify/SpotifyAlbums.vue');
+const SpotifySongs = () => import(/* webpackChunkName: "SpotifySongs" */ './views/spotify/SpotifySongs.vue');
 
-const SpotifyAlbum = () => import(/* webpackChunkName: "Spotify Album" */ './views/spotify/SpotifyAlbum.vue');
-const SpotifyArtist = () => import(/* webpackChunkName: "Spotify Artist" */ './views/spotify/SpotifyArtist.vue');
+const SpotifyAlbum = () => import(/* webpackChunkName: "SpotifyAlbum" */ './views/spotify/SpotifyAlbum.vue');
+const SpotifyArtist = () => import(/* webpackChunkName: "SpotifyArtist" */ './views/spotify/SpotifyArtist.vue');
 
 
 Vue.use(Router);
