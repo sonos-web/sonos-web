@@ -1,3 +1,8 @@
+const path = require('path');
+
+function resolveSrc(_path) {
+  return path.join(__dirname, _path);
+}
 module.exports = {
   devServer: {
     port: process.env.PORT,
@@ -10,5 +15,11 @@ module.exports = {
   },
   configureWebpack: {
     devtool: 'source-map',
+    // Set up all the aliases we use in our app.
+    resolve: {
+      alias: {
+        '@': resolveSrc('src'),
+      },
+    },
   },
 };

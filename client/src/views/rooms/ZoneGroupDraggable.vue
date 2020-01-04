@@ -1,16 +1,18 @@
 <template>
   <draggable class="draggableGroup" v-model="zoneGroupAsArray"
-    :options="{
-      group: {
-        name: 'zoneGroup',  put: false, pull: ['zoneGroupMembers']
-      },
-      sort: false, draggable:'.zone-group'}">
+    :group="{
+        name: 'zoneGroup',
+        put: false,
+        pull: ['zoneGroupMembers']
+      }"
+    :sort="false"
+    draggable='.zone-group'>
     <v-card class="px-3 pb-1 zone-group" v-for="group in zoneGroupAsArray" :key="group.id"
     hover :raised="isActiveGroup(group.id)" color="tertiary">
       <div v-show="!isActiveGroup(group.id)" class="overlay"></div>
       <v-layout>
         <v-flex xs12 pa-0 pt-0>
-          <v-card-title primary-title class="pb-0 align-center">
+          <v-card-title class="pb-0 align-center pt-6">
             <div @mouseover="tooltipOnOverFlow"
               class="flex xs10 pa-0 display-1 text-truncate">
               {{ groupName(group.id) }}
@@ -38,11 +40,11 @@
           </div>
         </div>
         <v-flex pl-0 v-bind="albumInfoBreakpoint">
-          <v-card-title primary-title class="d-block">
+          <v-card-title class="d-block pt-4">
             <div @mouseover="tooltipOnOverFlow" class="headline text-truncate font-weight-medium">
               {{ trackTitle(group.id) }}
             </div>
-            <v-layout ma-0>
+            <v-layout :class="$style.artistAlbumInfo" ma-0>
               <router-link
                 @mouseover="tooltipOnOverFlow"
                 :to="`/artist/${encodedItem(group.track.artist)}`"
@@ -212,5 +214,11 @@ export default {
 
 .draggable {
   min-height:10px;
+}
+</style>
+
+<style module>
+.artistAlbumInfo {
+  line-height: 20px;
 }
 </style>

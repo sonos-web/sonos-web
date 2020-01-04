@@ -6,14 +6,15 @@
           <input v-focus v-model="searchInput"
           type="text" class="search-container__input" placeholder="Start typing...">
         </v-flex>
-        <v-flex xs12 mt-5>
+        <v-flex xs12 mt-12>
           <template v-if="searchInput">
             <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
             <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
-            <v-layout pt-4 row wrap v-else>
-              <v-tabs class="library-tabs pb-3"
-              centered show-arrows
-              slider-color="rgba(0,0,0,0)">
+            <v-layout pt-12 row wrap v-else>
+              <v-tabs
+              class="library-tabs pb-3"
+              centered
+              show-arrows>
                 <v-tab v-for="(tab, index) in tabs" :to="tab.link" :key="index">
                   {{ tab.title }}
                 </v-tab>
@@ -26,7 +27,8 @@
               <div class="display-1 font-weight-bold text-xs-center pb-3">
                 Search your Music Library
               </div>
-              <div class="subheading grey--text font-weight-medium text-xs-center">
+              <div class="subtitle-1
+ grey--text font-weight-medium text-xs-center">
                 Find artists, albums, songs, genres, playlists, etc.
               </div>
             </v-flex>

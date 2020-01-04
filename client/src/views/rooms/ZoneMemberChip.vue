@@ -1,8 +1,13 @@
 <template>
-  <v-chip close label color="grey darken-3"
-    class="member-zone pa-0 pr-2"
+  <v-chip
+    close
+    label
+    color="grey darken-3"
+    :class="$style.chip"
+    class="member-zone"
     @input="ungroupZone(zoneMember.id)">
-    <div class="subheading grey--text text--lighten-2" >
+    <div class="subtitle-1
+ grey--text text--lighten-2" >
       {{zoneMember.name}}
     </div>
   </v-chip>
@@ -27,3 +32,9 @@ export default {
   },
 };
 </script>
+
+<style module>
+.chip {
+  margin-top: 5px;
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <v-flex xs6 sm4 md3 lg2 xl2 pa-2 mb-3 class="library-item">
-    <v-card flat tile :to="path">
+    <v-card text tile :to="path" :ripple="false">
       <div class="v-responsive v-image" v-if="!albumCollageImages.length">
         <div class="v-responsive__sizer" style="padding-bottom: 100%;"></div>
         <div v-lazy:background-image="albumArtURL"
@@ -100,6 +100,7 @@ export default {
 <style>
 .library-item .v-card {
   background-color: rgba(0,0,0,0);
+  box-shadow:none;
 }
 .library-item .library-title {
   display: -webkit-box;

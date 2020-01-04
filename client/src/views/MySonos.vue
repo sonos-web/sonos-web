@@ -2,9 +2,10 @@
   <v-container fluid pa-0 ma-0>
     <vue-headful title="My Sonos - Sonos Web"></vue-headful>
     <v-layout row wrap>
-      <v-tabs class="library-tabs pb-3"
-      centered show-arrows
-      slider-color="rgba(0,0,0,0)">
+      <v-tabs
+      class="library-tabs pb-3"
+      centered
+      show-arrows>
         <v-tab v-for="(tab, index) in tabs" :to="tab.link" :key="index">
           {{ tab.title }}
         </v-tab>

@@ -32,6 +32,10 @@ socket.on('Sonos Event Data Received', (data) => {
 });
 
 socket.on('disconnect', () => {
-  store.commit('SET_HAS_ERROR', true);
-  store.commit('SET_ERROR_MESSAGE', 'We got disconnected from the Sonos Network. Is the application server running?');
+  console.warn('We got disconnected from the Sonos Network. Is the application server running?');
+  // store.commit('SET_HAS_ERROR', true);
+  // store.commit(
+  //   'SET_ERROR_MESSAGE',
+  //   'We got disconnected from the Sonos Network. Is the application server running?',
+  // );
 });

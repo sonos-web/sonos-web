@@ -1,27 +1,35 @@
 <template>
   <v-menu
     transition="slide-y-transition"
-    class="d-block play-button"
     max-width="200"
-    offset-y bottom>
-    <v-btn class="play-button" :class="buttonClass"
-    large slot="activator" color="primary darken-2 mb-3">
-      Play
-      <v-icon right>arrow_drop_down</v-icon>
-    </v-btn>
+    offset-y
+    bottom>
+    <template v-slot:activator="{ on }">
+      <div :class="$style.playButtonContainer">
+        <v-btn
+          v-on="on"
+          class="play-button"
+          :class="buttonClass"
+          large
+          color="primary darken-2 mb-3">
+          Play
+          <v-icon right>arrow_drop_down</v-icon>
+        </v-btn>
+      </div>
+    </template>
     <v-list color="secondary">
-      <v-list-tile @click="playNow(uriObject)">
-        <v-list-tile-title>Play Now</v-list-tile-title>
-      </v-list-tile>
-      <v-list-tile @click="playNext(uriObject)">
-        <v-list-tile-title>Play Next</v-list-tile-title>
-      </v-list-tile>
-      <v-list-tile @click="addToEndOfQueue(uriObject)">
-        <v-list-tile-title>Add to End of Queue</v-list-tile-title>
-      </v-list-tile>
-      <v-list-tile @click="replaceQueueAndPlay(uriObject)">
-        <v-list-tile-title>Replace Queue</v-list-tile-title>
-      </v-list-tile>
+      <v-list-item @click="playNow(uriObject)">
+        <v-list-item-title>Play Now</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="playNext(uriObject)">
+        <v-list-item-title>Play Next</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="addToEndOfQueue(uriObject)">
+        <v-list-item-title>Add to End of Queue</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="replaceQueueAndPlay(uriObject)">
+        <v-list-item-title>Replace Queue</v-list-item-title>
+      </v-list-item>
     </v-list>
   </v-menu>
 </template>
@@ -52,5 +60,15 @@ export default {
     },
   },
 };
-
 </script>
+
+<style module lang="scss">
+.playButtonContainer {
+  display: block;
+  text-align: center;
+
+  button {
+    width: 200px;
+  }
+}
+</style>

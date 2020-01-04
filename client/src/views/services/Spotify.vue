@@ -6,22 +6,23 @@
           <div class="display-1 font-weight-bold text-xs-center pb-1">
             Authorize Spotify
           </div>
-          <div class="subheading grey--text font-weight-medium text-xs-center pb-2">
+          <div class="subtitle-1 grey--text font-weight-medium text-xs-center pb-2">
             Play your saved tracks, albums, playlists, etc. from Spotify
           </div>
           <div class="caption grey--text font-weight-medium text-xs-center pb-4">
             * Spotify Premium is required for playback
           </div>
           <div class="text-xs-center">
-            <v-btn color="primary" round large @click="authorize">Connect Spotify Account
+            <v-btn color="primary" rounded large @click="authorize">Connect Spotify Account
             </v-btn>
           </div>
         </v-flex>
       </v-layout>
       <v-layout v-else-if="authorized" row wrap>
-        <v-tabs class="library-tabs pb-3"
-        centered show-arrows
-        slider-color="rgba(0,0,0,0)">
+        <v-tabs
+        class="library-tabs pb-3"
+        centered
+        show-arrows>
           <v-tab v-for="(tab, index) in tabs" :to="tab.link" :key="index">
             {{ tab.title }}
           </v-tab>

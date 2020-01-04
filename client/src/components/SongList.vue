@@ -17,18 +17,18 @@
       :position-x="menuPosition.x"
       :position-y="menuPosition.y">
       <v-list color="secondary">
-        <v-list-tile @click="playNow(selectedSongURI)">
-          <v-list-tile-title>Play Now</v-list-tile-title>
-        </v-list-tile>
-        <v-list-tile @click="playNext(selectedSongURI)" v-if="!isRadio">
-          <v-list-tile-title>Play Next</v-list-tile-title>
-        </v-list-tile>
-        <v-list-tile @click="addToEndOfQueue(selectedSongURI)" v-if="!isRadio">
-          <v-list-tile-title>Add to End of Queue</v-list-tile-title>
-        </v-list-tile>
-        <v-list-tile @click="replaceQueueAndPlay(selectedSongURI)" v-if="!isRadio">
-          <v-list-tile-title>Replace Queue</v-list-tile-title>
-        </v-list-tile>
+        <v-list-item @click="playNow(selectedSongURI)">
+          <v-list-item-title>Play Now</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="playNext(selectedSongURI)" v-if="!isRadio">
+          <v-list-item-title>Play Next</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="addToEndOfQueue(selectedSongURI)" v-if="!isRadio">
+          <v-list-item-title>Add to End of Queue</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="replaceQueueAndPlay(selectedSongURI)" v-if="!isRadio">
+          <v-list-item-title>Replace Queue</v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-menu>
   </v-list>

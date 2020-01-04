@@ -154,7 +154,7 @@ export default {
 
 <style>
 .top-result-heading {
-  color: white;
+  color: white!important;
   text-decoration: none;
   font-weight: 900;
   font-size: 34px;

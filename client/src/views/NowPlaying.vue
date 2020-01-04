@@ -9,11 +9,14 @@
           </div>
           <div class="v-responsive v-image">
             <div v-lazy:background-image="albumArtURL"
-              class="album-art background-image" :key="albumArtURL"></div>
+              class="background-image"
+              :class="$style.albumArt"
+              :key="albumArtURL">
+            </div>
           </div>
           <v-flex xs12>
             <div class="text-xs-center">
-              <v-card-title primary-title class="d-block">
+              <v-card-title class="d-block pt-4">
                 <div @mouseover="tooltipOnOverFlow"
                   class="headline text-truncate font-weight-medium">
                   {{ track }}
@@ -59,8 +62,7 @@ export default {
   components: { RoomDropdownMenu },
   computed: {
     documentTitle() {
-      // const title = this.$store.state.documentTitleForActiveGroup;
-      return 'Now Playing - Sonos Web';
+      return this.$store.state.documentTitleForActiveGroup || 'Now Playing - Sonos Web';
     },
     activeZoneGroupId() {
       return this.$store.state.activeZoneGroupId;
@@ -96,8 +98,8 @@ export default {
 };
 </script>
 
-<style>
-.album-art {
+<style module>
+.albumArt {
   width: calc(100vh - 400px);
   height: calc(100vh - 400px);
   max-width: 500px;
@@ -105,9 +107,5 @@ export default {
   min-width: 150px;
   margin: 0 auto;
   position: relative;
-}
-.zone-group-selector {
-  font-size: 24px;
-  text-transform: none;
 }
 </style>

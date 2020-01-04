@@ -1,21 +1,21 @@
 <template>
-  <v-list-tile
-    avatar class="queue-item"
+  <v-list-item
+    :ripple="false"
+    class="queue-item"
     :class="queueItemClasses"
-    @click="hideMenu"
     @dblclick.native="playTrack"
     @contextmenu.prevent.native="showMenu">
-    <v-list-tile-avatar tile size="40px">
+    <v-list-item-avatar tile size="40px">
       <div class="v-responsive v-image">
         <div v-lazy:background-image="albumArtURL"
         class="background-image" :key="albumArtURL"></div>
       </div>
-    </v-list-tile-avatar>
-    <v-list-tile-content>
-      <v-list-tile-title class="font-weight-bold"
+    </v-list-item-avatar>
+    <v-list-item-content>
+      <v-list-item-title class="font-weight-bold"
         @mouseover="tooltipOnOverFlow">
         {{ track.title }}
-      </v-list-tile-title>
+      </v-list-item-title>
       <div>
         <v-layout>
           <router-link
@@ -35,20 +35,20 @@
           </template>
         </v-layout>
       </div>
-    </v-list-tile-content>
-    <v-list-tile-action>
+    </v-list-item-content>
+    <v-list-item-action>
       <v-btn icon ripple @click="showMenu">
         <v-icon color="grey lighten-1">more_horiz</v-icon>
       </v-btn>
-    </v-list-tile-action>
+    </v-list-item-action>
     <!--
-    <v-list-tile-action>
+    <v-list-item-action>
       <v-checkbox class="queue-item-checkbox"
         v-model="checked" color="white" hide-details>
       </v-checkbox>
-    </v-list-tile-action>
+    </v-list-item-action>
     -->
-  </v-list-tile>
+  </v-list-item>
 </template>
 
 
@@ -71,9 +71,6 @@ export default {
     },
     showMenu(event) {
       this.$emit('show-menu', event, this.track.queuePosition);
-    },
-    hideMenu() {
-      this.$emit('hide-menu');
     },
   },
   computed: {
@@ -116,7 +113,7 @@ export default {
   -webkit-transition-timing-function: linear!important;
   transition-timing-function: linear!important;
 }
-.queue-item .v-list__tile--link:hover {
+.queue-item .v-list-item--link:hover {
   background: unset!important;
 }
 .queue-item.checked {
@@ -131,14 +128,18 @@ export default {
 .queue-item-checkbox {
   flex: none;
 }
-.queue-item .v-list__tile__action {
+.queue-item .v-list-item__action {
   display: none;
 }
-.queue-item:hover .v-list__tile__action,
-.queue-item.checked .v-list__tile__action {
+.queue-item:hover .v-list-item__action,
+.queue-item.checked .v-list-item__action {
   display: flex;
 }
 .queue-item .item-link {
   font-size: 14px;
+}
+.v-list-item:hover::before,
+.v-list-item:focus::before {
+  opacity: 0!important;
 }
 </style>

@@ -8,7 +8,7 @@ Install Sonos Web on a single computer and access and manage your system from an
 
 Sonos Web relies upon the [node-sonos](https://github.com/bencevans/node-sonos) project for all its Sonos communication.
 
-Sonos Web has been tested on Windows 7, macOS, Linux, and Raspbian Stretch Lite (9.6).
+Sonos Web has been tested on Windows 10, macOS, Linux, and Raspbian Stretch Lite (9.6).
 
 [Check out the following Youtube video](https://youtu.be/0q8Z-XV81Z4) to see a brief demo of the system in use. (v0.5.2)
 
@@ -52,7 +52,7 @@ The goal for this project is to make installation as simple as possible for Wind
 To this end, **sonos-web-cli** was created to be able to install Sonos Web by a single command in your terminal.
 
 If you do not already have npm installed, you must do so [here](https://www.npmjs.com/get-npm) before continuing.
-If you are on Linux, the best way is to install node from source [here](https://github.com/nodesource/distributions)
+If you are on Linux, the best way is to install node (minimum v10 required) from source [here](https://github.com/nodesource/distributions)
 
 Once npm is installed, run the following commands in your terminal to get started:
 - `npm install -g sonos-web-cli`

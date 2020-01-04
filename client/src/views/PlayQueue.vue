@@ -16,7 +16,7 @@
           :timeout="settings.notifications.dragAndDropTracksInQueue.timeout"
           v-model="showDragAndDropInfo">
             {{ settings.notifications.dragAndDropTracksInQueue.text }}
-          <v-btn color="primary" flat @click="disableDragAndDropNotification">
+          <v-btn color="primary" text @click="disableDragAndDropNotification">
             Got It
           </v-btn>
         </v-snackbar>
@@ -26,7 +26,7 @@
           <room-dropdown-menu hideIcon
             buttonClasses="display-1 font-weight-bold text-capitalize ma-0 px-2">
           </room-dropdown-menu>
-          <div class="subheading grey--text text--lighten-1 font-weight-bold pl-10 pb-2">
+          <div class="subtitle-1 grey--text text--lighten-1 pl-3 font-weight-bold pb-2">
             Queue
             <span class="caption grey--text text--darken-1 font-weight-bold">
               {{ queueInfoText }}
@@ -34,55 +34,60 @@
           </div>
           <v-btn
             color="secondary"
-            class="ml-1 text-capitalize"
-            round depressed @click="clearQueue"
+            :class="$style.queueButtons"
+            rounded
+            depressed
+            @click="clearQueue"
             :disabled="isQueueEmpty">
             Clear Queue
           </v-btn>
           <v-dialog max-width="350px" v-model="queueDialog" :disabled="isQueueEmpty">
-            <v-btn
-              slot="activator"
-              color="secondary"
-              class="ml-1 text-capitalize"
-              round depressed
-              :disabled="isQueueEmpty">
-              Save Queue
-            </v-btn>
-            <v-card>
-              <v-card-title class="pb-0">
-                <span class="headline font-weight-medium">Save Queue</span>
-              </v-card-title>
-              <v-card-text class="pt-1">
-                <div class="body-2 pb-2 grey--text text--lighten-2">
-                  The Queue will be saved as a Sonos Playlist
-                </div>
-                <v-layout wrap>
-                  <v-flex xs12>
-                    <v-form ref="queueForm" lazy-validation @submit.prevent>
-                      <v-text-field
-                        v-model="playlistName"
-                        autofocus
-                        browser-autocomplete="off"
-                        label="Name"
-                        ref="playlistName"
-                        required
-                        :rules="[v => !!v || 'Enter a playlist name']">
-                      </v-text-field>
-                    </v-form>
-                  </v-flex>
-                </v-layout>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn flat @click="closeSaveQueueDialog">Cancel</v-btn>
-                <v-btn color="primary" flat @click="saveQueue">Save</v-btn>
-              </v-card-actions>
-            </v-card>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                color="secondary"
+                :class="$style.queueButtons"
+                rounded depressed
+                :disabled="isQueueEmpty">
+                Save Queue
+              </v-btn>
+            </template>
+              <v-card>
+                <v-card-title class="pb-0">
+                  <span class="headline font-weight-medium">Save Queue</span>
+                </v-card-title>
+                <v-card-text class="pt-1">
+                  <div class="body-2 pb-2 grey--text text--lighten-2">
+                    The Queue will be saved as a Sonos Playlist
+                  </div>
+                  <v-layout wrap>
+                    <v-flex xs12>
+                      <v-form ref="queueForm" lazy-validation @submit.prevent>
+                        <v-text-field
+                          v-model="playlistName"
+                          autofocus
+                          browser-autocomplete="off"
+                          label="Name"
+                          ref="playlistName"
+                          required
+                          :rules="[v => !!v || 'Enter a playlist name']">
+                        </v-text-field>
+                      </v-form>
+                    </v-flex>
+                  </v-layout>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn text @click="closeSaveQueueDialog">Cancel</v-btn>
+                  <v-btn color="primary" text @click="saveQueue">Save</v-btn>
+                </v-card-actions>
+              </v-card>
           </v-dialog>
         </v-flex>
         <v-flex xs12 class="queue-items-section">
           <v-layout fill-height align-center justify-center v-if="isQueueEmpty">
-            <div class="subheading grey--text font-weight-medium">
+            <div class="subtitle-1
+ grey--text font-weight-medium">
               Songs you choose to play will appear here
             </div>
           </v-layout>
@@ -205,9 +210,6 @@ export default {
 </script>
 
 <style>
-.pl-10 {
-  padding-left: 10px;
-}
 .float-right {
   float: right;
 }
@@ -234,6 +236,15 @@ export default {
 }
 
 .queue-items-section {
-  padding-top: 132px;
+  padding-top: 156px;
+}
+</style>
+
+<style module>
+.queueButtons {
+  text-transform: capitalize;
+  margin-left: 5px;
+  letter-spacing: unset;
+  margin: 4px 8px;
 }
 </style>

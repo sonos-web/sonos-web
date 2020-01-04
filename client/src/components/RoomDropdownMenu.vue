@@ -1,14 +1,23 @@
 <template>
   <v-menu bottom offset-y>
-    <v-btn class="zone-group-selector" :class="buttonClasses" large flat slot="activator">
-      {{ activeZoneGroupName }}
-      <v-icon right v-if="!hideIcon">arrow_drop_down</v-icon>
-    </v-btn>
+    <template v-slot:activator="{ on }">
+      <v-btn
+        class="zone-group-selector"
+        :class="buttonClasses"
+        large
+        text
+        v-on="on">
+        {{ activeZoneGroupName }}
+        <v-icon right v-if="!hideIcon">arrow_drop_down</v-icon>
+      </v-btn>
+    </template>
     <v-list>
-      <v-list-tile v-for="zoneGroup in inactiveZoneGroups" :key="zoneGroup.id"
-      @click="groupSelected(zoneGroup.id)">
-        <v-list-tile-title>{{ groupName(zoneGroup.id) }}</v-list-tile-title>
-      </v-list-tile>
+      <v-list-item
+        v-for="zoneGroup in inactiveZoneGroups"
+        :key="zoneGroup.id"
+        @click="groupSelected(zoneGroup.id)">
+        <v-list-item-title>{{ groupName(zoneGroup.id) }}</v-list-item-title>
+      </v-list-item>
     </v-list>
   </v-menu>
 </template>
@@ -54,3 +63,11 @@ export default {
   },
 };
 </script>
+
+<style>
+.zone-group-selector {
+  font-size: 24px!important;
+  text-transform: none;
+  letter-spacing: unset;
+}
+</style>

@@ -1,79 +1,90 @@
 <template>
-  <v-toolbar fixed clipped-left flat color="secondary" class="now-playing-bar">
+  <v-app-bar
+    fixed
+    clipped-left
+    text
+    color="secondary"
+    class="now-playing-bar"
+    height="90">
     <v-container fill-height fluid pa-0>
       <v-layout align-center justify-space-between>
         <div class="now-playing-bar-left">
-          <v-card flat tile>
+          <v-card text tile>
             <v-list two-line>
-              <v-list-tile avatar>
-                <v-list-tile-avatar tile size="60px">
+              <v-list-item>
+                <v-list-item-avatar tile size="60px">
                   <div class="v-responsive v-image">
                     <div v-lazy:background-image="albumArtURL"
                     class="background-image" :key="albumArtURL"></div>
                   </div>
-                </v-list-tile-avatar>
-                <v-list-tile-content class="pl-3">
+                </v-list-item-avatar>
+                <v-list-item-content>
                   <router-link
                     @mouseover="tooltipOnOverFlow"
                     :to="`/album/${encodedAlbum}`"
-                    class="item-link title text-truncate text-xs-center pa-0">
+                    class="item-link title text-truncate pa-0">
                     {{ track }}
                   </router-link>
                   <router-link
                     v-if="artist"
                     @mouseover="tooltipOnOverFlow"
                     :to="`/artist/${encodedArtist}`"
-                    class="item-link subheading text-truncate text-xs-center pa-0">
+                    class="item-link subtitle-1 text-truncate pa-0">
                     {{ artist }}
                   </router-link>
                   <router-link
                     v-else-if="album"
                     @mouseover="tooltipOnOverFlow"
-                    class="item-link subheading text-truncate text-xs-center pa-0">
+                    class="item-link subtitle-1 text-truncate pa-0">
                     {{ album }}
                   </router-link>
-                </v-list-tile-content>
-              </v-list-tile>
+                </v-list-item-content>
+              </v-list-item>
              </v-list>
           </v-card>
         </div>
         <div class="now-playing-bar-center">
-          <v-card flat tile>
+          <v-card text tile>
             <v-list dense class="pa-0 pt-2">
-              <v-list-tile>
-                <v-list-tile-action>
+              <v-list-item>
+                <v-list-item-action>
                   <v-btn class="play-mode-button" :class="shuffleActive ? 'active' : ''" icon
                   :disabled="!canSeek" @click="toggleShuffle">
                     <v-icon small>shuffle</v-icon>
                   </v-btn>
-                </v-list-tile-action>
-                <v-list-tile-action>
+                </v-list-item-action>
+                <v-list-item-action>
                   <v-btn :disabled="!previousEnabled" icon @click="previous">
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
-                </v-list-tile-action>
-                <v-list-tile-action>
+                </v-list-item-action>
+                <v-list-item-action>
                   <v-btn :disabled="!playStateEnabled" icon @click="playOrPause">
                     <v-icon large>{{ playStateIcon }}</v-icon>
                   </v-btn>
-                </v-list-tile-action>
-                <v-list-tile-action>
+                </v-list-item-action>
+                <v-list-item-action>
                   <v-btn :disabled="!nextEnabled" icon @click="next">
                     <v-icon>skip_next</v-icon>
                   </v-btn>
-                </v-list-tile-action>
-                <v-list-tile-action>
+                </v-list-item-action>
+                <v-list-item-action>
                   <v-btn class="play-mode-button" :class="repeatActive ? 'active' : ''"
                   :disabled="!canSeek" icon @click="toggleRepeat">
                     <v-icon small>{{ repeatIcon }}</v-icon>
                   </v-btn>
-                </v-list-tile-action>
-              </v-list-tile>
+                </v-list-item-action>
+              </v-list-item>
             </v-list>
             <v-list dense class="pa-0 progress-bar">
-              <v-list-tile>
-                <v-slider hide-details color="#b3b3b3" step="0" track-color="dark-grey"
-                  v-model="trackPosition" :readonly="!canSeek">
+              <v-list-item>
+                <v-slider
+                  hide-details
+                  color="#b3b3b3"
+                  step="0"
+                  track-color="dark-grey"
+                  v-model="trackPosition"
+                  :readonly="!canSeek">
                   <div class="caption grey--text text--lighten-1 progress-time" slot="prepend">
                     {{ trackElapsedTime }}
                   </div>
@@ -81,35 +92,46 @@
                     {{ trackDuration }}
                   </div>
                 </v-slider>
-              </v-list-tile>
+              </v-list-item>
             </v-list>
           </v-card>
         </div>
         <div class="now-playing-bar-right">
-          <v-card flat tile>
+          <v-card text tile>
             <v-list dense class="pa-0 volume-bar">
-              <v-list-tile>
-                <v-btn @click="handleQueueButtonClick" class="queue-button" title="Queue" flat
+              <v-list-item>
+                <v-btn @click="handleQueueButtonClick" class="queue-button" title="Queue" text
                 :class="$route.name === 'PlayQueue' ? 'v-btn--active': ''">
                   <v-icon>queue_music</v-icon>
                 </v-btn>
                 <v-menu class="room-select-button" bottom offset-y top>
-                  <v-btn :title="groupName(activeZoneGroupId)" flat slot="activator">
-                    <v-icon small>speaker_group</v-icon>
-                  </v-btn>
+                  <template v-slot:activator="{ on }">
+                    <v-btn :title="groupName(activeZoneGroupId)" text v-on="on">
+                      <v-icon small>speaker_group</v-icon>
+                    </v-btn>
+                  </template>
                   <v-list class="room-select-list">
-                    <v-list-tile v-for="zoneGroup in zoneGroups" :key="zoneGroup.id"
+                    <v-list-item v-for="zoneGroup in zoneGroups" :key="zoneGroup.id"
                     @click="groupSelected(zoneGroup.id)"
                     class="room-select-title"
                     :class="activeZoneGroupId === zoneGroup.id ? 'active' : ''">
-                      <v-list-tile-title>{{ groupName(zoneGroup.id) }}</v-list-tile-title>
-                    </v-list-tile>
+                      <v-list-item-title>{{ groupName(zoneGroup.id) }}</v-list-item-title>
+                    </v-list-item>
                   </v-list>
                 </v-menu>
                 <v-menu offset-y top :open-on-click="hasMembers" :close-on-content-click="false">
-                  <v-slider slot="activator" hide-details color="#b3b3b3" track-color="dark-grey"
-                  :prepend-icon="volumeIcon" @click:prepend="toggleMute" v-model="volume">
-                  </v-slider>
+                  <template v-slot:activator="{ on }">
+                    <v-slider
+                      thumb-label
+                      v-on="on"
+                      hide-details
+                      color="#b3b3b3"
+                      track-color="dark-grey"
+                      :prepend-icon="volumeIcon"
+                      @click:prepend="toggleMute"
+                      v-model="volume">
+                    </v-slider>
+                  </template>
 
                   <v-card color="secondary pa-2">
                     <member-volume-bar v-for="member in activeZoneGroupMembers" :key="member.id"
@@ -117,13 +139,13 @@
                     </member-volume-bar>
                   </v-card>
                 </v-menu>
-              </v-list-tile>
+              </v-list-item>
             </v-list>
           </v-card>
         </div>
       </v-layout>
     </v-container>
-  </v-toolbar>
+  </v-app-bar>
 </template>
 
 <script>
@@ -440,7 +462,13 @@ export default {
 </script>
 
 <style>
-.v-toolbar--fixed.now-playing-bar {
+.now-playing-bar .v-list-item__action {
+  margin: 0px;
+}
+.now-playing-bar .container.container--fluid {
+  max-width: 100%;
+}
+.v-app-bar--fixed.now-playing-bar {
   top: auto;
   bottom: 0;
   height: 90px;
@@ -448,20 +476,21 @@ export default {
 }
 .now-playing-bar .v-list, .now-playing-bar .v-card {
   background: rgba(0,0,0,0)!important;
+  box-shadow: none;
 }
 .now-playing-bar .v-toolbar__content {
   height: 100%!important;
   padding: 0 8px!important;
 }
-.now-playing-bar .v-list__tile__title {
+.now-playing-bar .v-list-item__title {
   font-weight: 500;
 }
-.now-playing-bar .v-list__tile {
+.now-playing-bar .v-list-item {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
 }
-.now-playing-bar-right .v-list__tile {
+.now-playing-bar-right .v-list-item {
   padding: 0px;
   padding-right: 8px;
 }
@@ -482,6 +511,10 @@ export default {
   display: flex;
   justify-content: flex-end;
 }
+.now-playing-bar-right .v-btn {
+  padding: 0px!important;
+  min-width: 24px!important;
+}
 .now-playing-bar .progress-time {
   line-height: 24px;
   font-weight: 600;
@@ -494,18 +527,25 @@ export default {
 }
 /***** Slider controls ******/
 .v-slider__thumb {
-  transform: translateY(-50%) scale(0.35);
+  transform: translateY(-50%) scale(0.7);
   background-color:#b3b3b3!important;
-  left: -8px;
+  left: -2px;
 }
 .v-slider__thumb-container:before {
   left: -12px;
 }
-.v-slider--is-active .v-slider__track-fill {
+.v-slider__thumb:before {
+  display:none!important;
+}
+.v-slider__thumb-label {
+  background-color: #4c4c4c!important;
+  left: 4px;
+}
+.v-slider--active .v-slider__track-fill {
   background-color:#3898d6!important;
 }
-.v-slider--is-active .v-slider__thumb {
-  transform: translateY(-50%) scale(0.45)!important;
+.v-slider--active .v-slider__thumb {
+  transform: translateY(-50%) scale(0.8)!important;
 }
 .v-input--is-readonly .v-slider__thumb {
   display: none;
@@ -566,11 +606,16 @@ export default {
 
 .now-playing-bar-left .item-link.title {
   font-size: 16px!important;
-  margin-bottom: 2px;
-  opacity:1.0;
+  opacity: 1.0;
+  line-height: 18px;
 }
-.now-playing-bar-left .item-link.subheading {
+.now-playing-bar-left .item-link.subtitle-1 {
   font-size: 13px!important;
   font-weight: 500!important;
+  line-height: 19px;
+}
+
+.now-playing-bar-left .v-list-item__content {
+  padding: 0px;
 }
 </style>

@@ -29,7 +29,8 @@
             {{ artistName }}
             </router-link>
             <div class="total-top mt-2 text-xs-center
-              subheading font-weight-bold d-block no-select">
+              subtitle-1
+ font-weight-bold d-block no-select">
               {{ album.total }}
               <span class="grey--text text-uppercase caption font-weight-bold">
                 {{ songLabel }}
@@ -37,7 +38,8 @@
             </div>
             <play-button-menu buttonClass="mt-3 mb-0" :uriData="uriData"></play-button-menu>
             <div class="total-bottom text-xs-center
-              subheading font-weight-bold d-block no-select">
+              subtitle-1
+ font-weight-bold d-block no-select">
               {{ album.total }}
               <span class="grey--text text-uppercase caption font-weight-bold">
                 {{ songLabel }}

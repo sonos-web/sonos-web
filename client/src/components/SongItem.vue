@@ -1,11 +1,11 @@
 <template>
-  <v-list-tile
-    avatar class="song-item"
+  <v-list-item
+    :ripple="false"
+    class="song-item"
     :class="queueItemClasses"
-    @click="hideMenu"
     @dblclick.native="playNowAction"
     @contextmenu.prevent.native="showMenu">
-    <v-list-tile-avatar tile size="40px">
+    <v-list-item-avatar tile size="40px">
       <v-icon class="music-note" color="grey" v-if="albumMode">
         music_note
       </v-icon>
@@ -13,14 +13,14 @@
         <div v-lazy:background-image="albumArtURL"
         class="background-image" :key="albumArtURL"></div>
       </div>
-    </v-list-tile-avatar>
+    </v-list-item-avatar>
 
-    <v-list-tile-content>
-      <v-list-tile-title
+    <v-list-item-content>
+      <v-list-item-title
         class="font-weight-bold"
         @mouseover="tooltipOnOverFlow">
         {{ song.title }}
-      </v-list-tile-title>
+      </v-list-item-title>
       <div v-if="!albumMode || allAlbum">
         <v-layout>
           <router-link
@@ -41,13 +41,13 @@
           </template>
         </v-layout>
       </div>
-    </v-list-tile-content>
-    <v-list-tile-action>
+    </v-list-item-content>
+    <v-list-item-action>
       <v-btn icon ripple @click="showMenu">
         <v-icon color="grey lighten-1">more_horiz</v-icon>
       </v-btn>
-    </v-list-tile-action>
-  </v-list-tile>
+    </v-list-item-action>
+  </v-list-item>
 </template>
 
 
@@ -95,9 +95,6 @@ export default {
     },
     showMenu(event) {
       this.$emit('show-menu', event, this.song.uri);
-    },
-    hideMenu() {
-      this.$emit('hide-menu');
     },
   },
   computed: {
@@ -155,7 +152,7 @@ export default {
 .song-item:hover .music-note {
   color: white!important;
 }
-.song-item .v-list__tile--link:hover {
+.song-item .v-list-item--link:hover {
   background: unset!important;
 }
 .song-item:hover {
@@ -167,11 +164,11 @@ export default {
 .song-item.active .music-note {
   color:#3898d6!important;
 }
-.song-item .v-list__tile__action {
+.song-item .v-list-item__action {
   display: none;
 }
-.song-item:hover .v-list__tile__action,
-.song-item.checked .v-list__tile__action {
+.song-item:hover .v-list-item__action,
+.song-item.checked .v-list-item__action {
   display: flex;
 }
 .song-item .item-link {

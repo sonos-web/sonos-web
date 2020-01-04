@@ -137,6 +137,7 @@ export default new Vuex.Store({
     updateZoneGroup({ commit, dispatch }, data) {
       commit('UPDATE_ZONE_GROUP', data);
       dispatch('updateTrackTimer');
+      dispatch('setDocumentTitleForActiveGroup');
     },
     setActiveZoneGroup({ commit, dispatch }, groupId) {
       localStorage.setItem('activeZoneGroupId', groupId);
@@ -164,13 +165,15 @@ export default new Vuex.Store({
     setDocumentTitleForActiveGroup({ commit, state, getters }) {
       const zoneGroup = getters.getGroupById(state.activeZoneGroupId);
       let documentTitle = null;
-      if (zoneGroup) {
+      if (zoneGroup && zoneGroup.track) {
         const artist = zoneGroup.track.artist ? ` · ${zoneGroup.track.artist}` : '';
         const title = getters.trackTitleForGroup(zoneGroup.id);
         const groupName = getters.groupName(zoneGroup.id);
         documentTitle = `${title}${artist} - ${groupName}`;
       }
-      commit('SET_DOCUMENT_TITLE_FOR_ACTIVE_GROUP', documentTitle);
+      if (documentTitle) {
+        commit('SET_DOCUMENT_TITLE_FOR_ACTIVE_GROUP', documentTitle);
+      }
     },
     updateTrackTimer({ dispatch, getters, commit }) {
       const group = getters.activeZoneGroup;

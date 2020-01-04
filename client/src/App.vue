@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app>
     <div class="app-background"></div>
     <v-content class="now-playing-bar-padding">
       <transition name="fade">
@@ -19,7 +19,15 @@
       <transition name="fade">
         <div v-if="!discoveringSonos && !hasError" class="fill-height">
           <!-- eslint-disable-next-line -->
-          <v-navigation-drawer width="230" fixed app clipped floating :permanent="true" :mini-variant.sync="$vuetify.breakpoint.mdAndDown">
+          <v-navigation-drawer
+            width="230"
+            fixed
+            app
+            clipped
+            floating
+            class="app-drawer"
+            :permanent="true"
+            :mini-variant.sync="$vuetify.breakpoint.mdAndDown">
             <v-list class="nav-link-list">
               <template v-for="item in items">
                 <v-list-group
@@ -29,38 +37,38 @@
                   :prepend-icon="item.model ? item.icon : item['icon-alt']"
                   append-icon=""
                 >
-                  <v-list-tile slot="activator">
-                    <v-list-tile-content>
-                      <v-list-tile-title>
+                  <v-list-item slot="activator">
+                    <v-list-item-content>
+                      <v-list-item-title>
                         {{ item.text }}
-                      </v-list-tile-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
-                  <v-list-tile
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item
                     v-for="child in item.children"
                     :key="child.text"
                     :to="{path: child.path}"
                   >
-                    <v-list-tile-action v-if="child.icon">
+                    <v-list-item-action v-if="child.icon">
                       <v-icon>{{ child.icon }}</v-icon>
-                    </v-list-tile-action>
-                    <v-list-tile-content>
-                      <v-list-tile-title>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>
                         {{ child.text }}
-                      </v-list-tile-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
                 </v-list-group>
-                <v-list-tile v-else :key="item.text" :to="{path: item.path}">
-                  <v-list-tile-action>
+                <v-list-item v-else :key="item.text" :to="{path: item.path}">
+                  <v-list-item-action>
                     <v-icon>{{ item.icon }}</v-icon>
-                  </v-list-tile-action>
-                  <v-list-tile-content>
-                    <v-list-tile-title>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title>
                       {{ item.text }}
-                    </v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
               </template>
             </v-list>
             <div class="version-text subtitle pa-3 grey--text text--darken-2">
@@ -110,10 +118,24 @@ export default {
 </script>
 
 <style>
+.text-xs-center {
+  text-align: center!important;
+}
+.app-drawer .v-list-item--active::before {
+  opacity: 0;
+}
+.app-drawer .v-list .v-list-item--active {
+  color:#3898da;
+}
+.app-drawer .v-list .v-list-item__title {
+  font-weight: 500;
+  font-size: 14px;
+}
 .version-text {
   position: absolute;
   bottom: 90px;
   left: 0px;
+  font-size: 14px;
 }
 .theme--dark.v-list {
   background: #282828;
@@ -147,15 +169,15 @@ export default {
 .theme--dark.v-navigation-drawer {
   background-color: rgba(14,21,33,0.8);
 }
-.nav-link-list .v-list__tile--active:after {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 4px;
-    bottom: 4px;
-    width: 4px;
-    left: 0px;
-    background-color: #3898d6;
+.nav-link-list .v-list-item--active:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 4px;
+  left: 0px;
+  background-color: #3898d6;
 }
 
 /** Set a default image for album art until it loads **/
@@ -203,9 +225,9 @@ export default {
 
 .item-link, .item-link-separator {
   text-decoration: none;
-  font-weight: bold;
+  font-weight: bold!important;
   display: block;
-  color: white;
+  color: white!important;
   opacity: 0.6;
 }
 .item-link-separator {
@@ -217,6 +239,7 @@ export default {
 }
 .item-link.album, .item-link.artist {
   font-weight: 500;
+  font-size: 14px;
 }
 .play-button {
   letter-spacing: 0.1em;
@@ -250,26 +273,24 @@ export default {
 .library-tabs {
   width: 100%;
 }
-.library-tabs .v-tabs__bar.theme--dark {
+.library-tabs .v-tabs-bar.theme--dark {
   background-color: unset;
 }
-.library-tabs .v-tabs__item {
+.library-tabs .v-tab {
   font-size: 13px;
   font-weight: bold;
   letter-spacing: 0.1em;
 }
-.library-tabs .v-tabs__div {
+.library-tabs .v-tab {
   position: relative;
   padding: 0px 8px;
 }
-.library-tabs .v-tabs__item.v-tabs__item--active:before {
-  content: "";
-  height: 2px;
-  background-color: #3898d6;
-  width: 30px;
-  position: absolute;
-  display: block;
-  bottom: 8px;
+
+.library-tabs .v-tab.v-tab--active {
+  color: white;
+}
+.theme--dark.v-tabs .v-tab:hover::before {
+  opacity: 0;
 }
 
 /**** Artist *****/

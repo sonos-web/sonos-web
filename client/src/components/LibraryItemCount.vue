@@ -1,6 +1,7 @@
 <template>
   <v-flex xs12 px-2 pb-2>
-    <div class="subheading font-weight-bold d-block no-select">
+    <div class="subtitle-1
+ font-weight-bold d-block no-select">
       {{ total }} <span class="grey--text text-uppercase caption font-weight-bold">{{ text }}</span>
     </div>
   </v-flex>

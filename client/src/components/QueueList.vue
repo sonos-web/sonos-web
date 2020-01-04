@@ -1,7 +1,7 @@
 <template>
   <v-list class="queue-list" two-line>
      <draggable class="draggable" v-model="itemsCopy"
-      :options="{draggable:'.queue-item'}" @sort="onSort">
+      draggable=".queue-item" @sort="onSort">
       <template v-for="(track, index) in itemsCopy">
         <queue-item
         @hide-menu="showMenu = false"
@@ -18,12 +18,12 @@
       :position-x="menuPosition.x"
       :position-y="menuPosition.y">
       <v-list color="secondary">
-        <v-list-tile @click="playTrack">
-          <v-list-tile-title>Play Song</v-list-tile-title>
-        </v-list-tile>
-        <v-list-tile @click="removeTrack">
-          <v-list-tile-title>Remove from Queue</v-list-tile-title>
-        </v-list-tile>
+        <v-list-item @click="playTrack">
+          <v-list-item-title>Play Song</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="removeTrack">
+          <v-list-item-title>Remove from Queue</v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-menu>
   </v-list>
@@ -31,8 +31,8 @@
 
 
 <script>
-import QueueItem from '@/components/QueueItem.vue';
 import draggable from 'vuedraggable';
+import QueueItem from '@/components/QueueItem.vue';
 import '@/helpers/extensions/Array';
 import groupsAPI from '@/services/API/groups';
 

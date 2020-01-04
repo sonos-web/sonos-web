@@ -9,14 +9,18 @@
         :timeout="settings.notifications.dragAndDropRooms.timeout"
         v-model="showDragAndDropInfo">
           {{ settings.notifications.dragAndDropRooms.text }}
-          <v-btn color="primary" flat @click="disableDragAndDropNotification">
+          <v-btn color="primary" text @click="disableDragAndDropNotification">
             Got It
           </v-btn>
         </v-snackbar>
       </div>
       <v-layout wrap row>
         <v-flex xs12>
-          <v-btn :disabled="zoneGroups.length === 0" round color="secondary"
+          <v-btn
+            :class="$style.partyModeButton"
+            :disabled="zoneGroups.length === 0"
+            rounded
+            color="secondary"
             @click="partyMode">
             {{ partyModeText }}
           </v-btn>
@@ -32,9 +36,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import ZoneGroupDraggable from '@/views/rooms/ZoneGroupDraggable.vue';
 import groupsAPI from '@/services/API/groups';
-import { mapState } from 'vuex';
 
 export default {
   name: 'Rooms',
@@ -95,3 +99,9 @@ export default {
   },
 };
 </script>
+
+<style module>
+.partyModeButton {
+  letter-spacing: unset;
+}
+</style>
