@@ -274,7 +274,7 @@ export default {
   width: 100%;
 }
 .library-tabs .v-tabs-bar.theme--dark {
-  background-color: unset;
+  background-color: unset!important;
 }
 .library-tabs .v-tab {
   font-size: 13px;
