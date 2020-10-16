@@ -69,7 +69,7 @@ class MusicLibrary {
         switch (options.searchCategory) {
           case 'albumArtists':
           case 'genres':
-          case 'playlists':
+          //case 'playlists':
             await Promise.all(result.items.map(async (item, index) => {
               try {
                 // Get the album art
