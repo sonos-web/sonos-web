@@ -70,6 +70,9 @@ class MusicLibrary {
           case 'albumArtists':
           case 'genres':
           case 'playlists':
+          case 'share':
+            break
+          default:
             await Promise.all(result.items.map(async (item, index) => {
               try {
                 // Get the album art
@@ -85,8 +88,6 @@ class MusicLibrary {
                 }
               }
             }));
-            break;
-          default:
             break;
         }
       }
