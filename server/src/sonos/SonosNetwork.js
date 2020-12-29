@@ -711,7 +711,7 @@ class SonosNetwork {
     const zone = this.devices.find(device => device.id === deviceId);
     if (!zone) { return null; }
     const queue = await zone.getQueue();
-    if (queue) {
+    if (queue && queue.items) {
       queue.items.forEach((track, index) => { queue.items[index].queuePosition = index + 1; });
       return queue.items;
     }
