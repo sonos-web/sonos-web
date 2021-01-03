@@ -5,7 +5,7 @@
     color="grey darken-3"
     :class="$style.chip"
     class="member-zone"
-    @input="ungroupZone(zoneMember.id)">
+    @click:close="ungroupZone(zoneMember.id)">
     <div class="subtitle-1
  grey--text text--lighten-2" >
       {{zoneMember.name}}
