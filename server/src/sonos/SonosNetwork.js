@@ -1,4 +1,4 @@
-const { DeviceDiscovery, Listener } = require('sonos');
+const { DeviceDiscovery, Listener, SpotifyRegion } = require('sonos');
 const { NoDevicesFound } = require('./SonosNetworkErrors');
 const {
   DiscoveringSonosDevices,
@@ -86,6 +86,14 @@ class SonosNetwork {
         device.deviceDescription().then((description) => {
           device.name = description.roomName;
           device.displayName = description.displayName;
+          if (process.env.REGION) {
+            if (process.env.REGION in SpotifyRegion) {
+              device.setSpotifyRegion(SpotifyRegion[process.env.REGION]);
+              console.log(`Setting spotify region to ${process.env.REGION}`);
+            } else {
+              console.error(`Specified region ${process.env.REGION} is not valid`);
+            }
+          }
           const UUID = description.UDN.split('uuid:')[1];
           device.id = UUID;
           this.listener.subscribeTo(device).then(() => {
@@ -421,7 +429,8 @@ class SonosNetwork {
         if (uri.indexOf('x-sonosapi-radio:') !== -1) {
           await group.coordinator.device.setAVTransportURI({ uri });
         } else {
-          const queuePosition = group.track.queuePosition + 1;
+          const queuePosition = group.queue
+            ? Math.max(...group.queue.map((item) => item.queuePosition)) + 1 : 1;
           await group.coordinator.device.queue(uri, queuePosition);
           await group.coordinator.device.selectTrack(queuePosition);
           await group.coordinator.device.play();
@@ -442,7 +451,8 @@ class SonosNetwork {
     const group = this.zoneGroups.find(zg => zg.id === groupId);
     const uri = await this._getURIFromData(group.coordinator.id, data);
     if (uri) {
-      const queuePosition = group.track.queuePosition + 1;
+      const queuePosition = group.queue
+        ? Math.max(...group.queue.map((item) => item.queuePosition)) + 1 : 1;
       await group.coordinator.device.queue(uri, queuePosition);
     }
   }
@@ -711,7 +721,7 @@ class SonosNetwork {
     const zone = this.devices.find(device => device.id === deviceId);
     if (!zone) { return null; }
     const queue = await zone.getQueue();
-    if (queue) {
+    if (queue && queue.items) {
       queue.items.forEach((track, index) => { queue.items[index].queuePosition = index + 1; });
       return queue.items;
     }
