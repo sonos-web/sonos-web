@@ -293,16 +293,19 @@ export default {
       return false;
     },
     track() {
-      return this.$store.getters.trackTitleForGroup(this.activeZoneGroupId);
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
+        return this.activeZoneGroup.track.title;
+      }
+      return '';
     },
     artist() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
         return this.activeZoneGroup.track.artist;
       }
       return '';
     },
     album() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
         return this.activeZoneGroup.track.album;
       }
       return '';
@@ -324,27 +327,26 @@ export default {
         return 0;
       },
       set(volume) {
-        if (this.activeZoneGroup) {
-          this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { volume } });
-          groupsAPI.volume(this.activeZoneGroupId, volume);
-        }
+        console.log(volume);
       },
     },
     trackElapsedTime() {
-      if (this.activeZoneGroup && this.activeZoneGroup.track.duration > 0) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track
+        && this.activeZoneGroup.track.duration > 0) {
         return secondsToTimeString(this.activeZoneGroup.track.position);
       }
       return '';
     },
     trackDuration() {
-      if (this.activeZoneGroup && this.activeZoneGroup.track.duration > 0) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track
+        && this.activeZoneGroup.track.duration > 0) {
         return secondsToTimeString(this.activeZoneGroup.track.duration);
       }
       return '';
     },
     trackPosition: {
       get() {
-        if (this.activeZoneGroup) {
+        if (this.activeZoneGroup && this.activeZoneGroup.track) {
           // eslint-disable-next-line max-len
           return ((this.activeZoneGroup.track.position / this.activeZoneGroup.track.duration) * 100) || 0;
         }
@@ -356,7 +358,7 @@ export default {
           const newPosition = Math.round(this.activeZoneGroup.track.duration * positionPercentage);
           const track = { ...this.activeZoneGroup.track, position: newPosition };
           this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { track } });
-          groupsAPI.seek(this.activeZoneGroupId, newPosition);
+          // groupsAPI.seek(this.activeZoneGroupId, newPosition);
         }
       },
     },

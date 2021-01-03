@@ -105,7 +105,7 @@ export default {
       return this.song.albumArtURI || this.$store.state.defaultAlbumArtURL;
     },
     active() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
         return this.activeZoneGroup.track.uri === this.song.uri;
       }
       return false;

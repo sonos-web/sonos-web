@@ -71,16 +71,19 @@ export default {
       return this.$store.getters.activeZoneGroup;
     },
     track() {
-      return this.$store.getters.trackTitleForGroup(this.activeZoneGroupId);
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
+        return this.activeZoneGroup.track.title;
+      }
+      return '';
     },
     artist() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
         return this.activeZoneGroup.track.artist;
       }
       return '';
     },
     album() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
         return this.activeZoneGroup.track.album;
       }
       return '';
