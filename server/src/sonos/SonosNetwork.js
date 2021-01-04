@@ -816,6 +816,7 @@ class SonosNetwork {
     const currentTrack = await zone.avTransportService().CurrentTrack();
 
     const tvPlaying = positionInfo.TrackURI.match(/^x-sonos-htastream:/) !== null;
+    const lineInPlaying = positionInfo.TrackURI.match(/^x-rincon-stream:/) !== null;
 
     const queue = await this._getQueue(zone.id);
 
@@ -825,6 +826,7 @@ class SonosNetwork {
       playMode: transportSettings.PlayMode,
       actions: transportActions.Actions.split(', '),
       tvPlaying,
+      lineInPlaying,
       queue,
     };
   }
