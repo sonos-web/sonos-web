@@ -71,10 +71,7 @@ export default {
       return this.$store.getters.activeZoneGroup;
     },
     track() {
-      if (this.activeZoneGroup && this.activeZoneGroup.track) {
-        return this.activeZoneGroup.track.title;
-      }
-      return '';
+      return this.$store.getters.trackTitleForGroup(this.activeZoneGroupId);
     },
     artist() {
       if (this.activeZoneGroup && this.activeZoneGroup.track) {

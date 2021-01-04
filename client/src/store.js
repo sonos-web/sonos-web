@@ -80,7 +80,7 @@ export default new Vuex.Store({
           title = 'TV';
         } else if (group.lineInPlaying) {
           title = 'Line In';
-        } else if (group.track.album) {
+        } else if (group.track.title) {
           title = group.track.title || '';
         }
         return title;

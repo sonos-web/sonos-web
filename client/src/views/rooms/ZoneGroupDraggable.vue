@@ -146,11 +146,8 @@ export default {
     albumArtURL(groupId) {
       return this.$store.getters.albumArtURLForGroup(groupId);
     },
-    trackTitle() {
-      if (this.activeZoneGroup && this.activeZoneGroup.track) {
-        return this.activeZoneGroup.track.title;
-      }
-      return '';
+    trackTitle(groupId) {
+      return this.$store.getters.trackTitleForGroup(groupId);
     },
     isPlaying(playState) {
       return playState === PlayState.playing || playState === PlayState.transitioning;
