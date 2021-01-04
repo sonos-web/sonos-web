@@ -1,4 +1,4 @@
-const { DeviceDiscovery, Listener, SpotifyRegion } = require('sonos');
+const { DeviceDiscovery, Listener, SpotifyRegion, Helpers } = require('sonos');
 const { NoDevicesFound } = require('./SonosNetworkErrors');
 const {
   DiscoveringSonosDevices,
@@ -428,6 +428,9 @@ class SonosNetwork {
       if (uri) {
         if (uri.indexOf('x-sonosapi-radio:') !== -1) {
           await group.coordinator.device.setAVTransportURI({ uri });
+        } else if (uri.indexOf('x-sonosapi-stream:') !== -1) {
+          const metadata = Helpers.GenerateMetadata(uri);
+          await group.coordinator.device.setAVTransportURI(metadata);
         } else {
           const queuePosition = group.queue
             ? Math.max(...group.queue.map((item) => item.queuePosition)) + 1 : 1;
