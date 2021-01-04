@@ -12,7 +12,7 @@ export default {
     },
     total: {
       type: Number,
-      default: 100,
+      default: 20,
     },
     libraryItem: {
       type: Object,

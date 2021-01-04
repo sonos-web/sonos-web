@@ -11,14 +11,14 @@ export default {
   checkAuthorization(tokens) {
     return axios.post('/checkAuthorization', tokens);
   },
-  getUserPlaylists() {
-    return axios.get('/playlists');
+  getUserPlaylists(options) {
+    return axios.get('/playlists', { params: options });
   },
-  getUserAlbums() {
-    return axios.get('/albums');
+  getUserAlbums(options) {
+    return axios.get('/albums', { params: options });
   },
-  getUserSongs() {
-    return axios.get('/songs');
+  getUserSongs(options) {
+    return axios.get('/songs', { params: options });
   },
   get(path) {
     return axios.get(path.replace('/spotify', ''));

@@ -47,12 +47,12 @@ class Spotify {
     }
   }
 
-  async getUserPlaylists() {
+  async getUserPlaylists(options) {
     try {
       const refreshData = await this.spotifyApi.refreshAccessToken();
       this.spotifyApi.setAccessToken(refreshData.body.access_token);
 
-      const data = await this.spotifyApi.getUserPlaylists();
+      const data = await this.spotifyApi.getUserPlaylists(options);
       const items = data.body.items.map(item => ({
         title: item.name,
         uri: item.uri,
@@ -67,12 +67,11 @@ class Spotify {
     }
   }
 
-  async getUserAlbums() {
+  async getUserAlbums(options) {
     try {
       const refreshData = await this.spotifyApi.refreshAccessToken();
       this.spotifyApi.setAccessToken(refreshData.body.access_token);
-
-      const data = await this.spotifyApi.getMySavedAlbums();
+      const data = await this.spotifyApi.getMySavedAlbums(options);
       const items = data.body.items.map(item => ({
         title: item.album.name,
         uri: item.album.uri,
@@ -88,12 +87,12 @@ class Spotify {
     }
   }
 
-  async getUserSongs() {
+  async getUserSongs(options) {
     try {
       const refreshData = await this.spotifyApi.refreshAccessToken();
       this.spotifyApi.setAccessToken(refreshData.body.access_token);
 
-      const data = await this.spotifyApi.getMySavedTracks();
+      const data = await this.spotifyApi.getMySavedTracks(options);
       const items = data.body.items.map(item => ({
         title: item.track.name,
         uri: item.track.uri,

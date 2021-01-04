@@ -30,7 +30,10 @@ module.exports = function SpotifyRoutes(spotify) {
 
   this.router.get('/playlists', async (req, res) => {
     try {
-      const playlists = await this.spotify.getUserPlaylists();
+      const playlists = await this.spotify.getUserPlaylists({
+        limit: parseInt(req.query.total, 10),
+        offset: parseInt(req.query.start, 10),
+      });
       res.status(200).send(playlists);
     } catch (error) {
       res.status(500).send(error.message);
@@ -39,7 +42,10 @@ module.exports = function SpotifyRoutes(spotify) {
 
   this.router.get('/albums', async (req, res) => {
     try {
-      const albums = await this.spotify.getUserAlbums();
+      const albums = await this.spotify.getUserAlbums({
+        limit: parseInt(req.query.total, 10),
+        offset: parseInt(req.query.start, 10),
+      });
       res.status(200).send(albums);
     } catch (error) {
       res.status(500).send(error.message);
@@ -48,7 +54,10 @@ module.exports = function SpotifyRoutes(spotify) {
 
   this.router.get('/songs', async (req, res) => {
     try {
-      const songs = await this.spotify.getUserSongs();
+      const songs = await this.spotify.getUserSongs({
+        limit: parseInt(req.query.total, 10),
+        offset: parseInt(req.query.start, 10),
+      });
       res.status(200).send(songs);
     } catch (error) {
       res.status(500).send(error.message);
