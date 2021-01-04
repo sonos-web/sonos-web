@@ -136,7 +136,7 @@ export default {
     },
     artistName() {
       if (this.songs.length && !this.allAlbum && !this.isPlaylist) {
-        return this.songs[0].artist;
+        return this.songs[0].albumArtist || this.songs[0].artist;
       }
       return null;
     },
