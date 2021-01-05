@@ -34,6 +34,7 @@ const Spotify = () => import(/* webpackChunkName: "Spotify" */ './views/services
 const SpotifyPlaylists = () => import(/* webpackChunkName: "SpotifyPlaylists" */ './views/spotify/SpotifyPlaylists.vue');
 const SpotifyAlbums = () => import(/* webpackChunkName: "SpotifyAlbums" */ './views/spotify/SpotifyAlbums.vue');
 const SpotifySongs = () => import(/* webpackChunkName: "SpotifySongs" */ './views/spotify/SpotifySongs.vue');
+const SpotifySearch = () => import(/* webpackChunkName: "SpotifySearch" */ './views/spotify/SpotifySearch.vue');
 
 const SpotifyAlbum = () => import(/* webpackChunkName: "SpotifyAlbum" */ './views/spotify/SpotifyAlbum.vue');
 const SpotifyArtist = () => import(/* webpackChunkName: "SpotifyArtist" */ './views/spotify/SpotifyArtist.vue');
@@ -234,6 +235,31 @@ const router = new Router({
           path: '/spotify/songs',
           name: 'SpotifySongs',
           component: SpotifySongs,
+        },
+        {
+          path: '/spotify/search',
+          name: 'SpotifySearch',
+          component: SpotifySearch,
+          children: [
+            {
+              path: '/spotify/search/albums/*',
+              name: 'SpotifySearchAlbums',
+              component: SpotifyAlbums,
+              props: { search: true },
+            },
+            {
+              path: '/spotify/search/songs/*',
+              name: 'SpotifySearchSongs',
+              component: SpotifySongs,
+              props: { search: true },
+            },
+            {
+              path: '/spotify/search/playlists/*',
+              name: 'SpotifySearchPlaylists',
+              component: SpotifyPlaylists,
+              props: { search: true },
+            },
+          ],
         },
       ],
     },

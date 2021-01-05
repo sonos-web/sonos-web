@@ -44,6 +44,7 @@ export default {
       { title: 'Playlists', link: '/spotify/playlists' },
       { title: 'Albums', link: '/spotify/albums' },
       { title: 'Songs', link: '/spotify/songs' },
+      { title: 'Search', link: '/spotify/search' },
     ],
   }),
   methods: {

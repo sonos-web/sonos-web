@@ -20,6 +20,15 @@ export default {
   getUserSongs(options) {
     return axios.get('/songs', { params: options });
   },
+  searchPlaylists(options) {
+    return axios.get('/search/playlists', { params: options });
+  },
+  searchAlbums(options) {
+    return axios.get('/search/albums', { params: options });
+  },
+  searchSongs(options) {
+    return axios.get('/search/songs', { params: options });
+  },
   get(path) {
     return axios.get(path.replace('/spotify', ''));
   },

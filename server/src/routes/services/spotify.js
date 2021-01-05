@@ -64,6 +64,42 @@ module.exports = function SpotifyRoutes(spotify) {
     }
   });
 
+  this.router.get('/search/playlists', async (req, res) => {
+    try {
+      const playlists = await this.spotify.searchPlaylists(req.query.searchTerm, {
+        limit: parseInt(req.query.total, 10),
+        offset: parseInt(req.query.start, 10),
+      });
+      res.status(200).send(playlists);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+
+  this.router.get('/search/albums', async (req, res) => {
+    try {
+      const albums = await this.spotify.searchAlbums(req.query.searchTerm, {
+        limit: parseInt(req.query.total, 10),
+        offset: parseInt(req.query.start, 10),
+      });
+      res.status(200).send(albums);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+
+  this.router.get('/search/songs', async (req, res) => {
+    try {
+      const songs = await this.spotify.searchSongs(req.query.searchTerm, {
+        limit: parseInt(req.query.total, 10),
+        offset: parseInt(req.query.start, 10),
+      });
+      res.status(200).send(songs);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+
   this.router.get('/playlist/:id', async (req, res) => {
     try {
       const playlist = await this.spotify.getPlaylist(req.params.id);

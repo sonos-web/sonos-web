@@ -108,6 +108,63 @@ class Spotify {
     }
   }
 
+  async searchPlaylists(searchTerm, options) {
+    try {
+      const refreshData = await this.spotifyApi.refreshAccessToken();
+      this.spotifyApi.setAccessToken(refreshData.body.access_token);
+      const data = await this.spotifyApi.searchPlaylists(searchTerm, options);
+      const items = data.body.playlists.items.map(item => ({
+        title: item.name,
+        uri: item.uri,
+        artist: null,
+        album: null,
+        albumArtURI: item.images[0].url,
+      }));
+      return { total: String(data.body.playlists.total), returned: String(items.length), items };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async searchAlbums(searchTerm, options) {
+    try {
+      const refreshData = await this.spotifyApi.refreshAccessToken();
+      this.spotifyApi.setAccessToken(refreshData.body.access_token);
+      const data = await this.spotifyApi.searchAlbums(searchTerm, options);
+      const items = data.body.albums.items.map(item => ({
+        title: item.name,
+        uri: item.uri,
+        artist: item.artists[0].name,
+        artistURI: item.artists[0].uri.split(':').slice(-1)[0],
+        album: null,
+        albumArtURI: item.images && item.images[0].url,
+      }));
+      return { total: String(data.body.albums.total), returned: String(items.length), items };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async searchSongs(searchTerm, options) {
+    try {
+      const refreshData = await this.spotifyApi.refreshAccessToken();
+      this.spotifyApi.setAccessToken(refreshData.body.access_token);
+      const data = await this.spotifyApi.searchTracks(searchTerm, options);
+      const items = data.body.tracks.items.map(item => ({
+        title: item.name,
+        uri: item.uri,
+        artist: item.album.artists[0].name,
+        artistURI: item.album.artists[0].uri.split(':').slice(-1)[0],
+        albumURI: item.album.uri.split(':').slice(-1)[0],
+        album: item.album.name,
+        albumArtURI: item.album.images[0].url,
+      }));
+      return { total: String(data.body.tracks.total), returned: String(items.length), items };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getPlaylist(id) {
     try {
       const data = await this.spotifyApi.getPlaylist(id);      

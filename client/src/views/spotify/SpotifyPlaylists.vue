@@ -4,6 +4,7 @@
       @loading-error="loadingError"
       @loaded-items="loadedItems"
       :asyncLoadMethod="loadMethod"
+      :resetItems="resetItems"
       :libraryItem="spotifyPlaylists"
       :searchTerm="searchTerm">
     </load-library-on-scroll>
@@ -50,6 +51,9 @@ export default {
       this.error = true;
       this.errorMessage = `${error.response.status}: ${error.response.data}`;
     },
+    resetItems() {
+      this.songs = {};
+    },
   },
   computed: {
     items() {
@@ -62,7 +66,7 @@ export default {
       return null;
     },
     loadMethod() {
-      return SpotifyAPI.getUserPlaylists;
+      return this.search ? SpotifyAPI.searchPlaylists : SpotifyAPI.getUserPlaylists;
     },
   },
 };
