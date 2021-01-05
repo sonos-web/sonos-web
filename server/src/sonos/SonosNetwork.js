@@ -432,6 +432,10 @@ class SonosNetwork {
           const metadata = Helpers.GenerateMetadata(uri);
           await group.coordinator.device.setAVTransportURI(metadata);
         } else {
+          const mediaInfo = await group.coordinator.device.avTransportService().GetMediaInfo();
+          if (!mediaInfo.CurrentURI.startsWith('x-rincon-queue:')) {
+            group.coordinator.device.setAVTransportURI(`x-rincon-queue:${group.coordinator.device.id}#0`);
+          }
           const queuePosition = group.queue
             ? Math.max(...group.queue.map((item) => item.queuePosition)) + 1 : 1;
           await group.coordinator.device.queue(uri, queuePosition);
