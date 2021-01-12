@@ -325,6 +325,7 @@ export default {
       },
       set(volume) {
         if (this.activeZoneGroup) {
+          this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { volume } });
           groupsAPI.volume(this.activeZoneGroupId, volume);
         }
       },
@@ -355,6 +356,8 @@ export default {
         if (this.activeZoneGroup) {
           const positionPercentage = position * 0.01;
           const newPosition = Math.round(this.activeZoneGroup.track.duration * positionPercentage);
+          const track = { ...this.activeZoneGroup.track, position: newPosition };
+          this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { track } });
           groupsAPI.seek(this.activeZoneGroupId, newPosition);
         }
       },
@@ -373,7 +376,10 @@ export default {
     },
     volumeIcon() {
       if (this.mute) return 'volume_mute';
-      return this.volume > 50 ? 'volume_up' : 'volume_down';
+      if (this.activeZoneGroup) {
+        return this.activeZoneGroup.volume > 50 ? 'volume_up' : 'volume_down';
+      }
+      return 'volume_down';
     },
     previousEnabled() {
       if (this.activeZoneGroup) {
