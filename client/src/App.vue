@@ -110,6 +110,7 @@ export default {
       { icon: 'library_music', text: 'Music Library', path: '/library' },
       { icon: 'star', text: 'My Sonos', path: '/sonos' },
       { icon: 'contactless', text: 'Spotify', path: '/spotify' },
+      { icon: 'cloud', text: 'Soundcloud', path: '/soundcloud' },
     ],
     APP_VERSION: `v${version}`,
 

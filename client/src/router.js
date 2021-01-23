@@ -39,6 +39,10 @@ const SpotifySearch = () => import(/* webpackChunkName: "SpotifySearch" */ './vi
 const SpotifyAlbum = () => import(/* webpackChunkName: "SpotifyAlbum" */ './views/spotify/SpotifyAlbum.vue');
 const SpotifyArtist = () => import(/* webpackChunkName: "SpotifyArtist" */ './views/spotify/SpotifyArtist.vue');
 
+const Soundcloud = () => import(/* webpackChunkName: "Soundcloud" */ './views/services/Soundcloud.vue');
+const SoundcloudStream = () => import(/* webpackChunkName: "SoundcloudStream" */ './views/soundcloud/SoundcloudStream.vue');
+const SoundcloudPlaylist = () => import(/* webpackChunkName: "SoundcloudStream" */ './views/soundcloud/SoundcloudPlaylist.vue');
+const SoundcloudSearch = () => import(/* webpackChunkName: "SoundcloudSearch" */ './views/soundcloud/SoundcloudSearch.vue');
 
 Vue.use(Router);
 const router = new Router({
@@ -278,6 +282,52 @@ const router = new Router({
       path: '/spotify/artist/*',
       name: 'SpotifyArtist',
       component: SpotifyArtist,
+    },
+    {
+      path: '/soundcloud',
+      component: Soundcloud,
+      children: [
+        {
+          path: '',
+          name: 'soundcloud',
+          redirect: { name: 'SoundcloudStream' },
+        },
+        {
+          path: '/soundcloud/stream',
+          name: 'SoundcloudStream',
+          component: SoundcloudStream,
+        },
+        {
+          path: '/soundcloud/search',
+          name: 'SoundcloudSearch',
+          component: SoundcloudSearch,
+          children: [
+            {
+              path: '/soundcloud/search/*',
+              name: 'SoundcloudSearchSongs',
+              component: SoundcloudStream,
+              props: { search: true },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      path: '/soundcloud/playlist/*',
+      name: 'SoundcloudPlaylist',
+      component: SoundcloudPlaylist,
+    },
+    {
+      path: '/soundcloud/related/*',
+      name: 'SoundcloudRelated',
+      component: SoundcloudPlaylist,
+      props: { isRelated: true },
+    },
+    {
+      path: '/soundcloud/user/*',
+      name: 'SoundcloudUser',
+      component: SoundcloudPlaylist,
+      props: { isUser: true },
     },
   ],
 });
