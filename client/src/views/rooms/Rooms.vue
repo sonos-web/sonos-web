@@ -14,7 +14,7 @@
           </v-btn>
         </v-snackbar>
       </div>
-      <v-layout wrap row>
+      <v-layout wrap>
         <v-flex xs12>
           <v-btn
             :class="$style.partyModeButton"

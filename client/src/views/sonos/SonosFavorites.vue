@@ -8,7 +8,7 @@
     </load-library-on-scroll>
     <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
     <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
-    <v-layout row wrap v-else>
+    <v-layout wrap v-else>
       <library-item-count :total="sonosFavorites.total"
         label="Favorites"></library-item-count>
       <v-flex xs12>

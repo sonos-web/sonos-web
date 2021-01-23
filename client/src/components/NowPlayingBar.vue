@@ -12,7 +12,7 @@
           <v-card text tile>
             <v-list two-line>
               <v-list-item>
-                <v-list-item-avatar tile size="60px">
+                <v-list-item-avatar tile size="60px" class="d-none d-sm-none d-md-block">
                   <div class="v-responsive v-image">
                     <div v-lazy:background-image="albumArtURL"
                     class="background-image" :key="albumArtURL"></div>
@@ -324,6 +324,7 @@ export default {
         return 0;
       },
       set(volume) {
+        // console.log('volume set', volume);
         if (this.activeZoneGroup) {
           this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { volume } });
           groupsAPI.volume(this.activeZoneGroupId, volume);
@@ -353,6 +354,7 @@ export default {
         return 0;
       },
       set(position) {
+        // console.log('trackPosition set', position);
         if (this.activeZoneGroup) {
           const positionPercentage = position * 0.01;
           const newPosition = Math.round(this.activeZoneGroup.track.duration * positionPercentage);
@@ -515,6 +517,29 @@ export default {
   min-width: 180px;
   display: flex;
   justify-content: flex-end;
+}
+@media (max-width: 960px) {
+  .v-app-bar--fixed.now-playing-bar {
+    padding-top: 90px;
+    height: 150px !important;
+    min-width: auto;
+  }
+
+  .now-playing-bar-left {
+    width: 40%;
+  }
+
+  .now-playing-bar-center {
+    display: block;
+    position: absolute;
+    max-width: none !important;
+    bottom: 60px;
+    width: calc(100% - 12px);
+  }
+
+  .now-playing-bar-right {
+    width: 60% !important;
+  }
 }
 .now-playing-bar-right .v-btn {
   padding: 0px!important;
