@@ -324,11 +324,12 @@ export default {
         return 0;
       },
       set(volume) {
-        // console.log('volume set', volume);
-        if (this.activeZoneGroup) {
-          this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { volume } });
-          groupsAPI.volume(this.activeZoneGroupId, volume);
-        }
+        console.log('volume set', volume);
+      //   if (this.activeZoneGroup) {
+      //     this.$store.commit('UPDATE_ZONE_GROUP'
+      // , { groupId: this.activeZoneGroupId, update: { volume } });
+      //     groupsAPI.volume(this.activeZoneGroupId, volume);
+      //   }
       },
     },
     trackElapsedTime() {
@@ -354,14 +355,16 @@ export default {
         return 0;
       },
       set(position) {
-        // console.log('trackPosition set', position);
-        if (this.activeZoneGroup) {
-          const positionPercentage = position * 0.01;
-          const newPosition = Math.round(this.activeZoneGroup.track.duration * positionPercentage);
-          const track = { ...this.activeZoneGroup.track, position: newPosition };
-          this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { track } });
-          groupsAPI.seek(this.activeZoneGroupId, newPosition);
-        }
+        console.log('trackPosition set', position);
+        // if (this.activeZoneGroup) {
+        //   const positionPercentage = position * 0.01;
+        //   const newPosition =
+        // Math.round(this.activeZoneGroup.track.duration * positionPercentage);
+        //   const track = { ...this.activeZoneGroup.track, position: newPosition };
+        //   this.$store.commit('UPDATE_ZONE_GROUP',
+        // { groupId: this.activeZoneGroupId, update: { track } });
+        //   groupsAPI.seek(this.activeZoneGroupId, newPosition);
+        // }
       },
     },
     canSeek() {
