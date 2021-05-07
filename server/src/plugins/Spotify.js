@@ -145,6 +145,24 @@ class Spotify {
     }
   }
 
+  async searchArtists(searchTerm, options) {
+    try {
+      const refreshData = await this.spotifyApi.refreshAccessToken();
+      this.spotifyApi.setAccessToken(refreshData.body.access_token);
+      const data = await this.spotifyApi.searchArtists(searchTerm, options);
+      const items = data.body.artists.items.map(item => ({
+        title: item.name,
+        uri: item.uri,
+        artist: null,
+        album: null,
+        albumArtURI: item.images[0] ? item.images[0].url : null,
+      }));
+      return { total: String(data.body.artists.total), returned: String(items.length), items };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async searchSongs(searchTerm, options) {
     try {
       const refreshData = await this.spotifyApi.refreshAccessToken();
@@ -167,7 +185,7 @@ class Spotify {
 
   async getPlaylist(id) {
     try {
-      const data = await this.spotifyApi.getPlaylist(id);      
+      const data = await this.spotifyApi.getPlaylist(id);
       const items = data.body.tracks.items.map(item => ({
         title: item.track.name,
         uri: item.track.uri,

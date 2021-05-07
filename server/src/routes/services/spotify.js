@@ -88,6 +88,18 @@ module.exports = function SpotifyRoutes(spotify) {
     }
   });
 
+  this.router.get('/search/artists', async (req, res) => {
+    try {
+      const artists = await this.spotify.searchArtists(req.query.searchTerm, {
+        limit: parseInt(req.query.total, 10),
+        offset: parseInt(req.query.start, 10),
+      });
+      res.status(200).send(artists);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+
   this.router.get('/search/songs', async (req, res) => {
     try {
       const songs = await this.spotify.searchSongs(req.query.searchTerm, {
