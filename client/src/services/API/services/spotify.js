@@ -26,6 +26,9 @@ export default {
   searchAlbums(options) {
     return axios.get('/search/albums', { params: options });
   },
+  searchArtists(options) {
+    return axios.get('/search/artists', { params: options });
+  },
   searchSongs(options) {
     return axios.get('/search/songs', { params: options });
   },

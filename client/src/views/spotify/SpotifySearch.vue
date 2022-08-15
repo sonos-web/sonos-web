@@ -29,7 +29,7 @@
               </div>
               <div class="subtitle-1
  grey--text font-weight-medium text-xs-center">
-                Find albums, songs, and playlists.
+                Find artists, albums, songs, and playlists.
               </div>
             </v-flex>
           </v-layout>
@@ -71,6 +71,7 @@ export default {
     },
     tabs() {
       return [
+        { title: 'Artists', link: `/spotify/search/artists/${this.encodedSearchInput}` },
         { title: 'Albums', link: `/spotify/search/albums/${this.encodedSearchInput}` },
         { title: 'Songs', link: `/spotify/search/songs/${this.encodedSearchInput}` },
         { title: 'Playlists', link: `/spotify/search/playlists/${this.encodedSearchInput}` },
@@ -85,7 +86,7 @@ export default {
       if (this.firstLoad) {
         this.firstLoad = false;
       } else if (value) {
-        this.$router.push(`/spotify/search/albums/${encodeURIComponent(value)}`);
+        this.$router.push(`/spotify/search/artists/${encodeURIComponent(value)}`);
       } else {
         this.$router.push('/spotify/search');
       }

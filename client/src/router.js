@@ -33,6 +33,7 @@ const PlayQueue = () => import(/* webpackChunkName: "PlayQueue" */ './views/Play
 const Spotify = () => import(/* webpackChunkName: "Spotify" */ './views/services/Spotify.vue');
 const SpotifyPlaylists = () => import(/* webpackChunkName: "SpotifyPlaylists" */ './views/spotify/SpotifyPlaylists.vue');
 const SpotifyAlbums = () => import(/* webpackChunkName: "SpotifyAlbums" */ './views/spotify/SpotifyAlbums.vue');
+const SpotifyArtists = () => import(/* webpackChunkName: "SpotifyArtists" */ './views/spotify/SpotifyArtists.vue');
 const SpotifySongs = () => import(/* webpackChunkName: "SpotifySongs" */ './views/spotify/SpotifySongs.vue');
 const SpotifySearch = () => import(/* webpackChunkName: "SpotifySearch" */ './views/spotify/SpotifySearch.vue');
 
@@ -249,6 +250,12 @@ const router = new Router({
               path: '/spotify/search/albums/*',
               name: 'SpotifySearchAlbums',
               component: SpotifyAlbums,
+              props: { search: true },
+            },
+            {
+              path: '/spotify/search/artists/*',
+              name: 'SpotifySearchArtists',
+              component: SpotifyArtists,
               props: { search: true },
             },
             {
