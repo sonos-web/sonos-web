@@ -18,7 +18,7 @@
           </div>
         </v-flex>
       </v-layout>
-      <v-layout v-else-if="authorized" row wrap>
+      <v-layout v-else-if="authorized" wrap>
         <v-tabs
         class="library-tabs pb-3"
         centered
@@ -44,6 +44,7 @@ export default {
       { title: 'Playlists', link: '/spotify/playlists' },
       { title: 'Albums', link: '/spotify/albums' },
       { title: 'Songs', link: '/spotify/songs' },
+      { title: 'Search', link: '/spotify/search' },
     ],
   }),
   methods: {

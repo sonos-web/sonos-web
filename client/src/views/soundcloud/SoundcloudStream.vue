@@ -4,13 +4,13 @@
       @loading-error="loadingError"
       @loaded-items="loadedItems"
       :asyncLoadMethod="loadMethod"
-      :libraryItem="sonosFavorites">
+      :libraryItem="songs"
+      :resetItems="resetItems"
+      :searchTerm="searchTerm">
     </load-library-on-scroll>
     <ErrorView v-if="error" absolute :message="errorMessage"></ErrorView>
     <LoadingView v-else-if="loading" absolute message="Loading..."></LoadingView>
-    <v-layout wrap v-else>
-      <library-item-count :total="sonosFavorites.total"
-        label="Favorites"></library-item-count>
+    <v-layout row wrap v-else>
       <v-flex xs12>
         <song-list :songs="items"></song-list>
       </v-flex>
@@ -20,35 +20,51 @@
 
 <script>
 import deepmerge from 'deepmerge';
-import MusicLibraryAPI from '@/services/API/musicLibrary';
-import SongList from '@/components/SongList.vue';
-import LibraryItemCount from '@/components/LibraryItemCount.vue';
+import SoundcloudAPI from '@/services/API/services/soundcloud';
+import SongList from '@/views/soundcloud/SoundcloudSongList.vue';
 import LoadLibraryOnScroll from '@/components/LoadLibraryOnScroll.vue';
 
 export default {
-  name: 'SonosFavorites',
-  components: { SongList, LibraryItemCount, LoadLibraryOnScroll },
+  name: 'SoundcloudStream',
+  components: { LoadLibraryOnScroll, SongList },
+  props: {
+    search: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
-    sonosFavorites: {},
+    songs: {},
     loading: true,
     error: false,
     errorMessage: null,
   }),
   methods: {
-    loadMethod: MusicLibraryAPI.getSonosFavorites,
     loadedItems(data) {
       this.loading = false;
-      this.sonosFavorites = deepmerge(this.sonosFavorites, data);
+      this.songs = deepmerge(this.songs, data);
     },
     loadingError(error) {
       this.loading = false;
       this.error = true;
       this.errorMessage = `${error.response.status}: ${error.response.data}`;
     },
+    resetItems() {
+      this.songs = {};
+    },
   },
   computed: {
     items() {
-      return this.sonosFavorites.items || [];
+      return this.songs.items || [];
+    },
+    searchTerm() {
+      if (this.search) {
+        return this.$route.params.pathMatch;
+      }
+      return null;
+    },
+    loadMethod() {
+      return this.search ? SoundcloudAPI.search : SoundcloudAPI.getStream;
     },
   },
 };

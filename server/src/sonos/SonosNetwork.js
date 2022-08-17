@@ -1,4 +1,4 @@
-const { DeviceDiscovery, Listener } = require('sonos');
+const { DeviceDiscovery, Listener, SpotifyRegion, Helpers } = require('sonos');
 const { NoDevicesFound } = require('./SonosNetworkErrors');
 const {
   DiscoveringSonosDevices,
@@ -86,6 +86,14 @@ class SonosNetwork {
         device.deviceDescription().then((description) => {
           device.name = description.roomName;
           device.displayName = description.displayName;
+          if (process.env.REGION) {
+            if (process.env.REGION in SpotifyRegion) {
+              device.setSpotifyRegion(SpotifyRegion[process.env.REGION]);
+              console.log(`Setting spotify region to ${process.env.REGION}`);
+            } else {
+              console.error(`Specified region ${process.env.REGION} is not valid`);
+            }
+          }
           const UUID = description.UDN.split('uuid:')[1];
           device.id = UUID;
           this.listener.subscribeTo(device).then(() => {
@@ -420,8 +428,16 @@ class SonosNetwork {
       if (uri) {
         if (uri.indexOf('x-sonosapi-radio:') !== -1) {
           await group.coordinator.device.setAVTransportURI({ uri });
+        } else if (uri.indexOf('x-sonosapi-stream:') !== -1) {
+          const metadata = Helpers.GenerateMetadata(uri);
+          await group.coordinator.device.setAVTransportURI(metadata);
         } else {
-          const queuePosition = group.track.queuePosition + 1;
+          const mediaInfo = await group.coordinator.device.avTransportService().GetMediaInfo();
+          if (mediaInfo && mediaInfo.CurrentURI && !mediaInfo.CurrentURI.startsWith('x-rincon-queue:')) {
+            group.coordinator.device.setAVTransportURI(`x-rincon-queue:${group.coordinator.device.id}#0`);
+          }
+          const queuePosition = group.queue
+            ? Math.max(...group.queue.map((item) => item.queuePosition)) + 1 : 1;
           await group.coordinator.device.queue(uri, queuePosition);
           await group.coordinator.device.selectTrack(queuePosition);
           await group.coordinator.device.play();
@@ -442,7 +458,8 @@ class SonosNetwork {
     const group = this.zoneGroups.find(zg => zg.id === groupId);
     const uri = await this._getURIFromData(group.coordinator.id, data);
     if (uri) {
-      const queuePosition = group.track.queuePosition + 1;
+      const queuePosition = group.queue
+        ? Math.max(...group.queue.map((item) => item.queuePosition)) + 1 : 1;
       await group.coordinator.device.queue(uri, queuePosition);
     }
   }
@@ -711,7 +728,7 @@ class SonosNetwork {
     const zone = this.devices.find(device => device.id === deviceId);
     if (!zone) { return null; }
     const queue = await zone.getQueue();
-    if (queue) {
+    if (queue && queue.items) {
       queue.items.forEach((track, index) => { queue.items[index].queuePosition = index + 1; });
       return queue.items;
     }
@@ -746,8 +763,8 @@ class SonosNetwork {
     // Average of all volumes
     // eslint-disable-next-line arrow-body-style
     const volumeSum = zones.reduce((accumulator, current) => {
-      return (accumulator.volume + current.volume);
-    });
+      return accumulator + current.volume;
+    }, 0);
     // If there is only one element in zones array, it will return the object
     // otherwise we will have a number in volumeSum
     const volume = typeof (volumeSum) === 'object' ? volumeSum.volume : Math.floor(volumeSum / zones.length);
@@ -806,6 +823,7 @@ class SonosNetwork {
     const currentTrack = await zone.avTransportService().CurrentTrack();
 
     const tvPlaying = positionInfo.TrackURI.match(/^x-sonos-htastream:/) !== null;
+    const lineInPlaying = positionInfo.TrackURI.match(/^x-rincon-stream:/) !== null;
 
     const queue = await this._getQueue(zone.id);
 
@@ -815,6 +833,7 @@ class SonosNetwork {
       playMode: transportSettings.PlayMode,
       actions: transportActions.Actions.split(', '),
       tvPlaying,
+      lineInPlaying,
       queue,
     };
   }
