@@ -763,8 +763,8 @@ class SonosNetwork {
     // Average of all volumes
     // eslint-disable-next-line arrow-body-style
     const volumeSum = zones.reduce((accumulator, current) => {
-      return (accumulator.volume + current.volume);
-    });
+      return accumulator + current.volume;
+    }, 0);
     // If there is only one element in zones array, it will return the object
     // otherwise we will have a number in volumeSum
     const volume = typeof (volumeSum) === 'object' ? volumeSum.volume : Math.floor(volumeSum / zones.length);
