@@ -5,11 +5,10 @@ RUN apt-get update && \
     apt-get clean autoclean && apt-get autoremove --yes && \
     rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/stufisher/sonos-web
+RUN git clone https://github.com/sonos-web/sonos-web
 
 WORKDIR /sonos-web/client
-RUN git checkout update_and_fix && \
-    npm install && \
+RUN npm install && \
     npm run build && \
     mv dist ../server/
 
