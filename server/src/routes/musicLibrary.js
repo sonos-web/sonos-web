@@ -15,7 +15,9 @@ module.exports = function MusicLibrary(sonosNetwork) {
         });
         res.status(200).send(results);
       } else if (libraryItem === 'sonos_playlists') {
-        const results = await this.sonosNetwork.musicLibrary.searchSonosPlaylists({ searchTerm: req.body.searchTerm });
+        const results = await this.sonosNetwork.musicLibrary.searchSonosPlaylists({
+          searchTerm: req.body.searchTerm,
+        });
         res.status(200).send(results);
       } else {
         const results = await this.sonosNetwork.musicLibrary.browse({

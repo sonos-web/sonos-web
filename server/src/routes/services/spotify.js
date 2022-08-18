@@ -16,7 +16,7 @@ module.exports = function SpotifyRoutes(spotify) {
         res.status(401).send();
       }
     } catch (error) {
-      throw error;
+      res.status(500).send(error.message);
     }
   });
   this.router.post('/authorizeCode', async (req, res) => {

@@ -56,53 +56,49 @@ class MusicLibrary {
     const cache = this._getCache(options);
     if (cache) return cache;
 
-    try {
-      // eslint-disable-next-line max-len
-      const { category, term, separator } = MusicLibrary._getSearchOptions(options.searchCategory, options.searchTerm, options.uri, options.search);
-      // for some reason _getSearchOptions is returning an encodedVersion
-      // of the term that affects share searchTerms
-      const searchTerm = category === 'share' && term ? decodeURI(term) : term;
-      // eslint-disable-next-line max-len
-      const result = await this.sonos.searchMusicLibrary(category, searchTerm, options.searchOptions, separator);
-      if (!result) return MusicLibrary._getEmptyReturnResult();
-      if (options.getAlbumArt && result.items) {
-        switch (options.searchCategory) {
-          case 'albumArtists':
-          case 'genres':
-          case 'playlists':
-            await Promise.all(result.items.map(async (item, index) => {
-              try {
-                // Get the album art
-                if (item.title !== 'All') {
-                  if (result.items[index].albumArtURI === null) {
-                    // eslint-disable-next-line max-len
-                    result.items[index].albumArtURI = await this._getAlbumArt(options.searchCategory, item.title, item.uri);
-                  }
-                }
-              } catch (error) {
-                if (error.message !== NoResultsFound) {
-                  throw error;
+    // eslint-disable-next-line max-len
+    const { category, term, separator } = MusicLibrary._getSearchOptions(options.searchCategory, options.searchTerm, options.uri, options.search);
+    // for some reason _getSearchOptions is returning an encodedVersion
+    // of the term that affects share searchTerms
+    const searchTerm = category === 'share' && term ? decodeURI(term) : term;
+    // eslint-disable-next-line max-len
+    const result = await this.sonos.searchMusicLibrary(category, searchTerm, options.searchOptions, separator);
+    if (!result) return MusicLibrary._getEmptyReturnResult();
+    if (options.getAlbumArt && result.items) {
+      switch (options.searchCategory) {
+        case 'albumArtists':
+        case 'genres':
+        case 'playlists':
+          await Promise.all(result.items.map(async (item, index) => {
+            try {
+              // Get the album art
+              if (item.title !== 'All') {
+                if (result.items[index].albumArtURI === null) {
+                  // eslint-disable-next-line max-len
+                  result.items[index].albumArtURI = await this._getAlbumArt(options.searchCategory, item.title, item.uri);
                 }
               }
-            }));
-            break;
-          default:
-            break;
-        }
+            } catch (error) {
+              if (error.message !== NoResultsFound) {
+                throw error;
+              }
+            }
+          }));
+          break;
+        default:
+          break;
       }
-
-      // Add this query to the cache
-      this._browseCache.push({
-        searchCategory: options.searchCategory,
-        searchTerm: options.searchTerm,
-        searchOptions: options.searchOptions,
-        data: result,
-      });
-
-      return result;
-    } catch (error) {
-      throw error;
     }
+
+    // Add this query to the cache
+    this._browseCache.push({
+      searchCategory: options.searchCategory,
+      searchTerm: options.searchTerm,
+      searchOptions: options.searchOptions,
+      data: result,
+    });
+
+    return result;
   }
 
   async getTopResults(options) {
@@ -130,12 +126,8 @@ class MusicLibrary {
   }
 
   async getFavorites() {
-    try {
-      const result = await this.sonos.getFavorites();
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await this.sonos.getFavorites();
+    return result;
   }
 
   /**
@@ -145,20 +137,16 @@ class MusicLibrary {
    */
   async getPlaylistURI(playlistName) {
     if (this._playlistCache) {
-      const playlist = this._playlistCache.items.find(p => p.title === playlistName);
+      const playlist = this._playlistCache.items.find((p) => p.title === playlistName);
       if (playlist) return playlist.uri;
       return null;
     }
-    try {
-      const playlists = await this.sonos.getMusicLibrary('playlists');
-      if (!playlists) throw new Error(NoResultsFound);
-      this._playlistCache = playlists;
-      const playlist = playlists.items.find(p => p.title === playlistName);
-      if (playlist) return playlist.uri;
-      return null;
-    } catch (error) {
-      throw error;
-    }
+    const playlists = await this.sonos.getMusicLibrary('playlists');
+    if (!playlists) throw new Error(NoResultsFound);
+    this._playlistCache = playlists;
+    const playlist = playlists.items.find((p) => p.title === playlistName);
+    if (playlist) return playlist.uri;
+    return null;
   }
 
 
@@ -180,20 +168,16 @@ class MusicLibrary {
         items,
       };
     }
-    try {
-      const playlists = await this.sonos.getMusicLibrary('sonos_playlists');
-      if (!playlists) throw new Error(NoResultsFound);
-      this._sonosPlaylistCache = playlists;
-      if (!playlists.items) return MusicLibrary._getEmptyReturnResult();
-      const items = playlists.items.slice(options.start, options.total);
-      return {
-        total: String(playlists.length),
-        returned: String(items.length),
-        items,
-      };
-    } catch (error) {
-      throw error;
-    }
+    const playlists = await this.sonos.getMusicLibrary('sonos_playlists');
+    if (!playlists) throw new Error(NoResultsFound);
+    this._sonosPlaylistCache = playlists;
+    if (!playlists.items) return MusicLibrary._getEmptyReturnResult();
+    const items = playlists.items.slice(options.start, options.total);
+    return {
+      total: String(playlists.length),
+      returned: String(items.length),
+      items,
+    };
   }
 
   /**
@@ -202,14 +186,10 @@ class MusicLibrary {
    * @returns {String|null} playlistId
    */
   async getSonosPlaylistId(playlistName) {
-    try {
-      const playlists = await this.getSonosPlaylists();
-      const playlist = playlists.items.find(p => p.title === playlistName);
-      if (playlist) return playlist.uri.split('#')[1];
-      return null;
-    } catch (error) {
-      throw error;
-    }
+    const playlists = await this.getSonosPlaylists();
+    const playlist = playlists.items.find((p) => p.title === playlistName);
+    if (playlist) return playlist.uri.split('#')[1];
+    return null;
   }
 
   /**
@@ -218,30 +198,24 @@ class MusicLibrary {
    * @returns {String|null} uri
    */
   async getSonosPlaylistURI(playlistName) {
-    try {
-      const playlists = await this.getSonosPlaylists();
-      const playlist = playlists.items.find(p => p.title === playlistName);
-      if (playlist) return playlist.uri;
-      return null;
-    } catch (error) {
-      throw error;
-    }
+    const playlists = await this.getSonosPlaylists();
+    const playlist = playlists.items.find((p) => p.title === playlistName);
+    if (playlist) return playlist.uri;
+    return null;
   }
 
   /**
    * Get Sonos Playlists
-   * @param {Object} options - { searchTerm: String, searchOptions: { start: Number, total: Number } }
+   * @param {Object} options - {
+   *  searchTerm: String, searchOptions: { start: Number, total: Number }
+   * }
    * @returns {Array} sonos playlists
    */
   async searchSonosPlaylists(options) {
-    try {
-      const playlists = await this.getSonosPlaylists(options);
-      // eslint-disable-next-line max-len
-      const results = playlists.items.filter(p => p.title.toLowerCase().indexOf(options.searchTerm.toLowerCase()) !== -1);
-      return { returned: String(results.length), total: String(results.length), items: results };
-    } catch (error) {
-      throw error;
-    }
+    const playlists = await this.getSonosPlaylists(options);
+    // eslint-disable-next-line max-len
+    const results = playlists.items.filter((p) => p.title.toLowerCase().indexOf(options.searchTerm.toLowerCase()) !== -1);
+    return { returned: String(results.length), total: String(results.length), items: results };
   }
 
   /*
@@ -281,66 +255,58 @@ class MusicLibrary {
       searchTerm = await this.getPlaylistURI(searchTerm);
     }
 
-    try {
-      // eslint-disable-next-line max-len
-      const { category, term, separator } = MusicLibrary._getSearchOptions(searchCategory, searchTerm, uri);
-      // eslint-disable-next-line max-len
-      let search = await this.sonos.searchMusicLibrary(category, decodeURI(term), {}, separator);
-      if (!search) throw new Error(NoResultsFound);
+    // eslint-disable-next-line max-len
+    const { category, term, separator } = MusicLibrary._getSearchOptions(searchCategory, searchTerm, uri);
+    // eslint-disable-next-line max-len
+    let search = await this.sonos.searchMusicLibrary(category, decodeURI(term), {}, separator);
+    if (!search) throw new Error(NoResultsFound);
 
-      // Build a collage of album art
-      if (searchCategory === 'playlists') {
-        const songs = search.items.filter(item => item.albumArtURI !== null);
-        // Get a list of 4 unique albums
-        const uniqueAlbums = [...new Set(songs.map(song => song.album))].slice(0, 4);
-        if (uniqueAlbums.length === 4) {
-          // return 4 unique album art image links
-          return uniqueAlbums.map((album) => {
-            const song = songs.find(item => item.album === album);
-            return song.albumArtURI;
-          });
-        }
+    // Build a collage of album art
+    if (searchCategory === 'playlists') {
+      const songs = search.items.filter((item) => item.albumArtURI !== null);
+      // Get a list of 4 unique albums
+      const uniqueAlbums = [...new Set(songs.map((song) => song.album))].slice(0, 4);
+      if (uniqueAlbums.length === 4) {
+        // return 4 unique album art image links
+        return uniqueAlbums.map((album) => {
+          const song = songs.find((item) => item.album === album);
+          return song.albumArtURI;
+        });
       }
+    }
 
-      let album = search.items.find(item => item.albumArtURI !== null);
+    let album = search.items.find((item) => item.albumArtURI !== null);
+    if (album) {
+      return album.albumArtURI;
+    }
+
+    // No album art found, let's dig deeper on the 'All' item.
+    // Useful for returning album art for Genres
+    search = await this.browse({
+      searchCategory,
+      searchTerm: `${searchTerm}//`,
+      searchOptions: { start: 0, total: 1 },
+      getAlbumArt: false,
+    });
+    if (search.items) [album] = search.items;
+    if (album && album.albumArtURI !== null) {
+      return album.albumArtURI;
+    }
+
+    // For returning album art of artists when browsing genres
+    if (searchCategory === 'genres') {
+      search = await this.browse({
+        searchCategory: 'albumArtists',
+        searchTerm,
+        searchOptions: { start: 0, total: 2 },
+        getAlbumArt: false,
+      });
+      album = search.items.find((item) => item.albumArtURI !== null);
       if (album) {
         return album.albumArtURI;
       }
-
-      try {
-        // No album art found, let's dig deeper on the 'All' item.
-        // Useful for returning album art for Genres
-        search = await this.browse({
-          searchCategory,
-          searchTerm: `${searchTerm}//`,
-          searchOptions: { start: 0, total: 1 },
-          getAlbumArt: false,
-        });
-        if (search.items) [album] = search.items;
-        if (album && album.albumArtURI !== null) {
-          return album.albumArtURI;
-        }
-
-        // For returning album art of artists when browsing genres
-        if (searchCategory === 'genres') {
-          search = await this.browse({
-            searchCategory: 'albumArtists',
-            searchTerm,
-            searchOptions: { start: 0, total: 2 },
-            getAlbumArt: false,
-          });
-          album = search.items.find(item => item.albumArtURI !== null);
-          if (album) {
-            return album.albumArtURI;
-          }
-        }
-      } catch (error) {
-        throw error;
-      }
-      return null;
-    } catch (error) {
-      throw error;
     }
+    return null;
   }
 
   /*

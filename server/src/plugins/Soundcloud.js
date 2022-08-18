@@ -36,8 +36,10 @@ class Soundcloud {
   }
 
   async request(options) {
-    if (!options.query) options.query = {};
-    if (this.credentials.client_id) options.query.client_id = this.credentials.client_id;
+    if (!options.query) options.query = {}; // eslint-disable-line no-param-reassign
+    if (this.credentials.client_id) {
+      options.query.client_id = this.credentials.client_id; // eslint-disable-line no-param-reassign
+    }
 
     return superagent.get(`${this.apiUrl}${options.url}`)
       .query(options.query)
@@ -48,12 +50,12 @@ class Soundcloud {
     try {
       if (options.offset === 0) {
         this.nextUUID = '';
-        options.limit += 1;
+        options.limit += 1; // eslint-disable-line no-param-reassign
       }
       const resp = await this.request({ url: '/stream', query: { ...options, offset: this.nextUUID } });
       const nextUUID = resp.body.next_href.match(/offset=([\w-]+)/);
       if (nextUUID) {
-        this.nextUUID = nextUUID[1];
+        this.nextUUID = nextUUID[1]; // eslint-disable-line prefer-destructuring
       }
       const items = resp.body.collection.map((item) => {
         const inner = item.track || item.playlist;
@@ -99,7 +101,7 @@ class Soundcloud {
       });
 
       const items = resp.body.tracks.map((item) => {
-        if (!item.user) item = trackById[item.id];
+        if (!item.user) item = trackById[item.id]; // eslint-disable-line no-param-reassign
         return {
           title: item.title,
           uri: `x-sonos-http:track:${item.id}.mp3?sid=160&flags=8224&sn=4`,
@@ -137,7 +139,7 @@ class Soundcloud {
       const resp = await this.nextArtist(id, options);
       const items = this.parseArtists(resp);
       while (items.length < options.limit && this.nextUserUUID) {
-        const next = await this.nextArtist(id, options);
+        const next = await this.nextArtist(id, options); // eslint-disable-line no-await-in-loop
         const nextItems = this.parseArtists(next);
         items.push(...nextItems);
       }
@@ -167,19 +169,18 @@ class Soundcloud {
     return resp;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   parseArtists(resp) {
-    return resp.body.collection.map((item) => {
-      return {
-        title: item.title,
-        uri: `x-sonos-http:track:${item.id}.mp3?sid=160&flags=8224&sn=4`,
-        artist: item.user.username,
-        artistId: item.user.id,
-        album: null,
-        type: item.kind,
-        id: item.id,
-        albumArtURI: item.artwork_url && item.artwork_url.replace('large', 't500x500'),
-      };
-    });
+    return resp.body.collection.map((item) => ({
+      title: item.title,
+      uri: `x-sonos-http:track:${item.id}.mp3?sid=160&flags=8224&sn=4`,
+      artist: item.user.username,
+      artistId: item.user.id,
+      album: null,
+      type: item.kind,
+      id: item.id,
+      albumArtURI: item.artwork_url && item.artwork_url.replace('large', 't500x500'),
+    }));
   }
 
   async getTracks(ids) {

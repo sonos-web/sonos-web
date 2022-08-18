@@ -13,7 +13,7 @@ module.exports = function SoundcloudRoutes(soundcloud) {
       const tokens = await this.soundcloud.authorizeCode(req.body.code);
       res.status(200).send(tokens);
     } catch (error) {
-      res.status(error.response.statusCode).send(error.message)
+      res.status(error.response.statusCode).send(error.message);
     }
   });
 
@@ -26,10 +26,10 @@ module.exports = function SoundcloudRoutes(soundcloud) {
       res.status(200).send(stream);
     } catch (error) {
       if (error.response.statusCode === 401) {
-        res.status(401).send('Invalid Soundcloud credentials')
-        return  
+        res.status(401).send('Invalid Soundcloud credentials');
+        return;
       }
-      res.status(error.response.statusCode).send(error.message)
+      res.status(error.response.statusCode).send(error.message);
     }
   });
 
