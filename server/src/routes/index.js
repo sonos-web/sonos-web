@@ -1,4 +1,3 @@
-
 // Dependencies
 const serveStatic = require('serve-static');
 const history = require('connect-history-api-fallback');
@@ -14,7 +13,6 @@ const Spotify = require('../plugins/Spotify');
 
 const SoundcloudRoutes = require('./services/soundcloud');
 const Soundcloud = require('../plugins/Soundcloud');
-
 
 module.exports = function Routes(sonosNetwork) {
   this.router = router;

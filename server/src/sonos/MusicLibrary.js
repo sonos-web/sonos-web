@@ -149,7 +149,6 @@ class MusicLibrary {
     return null;
   }
 
-
   /**
    * Get Sonos Playlists
    * @returns {Array} sonos playlists
@@ -225,7 +224,6 @@ class MusicLibrary {
    *************************************************************************************************
    *************************************************************************************************
    */
-
 
   /**
   * Returns a cached query or null

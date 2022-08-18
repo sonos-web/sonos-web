@@ -1,4 +1,3 @@
-
 const SonosNetworkMessages = Object.freeze({
   DiscoveringSonosDevices: 'Discovering Sonos Devices',
   SonosDeviceDiscoveryComplete: 'Sonos Device Discovery Complete',

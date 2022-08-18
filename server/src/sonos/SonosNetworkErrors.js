@@ -1,4 +1,3 @@
-
 const SonosNetworkErrors = Object.freeze({
   NoDevicesFound: 'No Devices Found',
 });

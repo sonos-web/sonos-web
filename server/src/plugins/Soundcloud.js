@@ -1,7 +1,6 @@
 const qs = require('querystring');
 const superagent = require('superagent');
 
-
 class Soundcloud {
   constructor(sonosNetwork) {
     this.apiUrl = 'https://api-v2.soundcloud.com';
