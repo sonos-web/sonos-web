@@ -14,7 +14,7 @@
           </v-btn>
         </v-snackbar>
       </div>
-      <v-layout wrap row>
+      <v-layout wrap>
         <v-flex xs12>
           <v-btn
             :class="$style.partyModeButton"
@@ -89,8 +89,8 @@ export default {
     breakpoint() {
       const breakpoint = {};
       if (this.$vuetify.breakpoint.smAndDown) breakpoint.xs12 = true;
-      if (this.$vuetify.breakpoint.lgAndDown) breakpoint.xs6 = true;
-      if (this.$vuetify.breakpoint.xl) breakpoint.xs4 = true;
+      else if (this.$vuetify.breakpoint.lgAndDown) breakpoint.xs6 = true;
+      else if (this.$vuetify.breakpoint.xl) breakpoint.xs4 = true;
       return breakpoint;
     },
     partyModeText() {

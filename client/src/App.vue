@@ -18,6 +18,13 @@
       </transition>
       <transition name="fade">
         <div v-if="!discoveringSonos && !hasError" class="fill-height">
+          <v-app-bar
+            v-show="$vuetify.breakpoint.smAndDown"
+            dark
+            flat
+          >
+            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+          </v-app-bar>
           <!-- eslint-disable-next-line -->
           <v-navigation-drawer
             width="230"
@@ -26,8 +33,8 @@
             clipped
             floating
             class="app-drawer"
-            :permanent="true"
-            :mini-variant.sync="$vuetify.breakpoint.mdAndDown">
+            v-model="drawer"
+            :permanent="$vuetify.breakpoint.mdAndUp">
             <v-list class="nav-link-list">
               <template v-for="item in items">
                 <v-list-group
@@ -95,13 +102,15 @@ export default {
   components: { NowPlayingBar },
   name: 'App',
   data: () => ({
+    drawer: false,
     items: [
       { icon: 'search', text: 'Search', path: '/search' },
       { icon: 'music_note', text: 'Now Playing', path: '/' },
       { icon: 'speaker_group', text: 'Rooms', path: '/rooms' },
       { icon: 'library_music', text: 'Music Library', path: '/library' },
       { icon: 'star', text: 'My Sonos', path: '/sonos' },
-      { icon: 'album', text: 'Spotify', path: '/spotify' },
+      { icon: 'contactless', text: 'Spotify', path: '/spotify' },
+      { icon: 'cloud', text: 'Soundcloud', path: '/soundcloud' },
     ],
     APP_VERSION: `v${version}`,
 
@@ -142,6 +151,11 @@ export default {
 }
 .now-playing-bar-padding {
   padding-bottom: 90px!important;
+}
+@media (max-width: 960px) {
+  .now-playing-bar-padding {
+    padding-bottom: 150px !important;
+  }
 }
 .app-background {
   background-size: cover;

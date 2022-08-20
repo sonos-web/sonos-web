@@ -1,7 +1,7 @@
 <template>
   <v-container fluid pa-0 ma-0>
     <vue-headful title="Music Library - Sonos Web"></vue-headful>
-    <v-layout row wrap>
+    <v-layout wrap>
       <v-tabs
       class="library-tabs pb-3"
       centered

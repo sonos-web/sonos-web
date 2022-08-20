@@ -1,0 +1,38 @@
+name: Docker
+
+on:
+  - workflow_dispatch
+
+jobs:
+  build-and-publish:
+    name: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Get version from `package.json`
+        id: pkgversion
+        run: |
+          PKG_VERSION=$(jq -r .version client/package.json)
+          echo "$PKG_VERSION"
+          echo "::set-output name=PKG_VERSION::$PKG_VERSION"
+      - name: Generate docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: sonosweb/sonos-web
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ steps.pkgversion.outputs.PKG_VERSION }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

@@ -19,29 +19,32 @@
       <v-list-item-title
         class="font-weight-bold"
         @mouseover="tooltipOnOverFlow">
-        {{ song.title }}
+        <template>
+          <v-icon v-if="isPlaylist" color="grey lighten-1">playlist_play</v-icon>
+          {{ song.title }}
+        </template>
       </v-list-item-title>
       <div v-if="!albumMode || allAlbum">
         <v-layout>
           <router-link
-            v-if="!albumMode"
             @mouseover="tooltipOnOverFlow"
             :to="artistLink"
             class="item-link text-truncate text-xs-center pa-0">
             {{ song.artist }}
           </router-link>
-          <template v-if="song.album">
-            <span v-if="!allAlbum" class="item-link-separator">•</span>
-            <router-link
-              @mouseover="tooltipOnOverFlow"
-              :to="albumLink"
-              class="item-link text-truncate text-xs-center pa-0">
-              {{ song.album }}
-            </router-link>
-          </template>
         </v-layout>
       </div>
     </v-list-item-content>
+    <v-list-item-action v-if="isPlaylist">
+      <v-btn icon ripple :href="playlistLink">
+        <v-icon color="grey lighten-1">playlist_play</v-icon>
+      </v-btn>
+    </v-list-item-action>
+    <v-list-item-action v-if="!isPlaylist">
+      <v-btn icon ripple :href="relatedLink">
+        <v-icon color="grey lighten-1">link</v-icon>
+      </v-btn>
+    </v-list-item-action>
     <v-list-item-action>
       <v-btn icon ripple @click="showMenu">
         <v-icon color="grey lighten-1">more_horiz</v-icon>
@@ -117,23 +120,17 @@ export default {
       }
       return classes;
     },
-    encodedArtist() {
-      return this.$Base64.encodeURI(this.song.artist);
-    },
-    encodedAlbum() {
-      return this.$Base64.encodeURI(this.song.album);
-    },
     artistLink() {
-      if (this.isSpotify) {
-        return `/spotify/artist/${this.song.artistURI}`;
-      }
-      return `/artist/${this.encodedArtist}`;
+      return `/soundcloud/user/${this.song.artistId}`;
     },
-    albumLink() {
-      if (this.isSpotify) {
-        return `/spotify/album/${this.song.albumURI}`;
-      }
-      return `/album/${this.encodedAlbum}`;
+    isPlaylist() {
+      return this.song.type === 'playlist';
+    },
+    playlistLink() {
+      return `/soundcloud/playlist/${this.song.id}`;
+    },
+    relatedLink() {
+      return `/soundcloud/related/${this.song.id}`;
     },
   },
 };

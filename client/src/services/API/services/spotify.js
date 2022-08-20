@@ -11,14 +11,26 @@ export default {
   checkAuthorization(tokens) {
     return axios.post('/checkAuthorization', tokens);
   },
-  getUserPlaylists() {
-    return axios.get('/playlists');
+  getUserPlaylists(options) {
+    return axios.get('/playlists', { params: options });
   },
-  getUserAlbums() {
-    return axios.get('/albums');
+  getUserAlbums(options) {
+    return axios.get('/albums', { params: options });
   },
-  getUserSongs() {
-    return axios.get('/songs');
+  getUserSongs(options) {
+    return axios.get('/songs', { params: options });
+  },
+  searchPlaylists(options) {
+    return axios.get('/search/playlists', { params: options });
+  },
+  searchAlbums(options) {
+    return axios.get('/search/albums', { params: options });
+  },
+  searchArtists(options) {
+    return axios.get('/search/artists', { params: options });
+  },
+  searchSongs(options) {
+    return axios.get('/search/songs', { params: options });
   },
   get(path) {
     return axios.get(path.replace('/spotify', ''));

@@ -1,4 +1,3 @@
-
 // Dependencies
 const serveStatic = require('serve-static');
 const history = require('connect-history-api-fallback');
@@ -12,11 +11,14 @@ const SpotifyRoutes = require('./services/spotify');
 
 const Spotify = require('../plugins/Spotify');
 
+const SoundcloudRoutes = require('./services/soundcloud');
+const Soundcloud = require('../plugins/Soundcloud');
 
 module.exports = function Routes(sonosNetwork) {
   this.router = router;
   this.sonosNetwork = sonosNetwork;
   this.spotify = new Spotify(this.sonosNetwork);
+  this.soundcloud = new Soundcloud(this.sonosNetwork);
 
   // the directory of the client code in production
   const clientDir = `${process.cwd()}/dist`;
@@ -34,12 +36,14 @@ module.exports = function Routes(sonosNetwork) {
   const musicLibrary = new MusicLibrary(this.sonosNetwork);
   const libraryDetail = new LibraryDetail(this.sonosNetwork);
   const spotifyRoutes = new SpotifyRoutes(this.spotify);
+  const soundcloudRoutes = new SoundcloudRoutes(this.soundcloud);
 
   this.router.use('/api/zones', zones.router);
   this.router.use('/api/groups', groups.router);
   this.router.use('/api/library', musicLibrary.router);
   this.router.use('/api/detail', libraryDetail.router);
   this.router.use('/api/spotify', spotifyRoutes.router);
+  this.router.use('/api/soundcloud', soundcloudRoutes.router);
   // End All router
 
   // This MUST come last - all router that we do not have endpoints for

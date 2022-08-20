@@ -10,6 +10,7 @@ Vue.use(Vuex);
 
 const emptyAlbumArtURL = require('./assets/empty-album-art.png');
 const tvAlbumArtURL = require('./assets/tv-album-art.png');
+const lineInAlbumArtURL = require('./assets/linein-album-art.png');
 
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
@@ -41,6 +42,7 @@ export default new Vuex.Store({
     defaultAlbumArtURL: emptyAlbumArtURL,
     currentTrackTimer: null,
     tvAlbumArtURL,
+    lineInAlbumArtURL,
     previousRoutePath: null,
   },
   getters: {
@@ -62,8 +64,11 @@ export default new Vuex.Store({
     albumArtURLForGroup: (state, getters) => (groupId) => {
       const group = getters.getGroupById(groupId);
       if (group && group.track) {
-        return group.track.albumArtURL
-        || (group.tvPlaying ? state.tvAlbumArtURL : state.defaultAlbumArtURL);
+        if (group.track.albumArtURL) return group.track.albumArtURL;
+
+        if (group.tvPlaying) return state.tvAlbumArtURL;
+        if (group.lineInPlaying) return state.lineInAlbumArtURL;
+        return state.defaultAlbumArtURL;
       }
       return state.defaultAlbumArtURL;
     },
@@ -73,7 +78,9 @@ export default new Vuex.Store({
         let title = '[No music selected]';
         if (group.tvPlaying) {
           title = 'TV';
-        } else if (group.track.album) {
+        } else if (group.lineInPlaying) {
+          title = 'Line In';
+        } else if (group.track.title) {
           title = group.track.title || '';
         }
         return title;

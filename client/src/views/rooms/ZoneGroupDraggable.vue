@@ -44,7 +44,7 @@
             <div @mouseover="tooltipOnOverFlow" class="headline text-truncate font-weight-medium">
               {{ trackTitle(group.id) }}
             </div>
-            <v-layout :class="$style.artistAlbumInfo" ma-0>
+            <v-layout :class="$style.artistAlbumInfo" ma-0 v-if="group.track">
               <router-link
                 @mouseover="tooltipOnOverFlow"
                 :to="`/artist/${encodedItem(group.track.artist)}`"

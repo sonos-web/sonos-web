@@ -74,13 +74,13 @@ export default {
       return this.$store.getters.trackTitleForGroup(this.activeZoneGroupId);
     },
     artist() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
         return this.activeZoneGroup.track.artist;
       }
       return '';
     },
     album() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
         return this.activeZoneGroup.track.album;
       }
       return '';

@@ -1,4 +1,6 @@
-const { DeviceDiscovery, Listener } = require('sonos');
+const {
+  DeviceDiscovery, Listener, SpotifyRegion, Helpers,
+} = require('sonos');
 const { NoDevicesFound } = require('./SonosNetworkErrors');
 const {
   DiscoveringSonosDevices,
@@ -86,6 +88,14 @@ class SonosNetwork {
         device.deviceDescription().then((description) => {
           device.name = description.roomName;
           device.displayName = description.displayName;
+          if (process.env.REGION) {
+            if (process.env.REGION in SpotifyRegion) {
+              device.setSpotifyRegion(SpotifyRegion[process.env.REGION]);
+              console.log(`Setting spotify region to ${process.env.REGION}`);
+            } else {
+              console.error(`Specified region ${process.env.REGION} is not valid`);
+            }
+          }
           const UUID = description.UDN.split('uuid:')[1];
           device.id = UUID;
           this.listener.subscribeTo(device).then(() => {
@@ -131,7 +141,7 @@ class SonosNetwork {
 
   _onAVTransportEvent(device) {
     // Find the zone group, we only care if it is the coordinator
-    const zoneGroup = this.zoneGroups.find(zg => zg.coordinator.id === device.id);
+    const zoneGroup = this.zoneGroups.find((zg) => zg.coordinator.id === device.id);
     if (zoneGroup) {
       this._getAVTransportInfo(device.id).then((transportInfo) => {
         this.socketio.emit(
@@ -164,7 +174,7 @@ class SonosNetwork {
 
   _onQueueChangedEvent(device) {
     // Find the zone group, we only care if it is the coordinator
-    const zoneGroup = this.zoneGroups.find(zg => zg.coordinator.id === device.id);
+    const zoneGroup = this.zoneGroups.find((zg) => zg.coordinator.id === device.id);
     if (zoneGroup) {
       this._getQueue(device.id).then((queue) => {
         this.socketio.emit(SonosEventDataReceived, { groupId: zoneGroup.id, update: { queue } });
@@ -204,7 +214,7 @@ class SonosNetwork {
    * @param {String} groupId
    */
   async play(groupId) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     try {
       if (group) await group.coordinator.device.play();
     } catch (error) {
@@ -217,7 +227,7 @@ class SonosNetwork {
    * @param {String} groupId
    */
   async pause(groupId) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     if (group) await group.coordinator.device.pause();
   }
 
@@ -226,7 +236,7 @@ class SonosNetwork {
    * @param {String} groupId
    */
   async next(groupId) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     if (group) await group.coordinator.device.next();
   }
 
@@ -235,7 +245,7 @@ class SonosNetwork {
    * @param {String} groupId
    */
   async previous(groupId) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     if (group) await group.coordinator.device.previous();
   }
 
@@ -245,7 +255,7 @@ class SonosNetwork {
    * @param {Number} seconds jump to x seconds
    */
   async seek(groupId, seconds) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     if (group) await group.coordinator.device.seek(seconds);
   }
 
@@ -255,7 +265,7 @@ class SonosNetwork {
    * @returns {Number}
    */
   async getTrackPosition(groupId) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     if (group) {
       const track = await group.coordinator.device.avTransportService().CurrentTrack();
       return track.position;
@@ -269,7 +279,7 @@ class SonosNetwork {
    * @param {Number} volume
    */
   async setPlayMode(groupId, playMode) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     await group.coordinator.device.setPlayMode(playMode);
   }
 
@@ -279,7 +289,7 @@ class SonosNetwork {
    * @param {Number} volume
    */
   async setVolume(zoneId, volume) {
-    const zone = this.devices.find(device => device.id === zoneId);
+    const zone = this.devices.find((device) => device.id === zoneId);
     await zone.setVolume(volume);
   }
 
@@ -295,7 +305,7 @@ class SonosNetwork {
    * @param {Number} volume The average volume for the group
    */
   async setGroupVolume(groupId, volume) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     const zones = [group.coordinator, ...group.members];
     const currentVolume = group.volume;
     // If the volume is zero we don't want to divide by 0 -- (NaN)
@@ -321,7 +331,7 @@ class SonosNetwork {
    * @param {Number} mute
    */
   async setMute(zoneId, mute) {
-    const zone = this.devices.find(device => device.id === zoneId);
+    const zone = this.devices.find((device) => device.id === zoneId);
     await zone.setMuted(mute);
   }
 
@@ -331,7 +341,7 @@ class SonosNetwork {
    * @param {Number} mute
    */
   async setGroupMute(groupId, mute) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     [group.coordinator, ...group.members].map(async (member) => {
       await member.device.setMuted(mute);
     });
@@ -344,7 +354,7 @@ class SonosNetwork {
    * @param {Number} newIndex - 0-based index of where to move the track
    */
   async reorderTracksInQueue(groupId, oldIndex, newIndex) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     // Add 1 to each index, because Sonos expects 1 based, not 0 based index
     const from = oldIndex + 1;
     let to = newIndex + 1;
@@ -361,7 +371,7 @@ class SonosNetwork {
    * @param {Array} trackIndexes - Array of 0-based indexes to be removed from queue
    */
   async removeTracksFromQueue(groupId, trackIndexes) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     const indexes = trackIndexes.sort((a, b) => b - a);
     // eslint-disable-next-line no-restricted-syntax
     for (const queuePosition of indexes) {
@@ -378,13 +388,9 @@ class SonosNetwork {
    * @param {String} playlistTitle
    */
   async saveQueue(groupId, playlistTitle) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     const options = { InstanceID: 0, Title: playlistTitle, ObjectID: '' };
-    try {
-      await group.coordinator.device.avTransportService().SaveQueue(options);
-    } catch (error) {
-      throw (error);
-    }
+    await group.coordinator.device.avTransportService().SaveQueue(options);
   }
 
   /**
@@ -392,7 +398,7 @@ class SonosNetwork {
    * @param {String} groupId
    */
   async clearQueue(groupId) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     await group.coordinator.device.flush();
   }
 
@@ -402,7 +408,7 @@ class SonosNetwork {
    * @param {Number} trackNumber - 1-based index of the track to play
    */
   async playTrackFromQueue(groupId, trackNumber) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     await group.coordinator.device.selectQueue();
     await group.coordinator.device.selectTrack(trackNumber);
     await group.coordinator.device.play();
@@ -414,14 +420,22 @@ class SonosNetwork {
    * @param {Object} data - The data to build the uri
    */
   async playNow(groupId, data) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     const uri = await this._getURIFromData(group.coordinator.id, data);
     try {
       if (uri) {
         if (uri.indexOf('x-sonosapi-radio:') !== -1) {
           await group.coordinator.device.setAVTransportURI({ uri });
+        } else if (uri.indexOf('x-sonosapi-stream:') !== -1) {
+          const metadata = Helpers.GenerateMetadata(uri);
+          await group.coordinator.device.setAVTransportURI(metadata);
         } else {
-          const queuePosition = group.track.queuePosition + 1;
+          const mediaInfo = await group.coordinator.device.avTransportService().GetMediaInfo();
+          if (mediaInfo && mediaInfo.CurrentURI && !mediaInfo.CurrentURI.startsWith('x-rincon-queue:')) {
+            group.coordinator.device.setAVTransportURI(`x-rincon-queue:${group.coordinator.device.id}#0`);
+          }
+          const queuePosition = group.queue
+            ? Math.max(...group.queue.map((item) => item.queuePosition)) + 1 : 1;
           await group.coordinator.device.queue(uri, queuePosition);
           await group.coordinator.device.selectTrack(queuePosition);
           await group.coordinator.device.play();
@@ -439,10 +453,11 @@ class SonosNetwork {
    * @param {String} data - The data to build the uri
    */
   async playNext(groupId, data) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     const uri = await this._getURIFromData(group.coordinator.id, data);
     if (uri) {
-      const queuePosition = group.track.queuePosition + 1;
+      const queuePosition = group.queue
+        ? Math.max(...group.queue.map((item) => item.queuePosition)) + 1 : 1;
       await group.coordinator.device.queue(uri, queuePosition);
     }
   }
@@ -453,7 +468,7 @@ class SonosNetwork {
    * @param {String} data - The data to build the uri
    */
   async addToEndOfQueue(groupId, data) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     const uri = await this._getURIFromData(group.coordinator.id, data);
     if (uri) {
       await group.coordinator.device.queue(uri);
@@ -466,7 +481,7 @@ class SonosNetwork {
    * @param {String} data - The data to build the uri
    */
   async replaceQueueAndPlay(groupId, data) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     const uri = await this._getURIFromData(group.coordinator.id, data);
     if (uri) {
       const trackNumber = data.songNumber || 1;
@@ -484,8 +499,8 @@ class SonosNetwork {
    * @param {String} zoneId
    */
   async joinGroup(groupId, zoneId) {
-    const zone = this.devices.find(device => device.id === zoneId);
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const zone = this.devices.find((device) => device.id === zoneId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     await zone.setAVTransportURI({ uri: `x-rincon:${group.coordinator.id}`, onlySetUri: true });
   }
 
@@ -494,7 +509,7 @@ class SonosNetwork {
    * @param {String} zoneId
    */
   async leaveGroup(zoneId) {
-    const zone = this.devices.find(device => device.id === zoneId);
+    const zone = this.devices.find((device) => device.id === zoneId);
     await zone.leaveGroup();
   }
 
@@ -503,7 +518,7 @@ class SonosNetwork {
    * @param {String} groupId
    */
   async partyMode(groupId) {
-    const group = this.zoneGroups.find(zg => zg.id === groupId);
+    const group = this.zoneGroups.find((zg) => zg.id === groupId);
     await Promise.all(this.devices.map(async (device) => {
       if (device.id !== group.coordinator.id) {
         await device.setAVTransportURI({ uri: `x-rincon:${group.coordinator.id}`, onlySetUri: true });
@@ -536,7 +551,7 @@ class SonosNetwork {
    * @param {Object} data
    */
   _updateZoneGroupTransportInfo(deviceId, data) {
-    const index = this.zoneGroups.findIndex(group => group.coordinator.id === deviceId);
+    const index = this.zoneGroups.findIndex((group) => group.coordinator.id === deviceId);
     if (index !== -1) {
     // Merge new data in
       this.zoneGroups[index] = { ...this.zoneGroups[index], ...data };
@@ -550,14 +565,14 @@ class SonosNetwork {
    * @returns {Object|null} ZoneGroup or null
    */
   _updateZoneGroupRenderingInfo(groupId, memberId, data) {
-    const index = this.zoneGroups.findIndex(zg => zg.id === groupId);
+    const index = this.zoneGroups.findIndex((zg) => zg.id === groupId);
     if (index !== -1) {
     // Merge the data into the coordinator if it matches the given memberId
       if (this.zoneGroups[index].coordinator.id === memberId) {
         this.zoneGroups[index].coordinator = { ...this.zoneGroups[index].coordinator, ...data };
       } else {
       // otherwise merge it into one of the members
-        const mIndex = this.zoneGroups[index].members.findIndex(member => member.id === memberId);
+        const mIndex = this.zoneGroups[index].members.findIndex((member) => member.id === memberId);
         if (mIndex !== -1) {
           this.zoneGroups[index].members[mIndex] = {
             ...this.zoneGroups[index].members[mIndex],
@@ -601,10 +616,10 @@ class SonosNetwork {
             const zone = {
               id: member.UUID,
               name: member.ZoneName,
-              device: this.devices.find(device => device.id === member.UUID),
+              device: this.devices.find((device) => device.id === member.UUID),
             };
             if (zone.device) {
-              const zoneGroup = zoneGroups.find(zg => zg.id === group.ID);
+              const zoneGroup = zoneGroups.find((zg) => zg.id === group.ID);
               if (zone.id === group.Coordinator) {
                 zoneGroup.coordinator = zone;
               } else {
@@ -617,7 +632,7 @@ class SonosNetwork {
         // A zone group could be without a coordinator if the Sonos player
         // was previously part of the network, but has been unplugged, etc.
         // For now, we simply eliminate these
-        zoneGroups = zoneGroups.filter(group => group.coordinator.device !== undefined);
+        zoneGroups = zoneGroups.filter((group) => group.coordinator.device !== undefined);
 
         // Fetch the transport info for all zones
         await Promise.all(zoneGroups.map(async (group, index) => {
@@ -646,7 +661,7 @@ class SonosNetwork {
         }));
 
         // Sort all the members of each zone alphabetically
-        zoneGroups.forEach(group => group.members.sort((m1, m2) => m1.name > m2.name));
+        zoneGroups.forEach((group) => group.members.sort((m1, m2) => m1.name > m2.name));
         // Sort all the zones alphabetically by coordinator
         zoneGroups.sort((group1, group2) => group1.coordinator.name > group2.coordinator.name);
 
@@ -692,11 +707,11 @@ class SonosNetwork {
    * @returns {Object|null} Zone Group found for the given deviceId or null
    */
   _zoneGroupForDeviceId(deviceId) {
-    let zoneGroup = this.zoneGroups.find(zg => zg.coordinator.id === deviceId);
+    let zoneGroup = this.zoneGroups.find((zg) => zg.coordinator.id === deviceId);
     if (!zoneGroup) {
       // eslint-disable-next-line arrow-body-style
       zoneGroup = this.zoneGroups.find((zg) => {
-        return zg.members.findIndex(member => member.device.id === deviceId) > -1;
+        return zg.members.findIndex((member) => member.device.id === deviceId) > -1;
       });
     }
     return zoneGroup || null;
@@ -708,10 +723,10 @@ class SonosNetwork {
    * @returns {Array}
    */
   async _getQueue(deviceId) {
-    const zone = this.devices.find(device => device.id === deviceId);
+    const zone = this.devices.find((device) => device.id === deviceId);
     if (!zone) { return null; }
     const queue = await zone.getQueue();
-    if (queue) {
+    if (queue && queue.items) {
       queue.items.forEach((track, index) => { queue.items[index].queuePosition = index + 1; });
       return queue.items;
     }
@@ -724,7 +739,7 @@ class SonosNetwork {
    * @returns {Object} { volume, mute }
    */
   async _getRenderingControlInfo(deviceId) {
-    const zone = this.devices.find(device => device.id === deviceId);
+    const zone = this.devices.find((device) => device.id === deviceId);
     if (!zone) { return {}; }
     const volume = await zone.renderingControlService().GetVolume();
     const mute = await zone.renderingControlService().GetMute();
@@ -742,12 +757,12 @@ class SonosNetwork {
   static _getGroupRenderingControlInfo(group) {
     const zones = [group.coordinator, ...group.members];
     // Group will be NOT muted if at least one zone is not muted
-    const mute = !zones.some(zone => !zone.mute);
+    const mute = !zones.some((zone) => !zone.mute);
     // Average of all volumes
     // eslint-disable-next-line arrow-body-style
     const volumeSum = zones.reduce((accumulator, current) => {
-      return (accumulator.volume + current.volume);
-    });
+      return accumulator + current.volume;
+    }, 0);
     // If there is only one element in zones array, it will return the object
     // otherwise we will have a number in volumeSum
     const volume = typeof (volumeSum) === 'object' ? volumeSum.volume : Math.floor(volumeSum / zones.length);
@@ -761,7 +776,7 @@ class SonosNetwork {
    * @returns {Object} AVTransportInfo
    */
   async _getAVTransportInfo(deviceId) {
-    const zone = this.devices.find(device => device.id === deviceId);
+    const zone = this.devices.find((device) => device.id === deviceId);
     if (!zone) { return {}; }
     /**
      * PlayMode - NORMAL, SUFFLE_NOREPEAT, SHUFFLE, REPEAT_ALL, SHUFFLE_REPEAT_ONE, REPEAT_ONE
@@ -806,6 +821,7 @@ class SonosNetwork {
     const currentTrack = await zone.avTransportService().CurrentTrack();
 
     const tvPlaying = positionInfo.TrackURI.match(/^x-sonos-htastream:/) !== null;
+    const lineInPlaying = positionInfo.TrackURI.match(/^x-rincon-stream:/) !== null;
 
     const queue = await this._getQueue(zone.id);
 
@@ -815,6 +831,7 @@ class SonosNetwork {
       playMode: transportSettings.PlayMode,
       actions: transportActions.Actions.split(', '),
       tvPlaying,
+      lineInPlaying,
       queue,
     };
   }

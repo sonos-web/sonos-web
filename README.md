@@ -12,6 +12,10 @@ Sonos Web has been tested on Windows 10, macOS, Linux, and Raspbian Stretch Lite
 
 [Check out the following Youtube video](https://youtu.be/0q8Z-XV81Z4) to see a brief demo of the system in use. (v0.5.2)
 
+## Docker Images
+
+Docker images are available at [https://hub.docker.com/r/sonosweb/sonos-web](https://hub.docker.com/r/sonosweb/sonos-web) and are automatically generated from this repository
+
 ## Features
 Sonos Web is a developing project and is not yet feature complete. If you would like to see a feature developed, please [open an issue](https://github.com/Villarrealized/sonos-web/issues/new).
 

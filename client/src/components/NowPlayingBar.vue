@@ -12,7 +12,7 @@
           <v-card text tile>
             <v-list two-line>
               <v-list-item>
-                <v-list-item-avatar tile size="60px">
+                <v-list-item-avatar tile size="60px" class="d-none d-sm-none d-md-block">
                   <div class="v-responsive v-image">
                     <div v-lazy:background-image="albumArtURL"
                     class="background-image" :key="albumArtURL"></div>
@@ -296,13 +296,13 @@ export default {
       return this.$store.getters.trackTitleForGroup(this.activeZoneGroupId);
     },
     artist() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
         return this.activeZoneGroup.track.artist;
       }
       return '';
     },
     album() {
-      if (this.activeZoneGroup) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track) {
         return this.activeZoneGroup.track.album;
       }
       return '';
@@ -324,6 +324,7 @@ export default {
         return 0;
       },
       set(volume) {
+        console.log('volume set', volume);
         if (this.activeZoneGroup) {
           this.$store.commit('UPDATE_ZONE_GROUP', { groupId: this.activeZoneGroupId, update: { volume } });
           groupsAPI.volume(this.activeZoneGroupId, volume);
@@ -331,27 +332,30 @@ export default {
       },
     },
     trackElapsedTime() {
-      if (this.activeZoneGroup && this.activeZoneGroup.track.duration > 0) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track
+        && this.activeZoneGroup.track.duration > 0) {
         return secondsToTimeString(this.activeZoneGroup.track.position);
       }
       return '';
     },
     trackDuration() {
-      if (this.activeZoneGroup && this.activeZoneGroup.track.duration > 0) {
+      if (this.activeZoneGroup && this.activeZoneGroup.track
+        && this.activeZoneGroup.track.duration > 0) {
         return secondsToTimeString(this.activeZoneGroup.track.duration);
       }
       return '';
     },
     trackPosition: {
       get() {
-        if (this.activeZoneGroup) {
+        if (this.activeZoneGroup && this.activeZoneGroup.track) {
           // eslint-disable-next-line max-len
           return ((this.activeZoneGroup.track.position / this.activeZoneGroup.track.duration) * 100) || 0;
         }
         return 0;
       },
       set(position) {
-        if (this.activeZoneGroup) {
+        console.log('trackPosition set', position);
+        if (this.activeZoneGroup && this.canSeek) {
           const positionPercentage = position * 0.01;
           const newPosition = Math.round(this.activeZoneGroup.track.duration * positionPercentage);
           const track = { ...this.activeZoneGroup.track, position: newPosition };
@@ -374,7 +378,10 @@ export default {
     },
     volumeIcon() {
       if (this.mute) return 'volume_mute';
-      return this.volume > 50 ? 'volume_up' : 'volume_down';
+      if (this.activeZoneGroup) {
+        return this.activeZoneGroup.volume > 50 ? 'volume_up' : 'volume_down';
+      }
+      return 'volume_down';
     },
     previousEnabled() {
       if (this.activeZoneGroup) {
@@ -510,6 +517,29 @@ export default {
   min-width: 180px;
   display: flex;
   justify-content: flex-end;
+}
+@media (max-width: 960px) {
+  .v-app-bar--fixed.now-playing-bar {
+    padding-top: 90px;
+    height: 150px !important;
+    min-width: auto;
+  }
+
+  .now-playing-bar-left {
+    width: 40%;
+  }
+
+  .now-playing-bar-center {
+    display: block;
+    position: absolute;
+    max-width: none !important;
+    bottom: 60px;
+    width: calc(100% - 12px);
+  }
+
+  .now-playing-bar-right {
+    width: 60% !important;
+  }
 }
 .now-playing-bar-right .v-btn {
   padding: 0px!important;

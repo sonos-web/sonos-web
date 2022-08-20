@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('path'); // eslint-disable-line import/no-extraneous-dependencies
 
 function resolveSrc(_path) {
   return path.join(__dirname, _path);

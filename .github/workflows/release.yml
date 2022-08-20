@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: choice
+        description: Type
+        options:
+          - major
+          - minor
+          - patch
+
+jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Use Node 16 🕹️
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Bump versions
+        run: |
+          cd client && npm version ${{ github.event.inputs.version }}
+          cd ../server && npm version ${{ github.event.inputs.version }}
+
+      - name: Get version from `package.json`
+        id: pkgversion
+        run: |
+          PKG_VERSION=$(jq -r .version client/package.json)
+          echo "::set-output name=PKG_VERSION::$PKG_VERSION"
+
+      - name: Commit updates
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Bump version to ${{ steps.pkgversion.outputs.PKG_VERSION }}
+
+      - name: Create release
+        uses: justincy/github-action-npm-release@2.0.2
+        id: release
+        with:
+          path: ${{ github.workspace }}/client
