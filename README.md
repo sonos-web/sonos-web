@@ -128,9 +128,6 @@ If you have any issues or a questions feel free to [open an issue](https://githu
 ## Support
 Suggestions and feedback are always welcome. 
 
-If you like Sonos Web and would like to help fund further development of this project, you can do so through Beerpay.
-[![Beerpay](https://beerpay.io/Villarrealized/sonos-web/badge.svg?style=beer)](https://beerpay.io/Villarrealized/sonos-web)
-
 
 ## License
 [GPL v3.0](https://github.com/Villarrealized/sonos-web-cli/blob/master/LICENSE)
