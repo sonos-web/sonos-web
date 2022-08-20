@@ -1,0 +1,34 @@
+name: Docker
+
+on: 
+  - push
+
+jobs:
+  build-and-publish:
+    name: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set version
+        id: pkgversion
+        run: |
+          PKG_VERSION=$(jq -r "version" "client/package.json")
+          echo "$PKG_VERSION"
+          echo "::set-output name=PKG_VERSION::$PKG_VERSION"
+      - name: echo version
+        run: |
+          echo "version is ${{ steps.pkgversion.outputs.PKG_VERSION }}"
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: sonosweb/sonos-web
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ steps.pkgversion.outputs.PKG_VERSION }}
+      - name: echo docker meta
+        id: echo-docker-meta
+        run: |
+          echo ${{ steps.pkgversion.outputs.PKG_VERSION }}
+          echo ${{ steps.meta.outputs.tags }}
