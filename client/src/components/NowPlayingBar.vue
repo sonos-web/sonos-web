@@ -33,8 +33,9 @@
                     {{ artist }}
                   </router-link>
                   <router-link
-                    v-else-if="album"
+                    v-if="album"
                     @mouseover="tooltipOnOverFlow"
+                    :to="`/artist/${encodedArtist}`"
                     class="item-link subtitle-1 text-truncate pa-0">
                     {{ album }}
                   </router-link>
@@ -539,6 +540,11 @@ export default {
 
   .now-playing-bar-right {
     width: 60% !important;
+  }
+}
+@media (max-width: 800px) and (orientation: landscape) {
+  .now-playing-bar {
+    display: none
   }
 }
 .now-playing-bar-right .v-btn {
