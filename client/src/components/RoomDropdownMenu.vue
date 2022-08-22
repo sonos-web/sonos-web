@@ -4,7 +4,7 @@
       <v-btn
         class="zone-group-selector"
         :class="buttonClasses"
-        large
+        :large="buttonLarge"
         text
         v-on="on">
         {{ activeZoneGroupName }}
@@ -34,6 +34,10 @@ export default {
     buttonClasses: {
       type: String,
       default: '',
+    },
+    buttonLarge: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

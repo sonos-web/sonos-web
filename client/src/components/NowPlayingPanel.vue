@@ -12,7 +12,7 @@
         <v-card text tile height="100%" class="flex-grow-1">
           <v-list-item>
             <v-list-item-subtitle class="text-center">
-              {{ groupName(activeZoneGroupId) }}
+              <room-dropdown-menu buttonClasses="px-0 text-body-1"></room-dropdown-menu>
             </v-list-item-subtitle>
           </v-list-item>
           <v-list-item>
@@ -182,13 +182,14 @@
 </template>
 
 <script>
+import RoomDropdownMenu from '@/components/RoomDropdownMenu.vue';
 import MemberVolumeBar from '@/components/MemberVolumeBar.vue';
 import NowPlayingMixin from '@/mixins/NowPlayingMixin';
 import tooltipOnOverflow from '@/mixins/tooltipOnOverflow';
 
 export default {
   name: 'NowPlayingPanel',
-  components: { MemberVolumeBar },
+  components: { MemberVolumeBar, RoomDropdownMenu },
   mixins: [tooltipOnOverflow, NowPlayingMixin],
 };
 </script>

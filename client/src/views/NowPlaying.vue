@@ -5,7 +5,7 @@
       <v-layout align-center justify-center row wrap>
         <v-flex xs12 align-center justify-center>
           <div class="text-xs-center pb-3">
-            <room-dropdown-menu></room-dropdown-menu>
+            <room-dropdown-menu buttonLarge></room-dropdown-menu>
           </div>
           <div class="v-responsive v-image">
             <div v-lazy:background-image="albumArtURL"
