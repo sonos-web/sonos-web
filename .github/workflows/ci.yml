@@ -14,7 +14,7 @@ jobs:
     - name: Install modules
       run: cd client && npm install
     - name: Lint
-      run: cd client && npx eslint .
+      run: cd client && npm run lint
 
   build-client:
     runs-on: ubuntu-latest
