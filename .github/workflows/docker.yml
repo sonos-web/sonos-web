@@ -10,18 +10,13 @@ jobs:
 
     strategy:
       matrix:
-        include:
-          - arch: aarch64
-            distro: ubuntu_latest
-          - arch: armv7
-            distro: ubuntu_latest
+        arch: [arm, arm64, x86, x86_64]
+
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      - uses: uraimo/run-on-arch-action@v2
-        name: Get version from `package.json`
+      - name: Get version from `package.json`
         id: pkgversion
         run: |
           PKG_VERSION=$(jq -r .version client/package.json)
