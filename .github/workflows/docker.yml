@@ -33,7 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: zegorax/sonos-web
+          images: sonosweb/sonos-web
           tags: |
             type=raw,value=latest
             type=raw,value=${{ steps.pkgversion.outputs.PKG_VERSION }}
