@@ -7,10 +7,21 @@ jobs:
   build-and-publish:
     name: docker
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - arch: aarch64
+            distro: ubuntu_latest
+          - arch: armv7
+            distro: ubuntu_latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Get version from `package.json`
+      
+      - uses: uraimo/run-on-arch-action@v2
+        name: Get version from `package.json`
         id: pkgversion
         run: |
           PKG_VERSION=$(jq -r .version client/package.json)
@@ -20,7 +31,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: sonosweb/sonos-web
+          images: zegorax/sonos-web
           tags: |
             type=raw,value=latest
             type=raw,value=${{ steps.pkgversion.outputs.PKG_VERSION }}
