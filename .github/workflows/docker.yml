@@ -7,15 +7,28 @@ jobs:
   build-and-publish:
     name: docker
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        arch: ["arm64", "arm/v7","amd64"]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Set up QEMU dependency
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
       - name: Get version from `package.json`
         id: pkgversion
         run: |
           PKG_VERSION=$(jq -r .version client/package.json)
           echo "$PKG_VERSION"
           echo "::set-output name=PKG_VERSION::$PKG_VERSION"
+
       - name: Generate docker meta
         id: meta
         uses: docker/metadata-action@v4
@@ -24,11 +37,13 @@ jobs:
           tags: |
             type=raw,value=latest
             type=raw,value=${{ steps.pkgversion.outputs.PKG_VERSION }}
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
@@ -36,3 +51,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/${{ matrix.arch }}
