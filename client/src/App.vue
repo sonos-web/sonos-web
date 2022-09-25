@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <div class="app-background"></div>
-    <v-content class="now-playing-bar-padding">
+    <v-main class="now-playing-bar-padding">
       <transition name="fade">
         <v-container fluid fill-height v-if="discoveringSonos">
           <v-layout align-center justify-center>
@@ -82,6 +82,7 @@
               {{ APP_VERSION }}
             </div>
           </v-navigation-drawer>
+          <NowPlayingPanel></NowPlayingPanel>
           <v-container fill-height>
             <v-layout>
               <router-view/>
@@ -90,16 +91,17 @@
           <NowPlayingBar></NowPlayingBar>
         </div>
       </transition>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
 <script>
 import NowPlayingBar from '@/components/NowPlayingBar.vue';
+import NowPlayingPanel from '@/components/NowPlayingPanel.vue';
 import { version } from '../package.json';
 
 export default {
-  components: { NowPlayingBar },
+  components: { NowPlayingBar, NowPlayingPanel },
   name: 'App',
   data: () => ({
     drawer: false,
